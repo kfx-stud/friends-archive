@@ -3,7 +3,6 @@ import json
 import time
 import uuid
 import base64
-import hashlib
 import subprocess
 from pathlib import Path
 from PIL import Image
@@ -57,42 +56,74 @@ INCOMING_DIR = BASE_DIR / "incoming"
 IMAGES_DIR = BASE_DIR / "images"
 DATA_FILE = BASE_DIR / "data.json"
 SCORE_THRESHOLD = 7
+HASH_SIMILARITY_THRESHOLD = 8  # Порог визуального сходства (<= 8 считается дубликатом)
 
 PROMPT = """
-Ты эксперт по интернет-мемам и куратор смешных фото компании друзей.
-Проанализируй изображение и верни результат СТРОГО в формате JSON без markdown:
+Ты клубный селекционер и ведущий официального архива футбольного клуба «ГазМяс».
+Перед тобой фото потенциального игрока или яркого клубного момента.
+Оцени кадр по мемности, комичности и атмосфере дворового футбола.
+Верни результат СТРОГО в формате JSON без markdown и кавычек кода:
 {
-  "score": <целое число от 1 до 10, где 1 - скучное фото, а 10 - легендарный мем>,
-  "tag": "<короткий тег на русском, например: Мем, Вайб, Крипи, Чилл, Стрит, Дистанционка, Аут>",
+  "score": <целое число от 1 до 10, где 1 - обычное скучное фото, а 10 - золотой фонд ГазМяса>,
+  "tag": "<позиция на поле или амплуа на русском, например: Нападающий, Опорник, Вратарь-дыра, Легионер, Фанат, Судья, Травма>",
   "tag_class": "<одно из трех значений: '', 'purple', 'alt'>",
-  "title": "<емкое смешное название карточки на русском, 2-3 слова>",
-  "caption": "<остроумная ироничная подпись к фото на русском, 1-2 предложения>"
+  "title": "<емкое футбольное или мемное прозвище/название карточки на русском, 2-3 слова>",
+  "caption": "<ироничный клубный комментарий тренера или пресс-службы к фото на русском, 1-2 предложения>"
 }
 """
 
-def get_file_hash(file_path: Path) -> str:
-    """Вычисляет SHA-256 хеш файла для точного поиска дубликатов."""
-    hasher = hashlib.sha256()
-    with open(file_path, "rb") as f:
-        while chunk := f.read(65536):
-            hasher.update(chunk)
-    return hasher.hexdigest()
+def calculate_dhash(image_path: Path, hash_size=8) -> int:
+    """Вычисляет разностный перцептивный хеш (dHash) через Pillow."""
+    with Image.open(image_path) as img:
+        img_gray = img.convert("L").resize((hash_size + 1, hash_size), Image.Resampling.LANCZOS)
+        pixels = list(img_gray.getdata())
 
-def get_existing_hashes(cards: list) -> set:
-    """Собирает хеши уже опубликованных фото из data.json и папки images/."""
-    hashes = set()
+        diff = []
+        for row in range(hash_size):
+            for col in range(hash_size):
+                left = pixels[row * (hash_size + 1) + col]
+                right = pixels[row * (hash_size + 1) + col + 1]
+                diff.append(left > right)
+
+        decimal_val = 0
+        for index, val in enumerate(diff):
+            if val:
+                decimal_val |= 1 << index
+        return decimal_val
+
+def hamming_distance(hash1: int, hash2: int) -> int:
+    """Считает разницу в битах между двумя хешами."""
+    return bin(hash1 ^ hash2).count("1")
+
+def get_existing_hashes(cards: list) -> list:
+    """Собирает хеши существующих карточек и вычисляет их при первом запуске."""
+    hashes = []
+    updated = False
     for card in cards:
-        if "hash" in card:
-            hashes.add(card["hash"])
+        if "phash" in card:
+            hashes.append(card["phash"])
         else:
             img_rel_path = card.get("file")
             if img_rel_path:
                 img_path = BASE_DIR / img_rel_path
                 if img_path.exists():
-                    h = get_file_hash(img_path)
-                    card["hash"] = h
-                    hashes.add(h)
+                    try:
+                        h = calculate_dhash(img_path)
+                        card["phash"] = h
+                        hashes.append(h)
+                        updated = True
+                    except Exception:
+                        pass
+    if updated:
+        with open(DATA_FILE, "w", encoding="utf-8") as f:
+            json.dump(cards, f, ensure_ascii=False, indent=2)
     return hashes
+
+def is_duplicate(file_hash: int, existing_hashes: list) -> bool:
+    for h in existing_hashes:
+        if hamming_distance(file_hash, h) <= HASH_SIMILARITY_THRESHOLD:
+            return True
+    return False
 
 def analyze_image_with_gemini(image_path: Path):
     with open(image_path, "rb") as f:
@@ -127,24 +158,19 @@ def analyze_image_with_gemini(image_path: Path):
 
         try:
             res = requests.post(url, headers=headers, json=payload, timeout=60)
-            
             if res.status_code == 200:
                 result_json = res.json()
                 text = result_json["candidates"][0]["content"]["parts"][0]["text"]
                 return json.loads(text)
-
             elif res.status_code in (429, 401, 403):
                 key_manager.mark_current_exhausted(f"HTTP {res.status_code}")
                 continue
-
             elif res.status_code == 503:
                 print("Сервер временно занят (503). Пауза 8 сек...")
                 time.sleep(8)
                 continue
-
             else:
                 raise Exception(f"HTTP {res.status_code}: {res.text}")
-
         except requests.exceptions.RequestException as e:
             print(f"Сетевой сбой: {e}. Пауза 5 сек...")
             time.sleep(5)
@@ -162,10 +188,8 @@ def process_photos():
         except json.JSONDecodeError:
             cards = []
 
-    # Предзагрузка базы хешей уже опубликованных фото
     existing_hashes = get_existing_hashes(cards)
 
-    # Удаление миниатюр Telegram
     for thumb in INCOMING_DIR.glob("*_thumb.*"):
         try:
             thumb.unlink()
@@ -184,18 +208,20 @@ def process_photos():
 
     total_files = len(incoming_files)
     print(f"Загружено ключей: {len(API_KEYS)}")
-    print(f"Найдено файлов для обработки: {total_files}")
+    print(f"Кадров на просмотр: {total_files}")
     added_count = 0
 
     for idx, file_path in enumerate(incoming_files, start=1):
-        print(f"\n[{idx}/{total_files}] Проверка файла: {file_path.name}")
+        print(f"\n[{idx}/{total_files}] Проверка кадра: {file_path.name}")
 
-        # Проверка на дубликат по хешу
-        file_hash = get_file_hash(file_path)
-        if file_hash in existing_hashes:
-            print("-> [ДУБЛИКАТ] Это фото уже есть на сайте! Удаляем из incoming без вызова API.")
-            file_path.unlink()
-            continue
+        try:
+            current_phash = calculate_dhash(file_path)
+            if is_duplicate(current_phash, existing_hashes):
+                print("-> [ДУБЛИКАТ/ПОХОЖЕЕ] Схожий кадр уже есть в архиве клуба. Удаляем без вызова API.")
+                file_path.unlink()
+                continue
+        except Exception as e:
+            print(f"[-] Ошибка при расчете dHash: {e}")
 
         try:
             data = analyze_image_with_gemini(file_path)
@@ -209,8 +235,8 @@ def process_photos():
 
         try:
             score = int(data.get("score", 0))
-            title = data.get("title", "Без названия")
-            print(f"Вердикт: «{title}» | Оценка: {score}/10")
+            title = data.get("title", "Игрок")
+            print(f"Вердикт: «{title}» | Оценка селекционера: {score}/10")
 
             if score >= SCORE_THRESHOLD:
                 new_filename = f"photo_{uuid.uuid4().hex[:8]}.jpg"
@@ -221,25 +247,23 @@ def process_photos():
                     img.thumbnail((1200, 1200))
                     img.save(dest_path, "JPEG", quality=85)
 
-                # Сохраняем хеш оптимизированного фото и оригинала
-                saved_hash = get_file_hash(dest_path)
-                existing_hashes.add(file_hash)
-                existing_hashes.add(saved_hash)
+                saved_phash = calculate_dhash(dest_path)
+                existing_hashes.append(saved_phash)
 
                 new_card = {
                     "file": f"images/{new_filename}",
-                    "hash": saved_hash,
-                    "tag": data.get("tag", "Вайб"),
+                    "phash": saved_phash,
+                    "tag": data.get("tag", "Основа"),
                     "tag_class": data.get("tag_class", ""),
                     "title": title,
                     "caption": data.get("caption", "")
                 }
                 cards.insert(0, new_card)
                 added_count += 1
-                print(f"-> Добавлено в архив: {new_filename}")
+                print(f"-> Подписан в клуб: {new_filename}")
                 file_path.unlink()
             else:
-                print(f"-> Пропущено: балл {score} ниже порога {SCORE_THRESHOLD}")
+                print(f"-> Не подошел по уровню (балл {score} ниже {SCORE_THRESHOLD}). Списан.")
                 file_path.unlink()
 
         except Exception as e:
@@ -253,18 +277,18 @@ def process_photos():
         with open(DATA_FILE, "w", encoding="utf-8") as f:
             json.dump(cards, f, ensure_ascii=False, indent=2)
 
-        print(f"\n[✓] Успешно добавлено новых карточек: {added_count}")
+        print(f"\n[✓] Успешно добавлено в заявку игроков: {added_count}")
         print("Отправка изменений на GitHub...")
 
         try:
             subprocess.run(["git", "add", "images/", "data.json"], check=True)
-            subprocess.run(["git", "commit", "-m", f"AI curator: добавлено {added_count} фото"], check=True)
+            subprocess.run(["git", "commit", "-m", f"ГазМяс: пополнение состава (+{added_count})"], check=True)
             subprocess.run(["git", "push"], check=True)
             print("Готово! Сайт обновится через 30–60 секунд.")
         except subprocess.CalledProcessError as e:
             print(f"Ошибка Git при коммите/пуше: {e}")
     else:
-        print("\nНовых карточек не добавлено. data.json не изменялся.")
+        print("\nНовых подходящих карточек не найдено. data.json не изменялся.")
 
 if __name__ == "__main__":
     process_photos()
