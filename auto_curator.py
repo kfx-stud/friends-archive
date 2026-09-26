@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import time
+import re
 import base64
 import requests
 from PIL import Image
@@ -10,8 +11,9 @@ INCOMING_DIR = "incoming"
 IMAGES_DIR = "images"
 DATA_FILE = "data.json"
 KEYS_FILE = "keys.txt"
+ENV_FILE = ".env"
 
-# Порог прохождения кадра в архив (от 1 до 10)
+# Минимальный балл для добавления на сайт (от 1 до 10)
 MIN_SCORE = 7
 
 os.makedirs(INCOMING_DIR, exist_ok=True)
@@ -82,14 +84,38 @@ class KeyManager:
 
 
 def load_keys():
-    if not os.path.exists(KEYS_FILE):
-        print(f"Файл {KEYS_FILE} не найден.")
-        sys.exit(1)
-    with open(KEYS_FILE, "r", encoding="utf-8") as f:
-        keys = [line.strip() for line in f if line.strip() and not line.startswith("#")]
+    keys = []
+    
+    # 1. Чтение из .env
+    if os.path.exists(ENV_FILE):
+        with open(ENV_FILE, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                if "=" in line:
+                    k, v = line.split("=", 1)
+                    k = k.strip().upper()
+                    v = v.strip().strip('"').strip("'")
+                    if any(sub in k for sub in ("GEMINI", "API_KEY", "KEY")):
+                        for sub_key in v.split(","):
+                            sub_key = sub_key.strip()
+                            if sub_key and sub_key not in keys:
+                                keys.append(sub_key)
+
+    # 2. Если в .env ничего не найдено, проверяем keys.txt
+    if not keys and os.path.exists(KEYS_FILE):
+        with open(KEYS_FILE, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#") and line not in keys:
+                    keys.append(line)
+
     if not keys:
-        print(f"Файл {KEYS_FILE} пуст.")
+        print("Ошибка: API-ключи не найдены ни в .env, ни в keys.txt.")
+        print("Укажите в .env строку GEMINI_API_KEY=... или GEMINI_API_KEYS=key1,key2")
         sys.exit(1)
+
     return keys
 
 
@@ -109,22 +135,30 @@ def calculate_dhash(image_path, hash_size=8):
         return None
 
 
+def extract_json_payload(text):
+    text = text.strip()
+    match = re.search(r"\{.*\}", text, re.DOTALL)
+    if match:
+        return json.loads(match.group(0))
+    return json.loads(text)
+
+
 def analyze_image_with_gemini(image_path, key_manager):
     system_prompt = (
         "Ты беспощадный арт-директор и архивариус дворового футбольного клуба 'ФК ГазМяс'. "
         "Твоя задача — объективно оценить историческую и мемную ценность кадра и написать едкое описание.\n\n"
         "ШКАЛА ОЦЕНКИ SCORE (СТРОГО 1-10, НЕ ЗАВЫШАЙ БАЛЛЫ ИЗ ВЕЖЛИВОСТИ!):\n"
-        "- 1-4 балла (мусор/проходняк): смазанные пальцы, пустые стены, скучные бытовые фото без действия, рандомные скриншоты переписок, некрасивые размытые лица.\n"
-        "- 5-6 баллов (посредственно): обычное селфи, стандартная посиделка, ничего легендарного или смешного.\n"
-        "- 7-8 баллов (хороший контент): клубная атмосфера, яркие эмоции, алкоголь, забавные позы, узнаваемые лица ГазМяса.\n"
-        "- 9-10 баллов (золотой фонд/шедевр): эпический завоз, исторический момент, угар, идеальный мем.\n\n"
+        "- 1-4 балла: смазанные пальцы, пустые стены, скучные бытовые фото без действия, рандомные скриншоты переписок, некрасивые размытые лица.\n"
+        "- 5-6 баллов: обычное селфи, стандартная посиделка, ничего легендарного или смешного.\n"
+        "- 7-8 баллов: клубная атмосфера, яркие эмоции, алкоголь, забавные позы, узнаваемые лица ГазМяса.\n"
+        "- 9-10 баллов: эпический завоз, исторический момент, угар, идеальный мем.\n\n"
         "Главные темы клуба для панчлайнов и тегов:\n"
         "1. Дибуны ('нихуя Дибуны отстроили', дача, станция, природа).\n"
         "2. Лудка, бонуски, бурмалда, Sugar Rush, Sweet Bonanza, '99% лудоманов останавливаются за шаг до победы'.\n"
         "3. Реальные пацаны (Базанов, Колян, Вован, Эдик, 'Базанов дал джазу').\n"
         "4. Гимн/строевая: 'Солнышко светит, курочка клюет по зернышку по зернышку, а служба все идет...'.\n"
         "5. Локации и лица: Гараж на Гороховой, Франк на Сенной, Кресты (Карл Фридрих), Студос; Директор Платон (Первый и Единственный), Менеджер Артем Визиров, Тренер Иван Плыгун, kfx.\n\n"
-        "Верни ответ СТРОГО в формате JSON без markdown (без ```json):\n"
+        "Верни ответ СТРОГО в формате JSON:\n"
         '{"score": 7, "title": "Заголовок (3-5 слов)", "caption": "Панчлайн и описание (1-2 предложения)", "tag": "Тег (Дибуны, Лудка, Бонуска, Основа, Тренер, Дирекция, Легенда)"}'
     )
 
@@ -159,7 +193,7 @@ def analyze_image_with_gemini(image_path, key_manager):
             print("[X] Все доступные API-ключи исчерпаны.")
             return None
 
-        url = f"[https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=](https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=){api_key}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key={api_key}"
 
         try:
             res = requests.post(url, headers=headers, json=payload, timeout=30)
@@ -168,4 +202,145 @@ def analyze_image_with_gemini(image_path, key_manager):
                 errors_503_count = 0
                 data = res.json()
                 text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
-                if text.startswith("
+                return extract_json_payload(text)
+
+            elif res.status_code == 503:
+                errors_503_count += 1
+                if errors_503_count < 10:
+                    print(f"Сервер временно занят (503). Пауза 8 сек... (ошибка {errors_503_count}/10)")
+                    time.sleep(8)
+                    continue
+                else:
+                    print("Получено 10 ошибок 503 подряд. Смена ключа (пауза ключа на 60 сек)...")
+                    errors_503_count = 0
+                    key_manager.mark_cooldown(seconds=60)
+                    continue
+
+            elif res.status_code == 429:
+                errors_503_count = 0
+                print("Превышен лимит запросов (429). Кулдаун ключа на 60 сек...")
+                key_manager.mark_cooldown(seconds=60)
+                continue
+
+            elif res.status_code in (400, 401, 403):
+                errors_503_count = 0
+                print(f"Ошибка авторизации ({res.status_code}). Исключаем ключ...")
+                key_manager.mark_dead()
+                continue
+
+            else:
+                errors_503_count = 0
+                print(f"Неизвестный статус: {res.status_code}. Переключение ключа...")
+                key_manager.switch_to_next()
+                time.sleep(2)
+                continue
+
+        except requests.exceptions.RequestException as e:
+            print(f"Сетевой сбой: {e}. Пауза 5 сек...")
+            time.sleep(5)
+            continue
+        except Exception as e:
+            print(f"Ошибка парсинга ответа: {e}. Повтор...")
+            time.sleep(2)
+            continue
+
+
+def load_database():
+    if os.path.exists(DATA_FILE):
+        try:
+            with open(DATA_FILE, "r", encoding="utf-8") as f:
+                content = f.read().strip()
+                if content:
+                    return json.loads(content)
+        except Exception as e:
+            print(f"[!] Предупреждение: не удалось прочесть {DATA_FILE} ({e}). Будет создан новый список.")
+            return []
+    return []
+
+
+def save_database(data):
+    with open(DATA_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+        f.flush()
+        os.fsync(f.fileno())
+
+
+def main():
+    keys = load_keys()
+    key_manager = KeyManager(keys)
+
+    print(f"Загружено ключей: {len(keys)}")
+    key_manager.print_status()
+
+    supported_exts = (".jpg", ".jpeg", ".png", ".webp")
+    incoming_files = [f for f in os.listdir(INCOMING_DIR) if f.lower().endswith(supported_exts)]
+    print(f"Кадров на просмотр: {len(incoming_files)}")
+
+    db = load_database()
+    print(f"Уже в базе {DATA_FILE}: {len(db)} записей\n")
+
+    processed_hashes = {item["hash"] for item in db if "hash" in item and item["hash"] is not None}
+    processed_files = {item["file"] for item in db if "file" in item}
+
+    if not incoming_files:
+        print(f"Папка {INCOMING_DIR}/ пуста. Добавьте фотографии для обработки.")
+        return
+
+    total = len(incoming_files)
+    for idx, filename in enumerate(incoming_files, start=1):
+        incoming_path = os.path.join(INCOMING_DIR, filename)
+        print(f"[{idx}/{total}] Проверка кадра: {filename}")
+
+        img_hash = calculate_dhash(incoming_path)
+        if img_hash is not None and img_hash in processed_hashes:
+            print("-> Дубликат кадра (по хэшу). Удаление из incoming.")
+            os.remove(incoming_path)
+            continue
+
+        result = analyze_image_with_gemini(incoming_path, key_manager)
+        if not result:
+            print("-> Не удалось получить описание. Остановка очереди.")
+            break
+
+        score = result.get("score", 0)
+        print(f"-> Оценка куратора: {score}/10")
+
+        if score < MIN_SCORE:
+            print(f"-> Не дотягивает до нормы (< {MIN_SCORE}). Отсеян.\n")
+            os.remove(incoming_path)
+            continue
+
+        new_filename = f"photo_{int(time.time())}_{filename}"
+        dest_path = os.path.join(IMAGES_DIR, new_filename)
+
+        with Image.open(incoming_path) as img:
+            rgb_img = img.convert("RGB")
+            rgb_img.save(dest_path, "JPEG", quality=85)
+
+        os.remove(incoming_path)
+
+        card_entry = {
+            "file": f"images/{new_filename}",
+            "title": result.get("title", "ФК ГазМяс"),
+            "caption": result.get("caption", "Момент матча"),
+            "tag": result.get("tag", "Основа"),
+            "tag_class": "alt" if len(db) % 2 == 0 else "",
+            "score": score,
+            "hash": img_hash
+        }
+
+        db.append(card_entry)
+        save_database(db)
+
+        if img_hash is not None:
+            processed_hashes.add(img_hash)
+        processed_files.add(card_entry["file"])
+
+        print(f"-> [OK] Записано в {DATA_FILE}: \"{card_entry['title']}\" (всего в базе: {len(db)})\n")
+        time.sleep(1)
+
+    print(f"Готово! В {DATA_FILE} сохранено записей: {len(db)}")
+
+
+if __name__ == "__main__":
+    main()
