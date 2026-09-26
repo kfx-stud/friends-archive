@@ -15,6 +15,8 @@
       --text: #ffffff;
       --text-muted: #8e9baa;
       --badge-bg: rgba(0, 0, 0, 0.75);
+      --sugar-pink: #ff2e93;
+      --sugar-purple: #9b51e0;
     }
 
     * {
@@ -30,7 +32,6 @@
       line-height: 1.6;
     }
 
-    /* Навбар клуба */
     header {
       background: linear-gradient(180deg, rgba(201, 0, 0, 0.98) 0%, rgba(135, 0, 0, 0.98) 100%);
       border-bottom: 3px solid var(--accent);
@@ -81,17 +82,32 @@
       letter-spacing: 0.5px;
     }
 
-    .header-tagline {
-      font-size: 0.85rem;
-      color: #fff;
-      background: rgba(0, 0, 0, 0.35);
-      padding: 0.35rem 0.8rem;
-      border-radius: 4px;
-      border: 1px solid rgba(255, 215, 0, 0.3);
-      font-weight: 600;
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
     }
 
-    /* Матч-центр */
+    .btn-sugar {
+      background: linear-gradient(135deg, var(--sugar-pink) 0%, var(--sugar-purple) 100%);
+      color: #fff;
+      border: 1px solid var(--accent);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 800;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 0 12px rgba(255, 46, 147, 0.4);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .btn-sugar:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 18px rgba(255, 46, 147, 0.7);
+    }
+
     .match-banner {
       background: #0f1217;
       border-bottom: 1px solid var(--surface-border);
@@ -130,14 +146,12 @@
       border: 1px solid var(--accent);
     }
 
-    /* Главный контейнер */
     .container {
       max-width: 1200px;
       margin: 2rem auto;
       padding: 0 1rem;
     }
 
-    /* Инфо-панель клуба */
     .club-stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -151,6 +165,11 @@
       border-left: 4px solid var(--primary);
       padding: 1.1rem;
       border-radius: 6px;
+    }
+
+    .info-card.sugar-card {
+      border-left: 4px solid var(--sugar-pink);
+      cursor: pointer;
     }
 
     .info-card span {
@@ -175,7 +194,6 @@
       margin-top: 0.25rem;
     }
 
-    /* Блок манифеста и цитаты руководства */
     .club-quote-section {
       background: linear-gradient(135deg, #181d26 0%, #12151b 100%);
       border: 1px solid var(--surface-border);
@@ -217,7 +235,6 @@
       letter-spacing: 0.5px;
     }
 
-    /* Правила селекции */
     .rules-card {
       background: var(--surface);
       border: 1px solid var(--surface-border);
@@ -240,19 +257,18 @@
     .rules-list {
       list-style: none;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 0.8rem;
     }
 
     .rules-list li {
       background: rgba(0, 0, 0, 0.3);
-      padding: 0.6rem 0.8rem;
+      padding: 0.7rem 0.9rem;
       border-radius: 4px;
       font-size: 0.85rem;
       border-left: 3px solid var(--accent);
     }
 
-    /* Заголовок секции состава */
     .section-header {
       display: flex;
       justify-content: space-between;
@@ -275,7 +291,6 @@
       text-transform: uppercase;
     }
 
-    /* Сетка игроков (карточек) */
     .squad-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -385,6 +400,134 @@
       color: var(--accent);
       font-weight: 700;
     }
+
+    /* Модалка слота Sugar Rush */
+    .slot-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .slot-modal {
+      background: linear-gradient(180deg, #1b0f2a 0%, #10081a 100%);
+      border: 3px solid var(--sugar-pink);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 440px;
+      padding: 1.5rem;
+      box-shadow: 0 0 30px rgba(255, 46, 147, 0.5);
+      text-align: center;
+      position: relative;
+    }
+
+    .slot-close {
+      position: absolute;
+      top: 10px;
+      right: 14px;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .slot-title {
+      font-size: 1.4rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, #ffd700, #ff2e93);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.2rem;
+    }
+
+    .slot-subtitle {
+      font-size: 0.8rem;
+      color: #d1b8ea;
+      margin-bottom: 1rem;
+    }
+
+    .slot-bank {
+      display: flex;
+      justify-content: space-around;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 0.5rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      margin-bottom: 1rem;
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+
+    .slot-reels {
+      display: flex;
+      justify-content: center;
+      gap: 0.8rem;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 1.2rem;
+      border-radius: 12px;
+      border: 2px solid var(--sugar-purple);
+      margin-bottom: 1.2rem;
+    }
+
+    .slot-reel {
+      width: 90px;
+      height: 90px;
+      background: #25123d;
+      border: 2px solid var(--accent);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.8rem;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+      user-select: none;
+      transition: transform 0.1s;
+    }
+
+    .slot-reel.spin {
+      animation: reelShake 0.12s infinite;
+    }
+
+    @keyframes reelShake {
+      0% { transform: translateY(-4px); }
+      50% { transform: translateY(4px); }
+      100% { transform: translateY(-4px); }
+    }
+
+    .slot-status {
+      min-height: 24px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .slot-spin-btn {
+      width: 100%;
+      background: linear-gradient(180deg, #ff2e93 0%, #c9006e 100%);
+      border: 2px solid var(--accent);
+      color: #fff;
+      font-size: 1.2rem;
+      font-weight: 900;
+      padding: 0.8rem;
+      border-radius: 10px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 0 15px rgba(255, 46, 147, 0.6);
+    }
+
+    .slot-spin-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 <body>
@@ -398,7 +541,9 @@
         <p>Архив клуба • Сезон 8: Финал</p>
       </div>
     </div>
-    <div class="header-tagline">Где газ — там и мяс</div>
+    <div class="nav-actions">
+      <button class="btn-sugar" onclick="openSlotModal()">🎰 Sugar Rush / Занос</button>
+    </div>
   </header>
 
   <!-- Матч-центр -->
@@ -407,7 +552,7 @@
     <div class="score">4 : 3</div>
     <div class="match-team">ФК ПивЗавод</div>
     <span class="match-status">Победа (ОТ) • Вторая лига</span>
-    <span style="color: var(--text-muted); font-size: 0.8rem;">Серия пенальти в гаражах</span>
+    <span style="color: var(--text-muted); font-size: 0.8rem;">Серия пенальти в гараже на Гороховой</span>
   </div>
 
   <main class="container">
@@ -416,22 +561,22 @@
       <div class="info-card">
         <span>Домашняя Арена</span>
         <strong>«Гараж на Гороховой»</strong>
-        <small>Резерв: Карл Фридрих на Крестах</small>
+        <small>Резерв: «Карл Фридрих» на Крестах</small>
       </div>
       <div class="info-card">
-        <span>Генеральный Спонсор</span>
-        <strong>КБ у остановки & Талка</strong>
-        <small>Партнер: Охота Крепкая 0.5</small>
+        <span>Транспортная служба</span>
+        <strong>«Дядя Миша»</strong>
+        <small>Трансфер строго под рэпчину Мэддкида</small>
       </div>
-      <div class="info-card">
-        <span>Руководство Клуба</span>
-        <strong>Платон Нодь (Директор)</strong>
-        <small>Менеджер: Артем Визиров</small>
+      <div class="info-card sugar-card" onclick="openSlotModal()" title="Кликни, чтобы крутить">
+        <span>Отдел Бурмалды</span>
+        <strong>Кафедра Лудки & Sugar Rush</strong>
+        <small>25 фриспинов (должно быть 10)</small>
       </div>
       <div class="info-card">
         <span>Тренерский Штаб</span>
         <strong>Иван Плыгун (Главный тренер)</strong>
-        <small>Теория: Юрфак & Латынь</small>
+        <small>Кафедра юридической латыни и бурмалды</small>
       </div>
     </div>
 
@@ -439,7 +584,7 @@
     <div class="club-quote-section">
       <div class="quote-body">
         <div class="quote-text">«Если повезет — будет бизнес, если нет — алкоголизм. Друг о друге не забывайте, ГазМяс не смейте развалить мне, опездолы!»</div>
-        <div class="quote-author">— Платон Петрович Нодь Третий, Директор ФК ГазМяс</div>
+        <div class="quote-author">— Платон Петрович Нодь, Первый и Единственный Директор ФК ГазМяс</div>
       </div>
     </div>
 
@@ -447,10 +592,14 @@
     <div class="rules-card">
       <h3>Регламент трансферного окна и отбора в заявку</h3>
       <ul class="rules-list">
-        <li><strong>Раунд чистилища:</strong> Игрок обязан выдержать ночной созвон и доказать преданность клубу.</li>
+        <li><strong>Раунд чистилища:</strong> Выдержать адское пекло в бане от директора — та же исповедь, только через пот.</li>
         <li><strong>Дисциплина на поле:</strong> Строго запрещен слив мида на Котле против Лины и полное «афк».</li>
         <li><strong>Теоретический зачет:</strong> Базовое понимание цитат сериала «Реальные пацаны» (Базанов, Колян, Вован).</li>
         <li><strong>Клубный кодекс:</strong> «Per aspera ad astra fututio» — через тернии к победам без негатива.</li>
+        <li><strong>Гражданская оборона:</strong> Чугунная ванна держит ударную волну 20 км, пластмассовая — не спасает нихуя.</li>
+        <li><strong>Железнодорожное правило:</strong> «Муравьи бегают по колесам — пизда поезду».</li>
+        <li><strong>Теория лудки:</strong> Помнить, что 99% лудоманов останавливаются аккурат за секунду до мега-заноса.</li>
+        <li><strong>Боевой рацион:</strong> Каша с малиной и червями (кличка «блевус», статус «не женат»).</li>
       </ul>
     </div>
 
@@ -465,9 +614,32 @@
     </div>
   </main>
 
+  <!-- Всплывающий слот Sugar Rush -->
+  <div class="slot-modal-overlay" id="slotOverlay" onclick="closeSlotOnBackdrop(event)">
+    <div class="slot-modal">
+      <button class="slot-close" onclick="closeSlotModal()">✕</button>
+      <div class="slot-title">🍭 ГазМяс: Sugar Rush</div>
+      <div class="slot-subtitle">Официальный симулятор бурмалды спонсора клуба</div>
+
+      <div class="slot-bank">
+        <div>Баланс: <span id="slotBalance" style="color: #ffd700;">3000</span> ₽</div>
+        <div>Ставка: <span>200</span> ₽</div>
+      </div>
+
+      <div class="slot-reels">
+        <div class="slot-reel" id="reel1">🍬</div>
+        <div class="slot-reel" id="reel2">🍓</div>
+        <div class="slot-reel" id="reel3">🍇</div>
+      </div>
+
+      <div class="slot-status" id="slotStatus">Крути барабан, забирай занос!</div>
+      <button class="slot-spin-btn" id="spinBtn" onclick="spinSlot()">Спин (200 ₽)</button>
+    </div>
+  </div>
+
   <footer>
     <p>© 2026 <span>ФК «ГазМяс»</span>. Все права защищены дворовым комитетом Санкт-Петербурга.</p>
-    <p style="margin-top: 0.3rem;">Дирекция: Платон Нодь • Креативный продюсер: Артем Визиров • Технический штаб: kfx</p>
+    <p style="margin-top: 0.3rem;">Дирекция: Платон Нодь (Первый и Единственный) • Креативный продюсер: Артем Визиров • Технический штаб: kfx</p>
   </footer>
 
   <script>
@@ -515,6 +687,109 @@
         counter.textContent = "Сбой трансферного листа";
         container.innerHTML = "<p style='color: #ef4444;'>Не удалось загрузить заявку игроков из data.json.</p>";
       }
+    }
+
+    const SYMBOLS = ["🍬", "🍓", "🍇", "⭐", "💣", "🍭"];
+    let balance = 3000;
+    const SPIN_COST = 200;
+    let isSpinning = false;
+
+    function openSlotModal() {
+      document.getElementById("slotOverlay").style.display = "flex";
+    }
+
+    function closeSlotModal() {
+      document.getElementById("slotOverlay").style.display = "none";
+    }
+
+    function closeSlotOnBackdrop(e) {
+      if (e.target.id === "slotOverlay") closeSlotModal();
+    }
+
+    function playBeep(freq = 440, type = "sine", duration = 0.1) {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function spinSlot() {
+      if (isSpinning) return;
+      if (balance < SPIN_COST) {
+        document.getElementById("slotStatus").textContent = "Баланс исчерпан! Дядя Миша подвезет 1000 ₽";
+        balance += 1000;
+        document.getElementById("slotBalance").textContent = balance;
+        return;
+      }
+
+      balance -= SPIN_COST;
+      document.getElementById("slotBalance").textContent = balance;
+      document.getElementById("slotStatus").textContent = "Бурмалдим...";
+      isSpinning = true;
+      document.getElementById("spinBtn").disabled = true;
+
+      const r1 = document.getElementById("reel1");
+      const r2 = document.getElementById("reel2");
+      const r3 = document.getElementById("reel3");
+
+      r1.classList.add("spin");
+      r2.classList.add("spin");
+      r3.classList.add("spin");
+
+      playBeep(300, "triangle", 0.3);
+
+      setTimeout(() => {
+        const res1 = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+        r1.textContent = res1;
+        r1.classList.remove("spin");
+        playBeep(450, "sine", 0.1);
+      }, 500);
+
+      setTimeout(() => {
+        const res2 = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+        r2.textContent = res2;
+        r2.classList.remove("spin");
+        playBeep(550, "sine", 0.1);
+      }, 900);
+
+      setTimeout(() => {
+        const res3 = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+        r3.textContent = res3;
+        r3.classList.remove("spin");
+        playBeep(650, "sine", 0.15);
+
+        isSpinning = false;
+        document.getElementById("spinBtn").disabled = false;
+
+        checkWin(r1.textContent, r2.textContent, r3.textContent);
+      }, 1300);
+    }
+
+    function checkWin(s1, s2, s3) {
+      const status = document.getElementById("slotStatus");
+      if (s1 === s2 && s2 === s3) {
+        let win = 5000;
+        if (s1 === "🍭" || s1 === "💣") win = 10000;
+        balance += win;
+        status.innerHTML = `🔥 МЕГА ЗАВОЗ! ВЫИГРЫШ: +${win} ₽! 🔥`;
+        playBeep(880, "square", 0.4);
+      } else if (s1 === s2 || s2 === s3 || s1 === s3) {
+        const win = 600;
+        balance += win;
+        status.textContent = `Ретригер бонуски! +${win} ₽`;
+        playBeep(600, "triangle", 0.2);
+      } else {
+        status.textContent = "Мимо! 99% лудоманов отступают перед джекпотом.";
+      }
+      document.getElementById("slotBalance").textContent = balance;
     }
 
     document.addEventListener("DOMContentLoaded", loadSquad);
