@@ -9,12 +9,12 @@
       --primary: #c90000;
       --primary-dark: #870000;
       --accent: #ffd700;
-      --bg: #0d0f12;
-      --surface: #161a20;
-      --surface-border: #262c36;
+      --bg: #0b0d10;
+      --surface: #14181f;
+      --surface-border: #232935;
       --text: #ffffff;
-      --text-muted: #9aa4b2;
-      --pitch: #1b4d24;
+      --text-muted: #8e9baa;
+      --badge-bg: rgba(0, 0, 0, 0.75);
     }
 
     * {
@@ -27,12 +27,12 @@
     body {
       background-color: var(--bg);
       color: var(--text);
-      line-height: 1.5;
+      line-height: 1.6;
     }
 
     /* Навбар клуба */
     header {
-      background: linear-gradient(180deg, rgba(201, 0, 0, 0.95) 0%, rgba(135, 0, 0, 0.95) 100%);
+      background: linear-gradient(180deg, rgba(201, 0, 0, 0.98) 0%, rgba(135, 0, 0, 0.98) 100%);
       border-bottom: 3px solid var(--accent);
       padding: 1rem 2rem;
       display: flex;
@@ -41,7 +41,7 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
     }
 
     .club-brand {
@@ -51,8 +51,8 @@
     }
 
     .club-logo {
-      width: 48px;
-      height: 48px;
+      width: 52px;
+      height: 52px;
       background: var(--accent);
       color: #000;
       border-radius: 50%;
@@ -60,8 +60,9 @@
       align-items: center;
       justify-content: center;
       font-weight: 900;
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       border: 2px solid #fff;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
     }
 
     .club-name h1 {
@@ -69,26 +70,40 @@
       text-transform: uppercase;
       letter-spacing: 1.5px;
       font-weight: 900;
+      line-height: 1.1;
     }
 
     .club-name p {
       font-size: 0.8rem;
-      color: #ffd700;
+      color: var(--accent);
       text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .header-tagline {
+      font-size: 0.85rem;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 0.35rem 0.8rem;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      font-weight: 600;
     }
 
     /* Матч-центр */
     .match-banner {
-      background: #111419;
+      background: #0f1217;
       border-bottom: 1px solid var(--surface-border);
-      padding: 0.75rem 1rem;
+      padding: 0.8rem 1rem;
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 2rem;
+      gap: 1.5rem;
       font-size: 0.9rem;
       text-transform: uppercase;
-      font-weight: 700;
+      font-weight: 800;
+      flex-wrap: wrap;
     }
 
     .match-team {
@@ -99,13 +114,23 @@
 
     .score {
       background: var(--primary);
-      padding: 0.2rem 0.8rem;
+      padding: 0.25rem 0.9rem;
       border-radius: 4px;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       letter-spacing: 2px;
+      box-shadow: 0 0 8px rgba(201, 0, 0, 0.6);
     }
 
-    /* Контейнер */
+    .match-status {
+      color: var(--accent);
+      font-size: 0.8rem;
+      background: rgba(255, 215, 0, 0.1);
+      padding: 0.2rem 0.6rem;
+      border-radius: 3px;
+      border: 1px solid var(--accent);
+    }
+
+    /* Главный контейнер */
     .container {
       max-width: 1200px;
       margin: 2rem auto;
@@ -115,7 +140,7 @@
     /* Инфо-панель клуба */
     .club-stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 1rem;
       margin-bottom: 2.5rem;
     }
@@ -124,7 +149,7 @@
       background: var(--surface);
       border: 1px solid var(--surface-border);
       border-left: 4px solid var(--primary);
-      padding: 1rem;
+      padding: 1.1rem;
       border-radius: 6px;
     }
 
@@ -133,12 +158,98 @@
       text-transform: uppercase;
       color: var(--text-muted);
       display: block;
-      margin-bottom: 0.25rem;
+      margin-bottom: 0.35rem;
+      font-weight: 700;
     }
 
     .info-card strong {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       color: #fff;
+      display: block;
+    }
+
+    .info-card small {
+      font-size: 0.75rem;
+      color: var(--accent);
+      display: block;
+      margin-top: 0.25rem;
+    }
+
+    /* Блок манифеста и цитаты руководства */
+    .club-quote-section {
+      background: linear-gradient(135deg, #181d26 0%, #12151b 100%);
+      border: 1px solid var(--surface-border);
+      border-radius: 8px;
+      padding: 1.8rem;
+      margin-bottom: 2.5rem;
+      position: relative;
+    }
+
+    .club-quote-section::before {
+      content: "“";
+      position: absolute;
+      top: 5px;
+      left: 15px;
+      font-size: 5rem;
+      color: rgba(201, 0, 0, 0.2);
+      font-family: Georgia, serif;
+      line-height: 1;
+    }
+
+    .quote-body {
+      position: relative;
+      z-index: 1;
+    }
+
+    .quote-text {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.5rem;
+      font-style: italic;
+    }
+
+    .quote-author {
+      font-size: 0.85rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    /* Правила селекции */
+    .rules-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .rules-card h3 {
+      text-transform: uppercase;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+      margin-bottom: 1rem;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .rules-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 0.8rem;
+    }
+
+    .rules-list li {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 0.6rem 0.8rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      border-left: 3px solid var(--accent);
     }
 
     /* Заголовок секции состава */
@@ -159,11 +270,12 @@
 
     .squad-count {
       color: var(--accent);
-      font-weight: 700;
+      font-weight: 800;
       font-size: 0.9rem;
+      text-transform: uppercase;
     }
 
-    /* Карточки игроков (фото) */
+    /* Сетка игроков (карточек) */
     .squad-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -204,14 +316,15 @@
       position: absolute;
       top: 12px;
       right: 12px;
-      background: rgba(0, 0, 0, 0.75);
+      background: var(--badge-bg);
       border: 1px solid var(--accent);
       color: var(--accent);
       font-size: 0.75rem;
-      padding: 0.25rem 0.6rem;
+      padding: 0.25rem 0.65rem;
       border-radius: 4px;
       text-transform: uppercase;
       font-weight: 800;
+      letter-spacing: 0.5px;
     }
 
     .player-badge.purple {
@@ -225,7 +338,7 @@
     }
 
     .card-content {
-      padding: 1rem;
+      padding: 1.2rem;
       display: flex;
       flex-direction: column;
       flex-grow: 1;
@@ -242,12 +355,12 @@
     .card-caption {
       font-size: 0.85rem;
       color: var(--text-muted);
-      line-height: 1.4;
+      line-height: 1.5;
       flex-grow: 1;
     }
 
     .card-footer {
-      margin-top: 1rem;
+      margin-top: 1.2rem;
       padding-top: 0.75rem;
       border-top: 1px solid rgba(255, 255, 255, 0.05);
       display: flex;
@@ -260,26 +373,32 @@
 
     footer {
       text-align: center;
-      padding: 2rem 1rem;
-      background: #08090b;
+      padding: 2.5rem 1rem;
+      background: #07090b;
       border-top: 1px solid var(--surface-border);
       color: var(--text-muted);
       font-size: 0.8rem;
       margin-top: 4rem;
     }
+
+    footer span {
+      color: var(--accent);
+      font-weight: 700;
+    }
   </style>
 </head>
 <body>
 
-  <!-- Хедер -->
+  <!-- Клубная шапка -->
   <header>
     <div class="club-brand">
       <div class="club-logo">ГМ</div>
       <div class="club-name">
         <h1>ФК ГазМяс</h1>
-        <p>Официальный клубный архив</p>
+        <p>Архив клуба • Сезон 8: Финал</p>
       </div>
     </div>
+    <div class="header-tagline">Где газ — там и мяс</div>
   </header>
 
   <!-- Матч-центр -->
@@ -287,43 +406,68 @@
     <div class="match-team">ФК ГазМяс</div>
     <div class="score">4 : 3</div>
     <div class="match-team">ФК ПивЗавод</div>
-    <span style="color: var(--accent); font-size: 0.75rem; margin-left: 1rem;">ПОБЕДА (ОТ)</span>
+    <span class="match-status">Победа (ОТ) • Вторая лига</span>
+    <span style="color: var(--text-muted); font-size: 0.8rem;">Серия пенальти в гаражах</span>
   </div>
 
   <main class="container">
-    <!-- Клубная панель -->
+    <!-- Инфо-панель клуба -->
     <div class="club-stats-grid">
       <div class="info-card">
         <span>Домашняя Арена</span>
-        <strong>«Коробка во дворе №4»</strong>
+        <strong>«Гараж на Гороховой»</strong>
+        <small>Резерв: Карл Фридрих на Крестах</small>
       </div>
       <div class="info-card">
         <span>Генеральный Спонсор</span>
-        <strong>КБ у остановки</strong>
+        <strong>КБ у остановки & Талка</strong>
+        <small>Партнер: Охота Крепкая 0.5</small>
       </div>
       <div class="info-card">
-        <span>Главный Тренер</span>
-        <strong>Иваныч (по совместительству трудовик)</strong>
+        <span>Руководство Клуба</span>
+        <strong>Платон Нодь (Директор)</strong>
+        <small>Менеджер: Артем Визиров</small>
       </div>
       <div class="info-card">
-        <span>Форма сезона</span>
-        <strong>В – В – П – Н – В</strong>
+        <span>Тренерский Штаб</span>
+        <strong>Иван Плыгун (Главный тренер)</strong>
+        <small>Теория: Юрфак & Латынь</small>
       </div>
     </div>
 
-    <!-- Список игроков / карточек -->
+    <!-- Манифест и цитата директора -->
+    <div class="club-quote-section">
+      <div class="quote-body">
+        <div class="quote-text">«Если повезет — будет бизнес, если нет — алкоголизм. Друг о друге не забывайте, ГазМяс не смейте развалить мне, опездолы!»</div>
+        <div class="quote-author">— Платон Петрович Нодь Третий, Директор ФК ГазМяс</div>
+      </div>
+    </div>
+
+    <!-- Регламент и правила селекции -->
+    <div class="rules-card">
+      <h3>Регламент трансферного окна и отбора в заявку</h3>
+      <ul class="rules-list">
+        <li><strong>Раунд чистилища:</strong> Игрок обязан выдержать ночной созвон и доказать преданность клубу.</li>
+        <li><strong>Дисциплина на поле:</strong> Строго запрещен слив мида на Котле против Лины и полное «афк».</li>
+        <li><strong>Теоретический зачет:</strong> Базовое понимание цитат сериала «Реальные пацаны» (Базанов, Колян, Вован).</li>
+        <li><strong>Клубный кодекс:</strong> «Per aspera ad astra fututio» — через тернии к победам без негатива.</li>
+      </ul>
+    </div>
+
+    <!-- Секция карточек игроков -->
     <div class="section-header">
       <h2>Заявка на сезон</h2>
       <div class="squad-count" id="squad-counter">Загрузка состава...</div>
     </div>
 
     <div class="squad-grid" id="gallery">
-      <!-- Карточки наполняются из data.json -->
+      <!-- Наполняется автоматически скриптом из data.json -->
     </div>
   </main>
 
   <footer>
-    <p>© 2026 ФК «ГазМяс». Все права защищены дворовым комитетом.</p>
+    <p>© 2026 <span>ФК «ГазМяс»</span>. Все права защищены дворовым комитетом Санкт-Петербурга.</p>
+    <p style="margin-top: 0.3rem;">Дирекция: Платон Нодь • Креативный продюсер: Артем Визиров • Технический штаб: kfx</p>
   </footer>
 
   <script>
@@ -340,7 +484,7 @@
         container.innerHTML = "";
 
         if (cards.length === 0) {
-          container.innerHTML = "<p style='color: var(--text-muted);'>Обойма пуста. Добавьте кадры в incoming/.</p>";
+          container.innerHTML = "<p style='color: var(--text-muted);'>Обойма пуста. Добавьте фотографии в incoming/ и запустите auto_curator.py.</p>";
           return;
         }
 
@@ -369,7 +513,7 @@
       } catch (err) {
         console.error(err);
         counter.textContent = "Сбой трансферного листа";
-        container.innerHTML = "<p style='color: #ef4444;'>Не удалось загрузить карточки состава.</p>";
+        container.innerHTML = "<p style='color: #ef4444;'>Не удалось загрузить заявку игроков из data.json.</p>";
       }
     }
 
