@@ -1,193 +1,379 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ГазМяс Сквад</title>
-    <style>
-        :root {
-            --bg-color: #0b0d13;
-            --card-bg: rgba(22, 27, 38, 0.85);
-            --accent-blue: #00d2ff;
-            --accent-purple: #9d4edd;
-            --accent-red: #ff3366;
-            --text-main: #f0f4f8;
-            --text-muted: #8c9cb0;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ФК ГАЗМЯС — Официальный клубный портал</title>
+  <style>
+    :root {
+      --primary: #c90000;
+      --primary-dark: #870000;
+      --accent: #ffd700;
+      --bg: #0d0f12;
+      --surface: #161a20;
+      --surface-border: #262c36;
+      --text: #ffffff;
+      --text-muted: #9aa4b2;
+      --pitch: #1b4d24;
+    }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(157, 78, 221, 0.18) 0px, transparent 45%),
-                radial-gradient(at 100% 100%, rgba(0, 210, 255, 0.15) 0px, transparent 45%);
-            background-attachment: fixed;
-            color: var(--text-main);
-            min-height: 100vh;
-            padding: 40px 16px;
-        }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
 
-        header { text-align: center; margin-bottom: 45px; }
-        h1 {
-            font-size: 3rem;
-            letter-spacing: 2px;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
-            font-weight: 900;
-        }
-        p.subtitle { color: var(--text-muted); font-size: 1.1rem; }
+    /* Навбар клуба */
+    header {
+      background: linear-gradient(180deg, rgba(201, 0, 0, 0.95) 0%, rgba(135, 0, 0, 0.95) 100%);
+      border-bottom: 3px solid var(--accent);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
 
-        .container {
-            max-width: 1300px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 22px;
-        }
+    .club-brand {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
 
-        .card {
-            background: var(--card-bg);
-            border-radius: 14px;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.07);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-            backdrop-filter: blur(8px);
-            display: flex;
-            flex-direction: column;
-            cursor: pointer;
-        }
+    .club-logo {
+      width: 48px;
+      height: 48px;
+      background: var(--accent);
+      color: #000;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.5rem;
+      border: 2px solid #fff;
+    }
 
-        .card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(0, 210, 255, 0.45);
-            box-shadow: 0 12px 30px rgba(0, 210, 255, 0.2);
-        }
+    .club-name h1 {
+      font-size: 1.4rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 900;
+    }
 
-        .img-wrapper {
-            width: 100%;
-            height: 330px;
-            overflow: hidden;
-            background-color: #12151e;
-        }
+    .club-name p {
+      font-size: 0.8rem;
+      color: #ffd700;
+      text-transform: uppercase;
+    }
 
-        .img-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            transition: transform 0.35s ease;
-        }
+    /* Матч-центр */
+    .match-banner {
+      background: #111419;
+      border-bottom: 1px solid var(--surface-border);
+      padding: 0.75rem 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
 
-        .card:hover .img-wrapper img { transform: scale(1.04); }
+    .match-team {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
 
-        .card-content {
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
+    .score {
+      background: var(--primary);
+      padding: 0.2rem 0.8rem;
+      border-radius: 4px;
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+    }
 
-        .tag {
-            align-self: flex-start;
-            font-size: 0.72rem;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            padding: 3px 8px;
-            border-radius: 5px;
-            background: rgba(0, 210, 255, 0.12);
-            color: var(--accent-blue);
-            font-weight: 700;
-        }
-        .tag.alt { background: rgba(255, 51, 102, 0.12); color: var(--accent-red); }
-        .tag.purple { background: rgba(157, 78, 221, 0.15); color: var(--accent-purple); }
+    /* Контейнер */
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
 
-        .title { font-size: 1.15rem; font-weight: 700; color: #ffffff; }
-        .caption { font-size: 0.9rem; color: var(--text-muted); line-height: 1.35; }
+    /* Инфо-панель клуба */
+    .club-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
 
-        footer { text-align: center; margin-top: 60px; color: var(--text-muted); font-size: 0.85rem; }
+    .info-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-left: 4px solid var(--primary);
+      padding: 1rem;
+      border-radius: 6px;
+    }
 
-        #modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.88);
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(5px);
-        }
-        #modal img {
-            max-width: 90vw;
-            max-height: 90vh;
-            border-radius: 10px;
-            box-shadow: 0 0 30px rgba(0, 210, 255, 0.3);
-        }
-    </style>
+    .info-card span {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .info-card strong {
+      font-size: 1.1rem;
+      color: #fff;
+    }
+
+    /* Заголовок секции состава */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 2px solid var(--surface-border);
+      padding-bottom: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-header h2 {
+      text-transform: uppercase;
+      font-size: 1.6rem;
+      letter-spacing: 1px;
+    }
+
+    .squad-count {
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    /* Карточки игроков (фото) */
+    .squad-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .player-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .player-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+    }
+
+    .image-container {
+      position: relative;
+      width: 100%;
+      height: 320px;
+      background: #000;
+    }
+
+    .image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .player-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(0, 0, 0, 0.75);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .player-badge.purple {
+      border-color: #a855f7;
+      color: #a855f7;
+    }
+
+    .player-badge.alt {
+      border-color: #38bdf8;
+      color: #38bdf8;
+    }
+
+    .card-content {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      color: #fff;
+    }
+
+    .card-caption {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      flex-grow: 1;
+    }
+
+    .card-footer {
+      margin-top: 1rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      background: #08090b;
+      border-top: 1px solid var(--surface-border);
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      margin-top: 4rem;
+    }
+  </style>
 </head>
 <body>
 
-    <header>
-        <h1>ГАЗМЯС СТИЛЬ</h1>
-        <p class="subtitle">Полный архив кадров, персон и мемов сквада</p>
-    </header>
+  <!-- Хедер -->
+  <header>
+    <div class="club-brand">
+      <div class="club-logo">ГМ</div>
+      <div class="club-name">
+        <h1>ФК ГазМяс</h1>
+        <p>Официальный клубный архив</p>
+      </div>
+    </div>
+  </header>
 
-    <div class="container" id="cards-container">
-        <!-- Карточки загружаются автоматически из data.json -->
+  <!-- Матч-центр -->
+  <div class="match-banner">
+    <div class="match-team">ФК ГазМяс</div>
+    <div class="score">4 : 3</div>
+    <div class="match-team">ФК ПивЗавод</div>
+    <span style="color: var(--accent); font-size: 0.75rem; margin-left: 1rem;">ПОБЕДА (ОТ)</span>
+  </div>
+
+  <main class="container">
+    <!-- Клубная панель -->
+    <div class="club-stats-grid">
+      <div class="info-card">
+        <span>Домашняя Арена</span>
+        <strong>«Коробка во дворе №4»</strong>
+      </div>
+      <div class="info-card">
+        <span>Генеральный Спонсор</span>
+        <strong>КБ у остановки</strong>
+      </div>
+      <div class="info-card">
+        <span>Главный Тренер</span>
+        <strong>Иваныч (по совместительству трудовик)</strong>
+      </div>
+      <div class="info-card">
+        <span>Форма сезона</span>
+        <strong>В – В – П – Н – В</strong>
+      </div>
     </div>
 
-    <footer>
-        &copy; 2026 gasmyas.me – Официальная база сквада
-    </footer>
-
-    <div id="modal" onclick="closeModal()">
-        <img id="modal-img" src="" alt="Full view">
+    <!-- Список игроков / карточек -->
+    <div class="section-header">
+      <h2>Заявка на сезон</h2>
+      <div class="squad-count" id="squad-counter">Загрузка состава...</div>
     </div>
 
-    <script>
-        async function loadCards() {
-            try {
-                const res = await fetch('data.json?v=' + Date.now());
-                const cards = await res.json();
-                const container = document.getElementById('cards-container');
-                container.innerHTML = '';
+    <div class="squad-grid" id="gallery">
+      <!-- Карточки наполняются из data.json -->
+    </div>
+  </main>
 
-                cards.forEach(card => {
-                    const cardEl = document.createElement('div');
-                    cardEl.className = 'card';
-                    cardEl.onclick = () => openModal(card.file);
+  <footer>
+    <p>© 2026 ФК «ГазМяс». Все права защищены дворовым комитетом.</p>
+  </footer>
 
-                    cardEl.innerHTML = `
-                        <div class="img-wrapper">
-                            <img src="${card.file}" alt="${card.title}" loading="lazy">
-                        </div>
-                        <div class="card-content">
-                            <span class="tag ${card.tag_class || ''}">${card.tag}</span>
-                            <div class="title">${card.title}</div>
-                            <div class="caption">${card.caption}</div>
-                        </div>
-                    `;
-                    container.appendChild(cardEl);
-                });
-            } catch (err) {
-                console.error("Ошибка загрузки карточек:", err);
-            }
+  <script>
+    async function loadSquad() {
+      const container = document.getElementById("gallery");
+      const counter = document.getElementById("squad-counter");
+
+      try {
+        const response = await fetch("data.json?t=" + new Date().getTime());
+        if (!response.ok) throw new Error("Ошибка загрузки data.json");
+        const cards = await response.json();
+
+        counter.textContent = `Игроков в обойме: ${cards.length}`;
+        container.innerHTML = "";
+
+        if (cards.length === 0) {
+          container.innerHTML = "<p style='color: var(--text-muted);'>Обойма пуста. Добавьте кадры в incoming/.</p>";
+          return;
         }
 
-        function openModal(src) {
-            document.getElementById('modal-img').src = src;
-            document.getElementById('modal').style.display = 'flex';
-        }
-        function closeModal() {
-            document.getElementById('modal').style.display = 'none';
-        }
+        cards.forEach((item, index) => {
+          const cardEl = document.createElement("div");
+          cardEl.className = "player-card";
 
-        loadCards();
-    </script>
+          const badgeClass = item.tag_class ? `player-badge ${item.tag_class}` : "player-badge";
+
+          cardEl.innerHTML = `
+            <div class="image-container">
+              <img src="${item.file}" alt="${item.title}" loading="lazy">
+              <span class="${badgeClass}">${item.tag || "Игрок"}</span>
+            </div>
+            <div class="card-content">
+              <div class="card-title">${item.title}</div>
+              <div class="card-caption">${item.caption}</div>
+              <div class="card-footer">
+                <span>№ ${index + 1}</span>
+                <span>Статус: Основа</span>
+              </div>
+            </div>
+          `;
+          container.appendChild(cardEl);
+        });
+      } catch (err) {
+        console.error(err);
+        counter.textContent = "Сбой трансферного листа";
+        container.innerHTML = "<p style='color: #ef4444;'>Не удалось загрузить карточки состава.</p>";
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", loadSquad);
+  </script>
 </body>
 </html>
