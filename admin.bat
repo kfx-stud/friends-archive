@@ -8,6 +8,6 @@ echo ========================================================
 
 start http://localhost:8080/admin.html
 
-python admin_server.py
+py admin_server.py
 
 pause

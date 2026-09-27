@@ -2,6 +2,7 @@ import os
 import json
 import shutil
 import time
+from urllib.parse import urlparse
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 PORT = 8080
@@ -9,9 +10,11 @@ PENDING_FILE = "pending.json"
 DATA_FILE = "data.json"
 IMAGES_DIR = "images"
 DELETED_DIR = "deleted"
+PENDING_DIR = "pending_images"
 
 os.makedirs(IMAGES_DIR, exist_ok=True)
 os.makedirs(DELETED_DIR, exist_ok=True)
+os.makedirs(PENDING_DIR, exist_ok=True)
 
 
 def load_json(filepath):
@@ -35,20 +38,28 @@ def save_json(filepath, data):
 
 class AdminHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
-        if self.path == "/api/pending":
+        parsed = urlparse(self.path)
+        path = parsed.path
+
+        if path == "/api/pending":
             pending = load_json(PENDING_FILE)
             self.send_response(200)
             self.send_header("Content-Type", "application/json; charset=utf-8")
-            self.send_header("Cache-Control", "no-cache")
+            self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
             self.end_headers()
             self.wfile.write(json.dumps(pending, ensure_ascii=False).encode("utf-8"))
             return
-        elif self.path == "/" or self.path == "/admin":
+
+        if path in ("/", "/admin"):
             self.path = "/admin.html"
+
         return super().do_GET()
 
     def do_POST(self):
-        if self.path == "/api/moderate":
+        parsed = urlparse(self.path)
+        path = parsed.path
+
+        if path == "/api/moderate":
             length = int(self.headers.get("Content-Length", 0))
             body = self.rfile.read(length).decode("utf-8")
             req = json.loads(body)
@@ -107,6 +118,9 @@ class AdminHandler(SimpleHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(b'{"status":"ok"}')
             return
+
+        self.send_response(404)
+        self.end_headers()
 
 
 if __name__ == "__main__":
