@@ -7,7 +7,6 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 PORT = 8080
 PENDING_FILE = "pending.json"
-REQUESTS_FILE = "requests.json"
 DATA_FILE = "data.json"
 IMAGES_DIR = "images"
 DELETED_DIR = "deleted"
@@ -55,20 +54,25 @@ class AdminHandler(SimpleHTTPRequestHandler):
 
         if path == "/api/pending":
             pending = load_json(PENDING_FILE)
+            # Дополнительная самоочистка: если файла картинки уже нет на диске, удаляем фантомную запись
+            cleaned_pending = []
+            changed = False
+            for item in pending:
+                t_file = item.get("temp_file", "").replace("/", os.sep).replace("\\", os.sep)
+                if t_file and os.path.exists(t_file):
+                    cleaned_pending.append(item)
+                else:
+                    changed = True
+
+            if changed:
+                save_json(PENDING_FILE, cleaned_pending)
+                pending = cleaned_pending
+
             self.send_response(200)
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
             self.end_headers()
             self.wfile.write(json.dumps(pending, ensure_ascii=False).encode("utf-8"))
-            return
-
-        if path == "/api/requests":
-            reqs = load_json(REQUESTS_FILE)
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json; charset=utf-8")
-            self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
-            self.end_headers()
-            self.wfile.write(json.dumps(reqs, ensure_ascii=False).encode("utf-8"))
             return
 
         if path in ("", "/", "/admin"):
@@ -88,104 +92,38 @@ class AdminHandler(SimpleHTTPRequestHandler):
         except Exception:
             req = {}
 
-        # 1. Подача заявки посетителем
-        if path == "/api/submit_request":
-            reqs = load_json(REQUESTS_FILE)
-            req_item = {
-                "id": f"req_{int(time.time() * 1000)}",
-                "time": time.strftime("%d.%m.%Y %H:%M"),
-                "file": req.get("file"),
-                "type": req.get("type"),
-                "current_title": req.get("current_title", ""),
-                "current_caption": req.get("current_caption", ""),
-                "new_title": req.get("new_title", ""),
-                "new_caption": req.get("new_caption", "")
-            }
-            reqs.append(req_item)
-            save_json(REQUESTS_FILE, reqs)
-
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json")
-            self.end_headers()
-            self.wfile.write(b'{"status":"ok"}')
-            return
-
-        # 2. Обработка заявок посетителей администратором
-        if path == "/api/handle_request":
-            action = req.get("action")
-            req_id = req.get("id")
-
-            reqs = load_json(REQUESTS_FILE)
-            target = next((x for x in reqs if x.get("id") == req_id), None)
-
-            if not target:
-                self.send_response(404)
-                self.end_headers()
-                return
-
-            if action == "apply":
-                db = load_json(DATA_FILE)
-                file_target = target.get("file")
-
-                if target.get("type") == "delete":
-                    db = [item for item in db if item.get("file") != file_target]
-                    save_json(DATA_FILE, db)
-
-                    if os.path.exists(file_target):
-                        filename = os.path.basename(file_target)
-                        dest_del = os.path.join(DELETED_DIR, filename)
-                        if os.path.exists(dest_del):
-                            base, ext = os.path.splitext(filename)
-                            dest_del = os.path.join(DELETED_DIR, f"{base}_{int(time.time())}{ext}")
-                        shutil.move(file_target, dest_del)
-
-                elif target.get("type") == "edit":
-                    for item in db:
-                        if item.get("file") == file_target:
-                            if target.get("new_title"):
-                                item["title"] = target["new_title"]
-                            if target.get("new_caption"):
-                                item["caption"] = target["new_caption"]
-                            break
-                    save_json(DATA_FILE, db)
-
-            reqs = [x for x in reqs if x.get("id") != req_id]
-            save_json(REQUESTS_FILE, reqs)
-
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json")
-            self.end_headers()
-            self.wfile.write(b'{"status":"ok"}')
-            return
-
-        # 3. Модерация кандидатов
         if path == "/api/moderate":
             action = req.get("action")
-            item_id = req.get("id")
+            item_id = str(req.get("id"))
             updated_title = req.get("title")
             updated_caption = req.get("caption")
             updated_tag = req.get("tag")
 
             pending = load_json(PENDING_FILE)
-            item = next((x for x in pending if x.get("id") == item_id), None)
+            item = next((x for x in pending if str(x.get("id")) == item_id), None)
 
             if not item:
-                self.send_response(404)
+                # Если элемента уже нет в очереди, отвечаем успехом, чтобы клиент не зависал
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
                 self.end_headers()
+                self.wfile.write(b'{"status":"already_removed"}')
                 return
 
-            src_file = item["temp_file"]
+            raw_path = item.get("temp_file", "")
+            src_file = raw_path.replace("/", os.sep).replace("\\", os.sep)
+            filename = os.path.basename(src_file)
 
             if action == "approve":
                 db = load_json(DATA_FILE)
-                filename = os.path.basename(src_file).replace("pending_", "photo_")
-                dest_file = os.path.join(IMAGES_DIR, filename)
+                dest_filename = filename.replace("pending_", "photo_")
+                dest_file = os.path.join(IMAGES_DIR, dest_filename)
 
                 if os.path.exists(src_file):
                     shutil.move(src_file, dest_file)
 
                 card = {
-                    "file": f"images/{filename}".replace("\\", "/"),
+                    "file": f"images/{dest_filename}".replace("\\", "/"),
                     "title": updated_title or item.get("title", "ФК ГазМяс"),
                     "caption": updated_caption or item.get("caption", ""),
                     "tag": updated_tag or item.get("tag", "Основа"),
@@ -197,7 +135,6 @@ class AdminHandler(SimpleHTTPRequestHandler):
                 save_json(DATA_FILE, db)
 
             elif action == "reject":
-                filename = os.path.basename(src_file)
                 dest_deleted = os.path.join(DELETED_DIR, filename)
                 if os.path.exists(dest_deleted):
                     base, ext = os.path.splitext(filename)
@@ -206,7 +143,8 @@ class AdminHandler(SimpleHTTPRequestHandler):
                 if os.path.exists(src_file):
                     shutil.move(src_file, dest_deleted)
 
-            pending = [x for x in pending if x.get("id") != item_id]
+            # Строгое удаление из pending.json по ID
+            pending = [x for x in pending if str(x.get("id")) != item_id]
             save_json(PENDING_FILE, pending)
 
             self.send_response(200)
@@ -215,8 +153,6 @@ class AdminHandler(SimpleHTTPRequestHandler):
             self.wfile.write(b'{"status":"ok"}')
             return
 
-        # Если путь не распознан
-        print(f"[!] Неизвестный POST-запрос: {path}")
         self.send_response(404)
         self.end_headers()
 
