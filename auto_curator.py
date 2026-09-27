@@ -3,6 +3,7 @@ import sys
 import json
 import time
 import re
+import io
 import base64
 import requests
 from PIL import Image
@@ -13,7 +14,6 @@ DATA_FILE = "data.json"
 KEYS_FILE = "keys.txt"
 ENV_FILE = ".env"
 
-# Минимальный балл для добавления на сайт (от 1 до 10)
 MIN_SCORE = 7
 
 os.makedirs(INCOMING_DIR, exist_ok=True)
@@ -86,7 +86,6 @@ class KeyManager:
 def load_keys():
     keys = []
     
-    # 1. Чтение из .env
     if os.path.exists(ENV_FILE):
         with open(ENV_FILE, "r", encoding="utf-8") as f:
             for line in f:
@@ -103,7 +102,6 @@ def load_keys():
                             if sub_key and sub_key not in keys:
                                 keys.append(sub_key)
 
-    # 2. Если в .env ничего не найдено, проверяем keys.txt
     if not keys and os.path.exists(KEYS_FILE):
         with open(KEYS_FILE, "r", encoding="utf-8") as f:
             for line in f:
@@ -146,7 +144,7 @@ def extract_json_payload(text):
 def analyze_image_with_gemini(image_path, key_manager):
     system_prompt = (
         "Ты беспощадный арт-директор и архивариус дворового футбольного клуба 'ФК ГазМяс'. "
-        "Твоя задача — объективно оценить историческую и мемную ценность кадра и написать едкое описание.\n\n"
+        "Твоя задача – объективно оценить историческую и мемную ценность кадра и написать едкое описание.\n\n"
         "ШКАЛА ОЦЕНКИ SCORE (СТРОГО 1-10, НЕ ЗАВЫШАЙ БАЛЛЫ ИЗ ВЕЖЛИВОСТИ!):\n"
         "- 1-4 балла: смазанные пальцы, пустые стены, скучные бытовые фото без действия, рандомные скриншоты переписок, некрасивые размытые лица.\n"
         "- 5-6 баллов: обычное селфи, стандартная посиделка, ничего легендарного или смешного.\n"
@@ -162,9 +160,16 @@ def analyze_image_with_gemini(image_path, key_manager):
         '{"score": 7, "title": "Заголовок (3-5 слов)", "caption": "Панчлайн и описание (1-2 предложения)", "tag": "Тег (Дибуны, Лудка, Бонуска, Основа, Тренер, Дирекция, Легенда)"}'
     )
 
-    with open(image_path, "rb") as f:
-        image_bytes = f.read()
-    b64_image = base64.b64encode(image_bytes).decode("utf-8")
+    try:
+        with Image.open(image_path) as img:
+            rgb_img = img.convert("RGB")
+            rgb_img.thumbnail((1600, 1600), Image.Resampling.LANCZOS)
+            buffer = io.BytesIO()
+            rgb_img.save(buffer, format="JPEG", quality=85)
+            b64_image = base64.b64encode(buffer.getvalue()).decode("utf-8")
+    except Exception as e:
+        print(f"[!] Файл поврежден и не читается ({image_path}): {e}")
+        return {"error_corrupt": True}
 
     payload = {
         "contents": [{
@@ -193,7 +198,7 @@ def analyze_image_with_gemini(image_path, key_manager):
             print("[X] Все доступные API-ключи исчерпаны.")
             return None
 
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key={api_key}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
 
         try:
             res = requests.post(url, headers=headers, json=payload, timeout=30)
@@ -207,30 +212,35 @@ def analyze_image_with_gemini(image_path, key_manager):
             elif res.status_code == 503:
                 errors_503_count += 1
                 if errors_503_count < 10:
-                    print(f"Сервер временно занят (503). Пауза 8 сек... (ошибка {errors_503_count}/10)")
+                    print(f"Сервер временно занят (503). Пауза 8 сек... (попытка {errors_503_count}/10)")
                     time.sleep(8)
                     continue
                 else:
-                    print("Получено 10 ошибок 503 подряд. Смена ключа (пауза ключа на 60 сек)...")
+                    print("Получено 10 ошибок 503 подряд. Смена ключа (пауза на 60 сек)...")
                     errors_503_count = 0
                     key_manager.mark_cooldown(seconds=60)
                     continue
 
             elif res.status_code == 429:
                 errors_503_count = 0
-                print("Превышен лимит запросов (429). Кулдаун ключа на 60 сек...")
+                print("Превышен лимит запросов (429). Пауза для текущего ключа на 60 сек...")
                 key_manager.mark_cooldown(seconds=60)
                 continue
 
-            elif res.status_code in (400, 401, 403):
+            elif res.status_code == 400:
+                # Ошибка 400 относится к формату самого кадра, ключи живые
+                print(f"[!] Ошибка запроса 400 (Bad Request): {res.text}")
+                return {"error_bad_request": True}
+
+            elif res.status_code in (401, 403):
                 errors_503_count = 0
-                print(f"Ошибка авторизации ({res.status_code}). Исключаем ключ...")
+                print(f"Ошибка авторизации ({res.status_code}): {res.text}. Исключаем ключ...")
                 key_manager.mark_dead()
                 continue
 
             else:
                 errors_503_count = 0
-                print(f"Неизвестный статус: {res.status_code}. Переключение ключа...")
+                print(f"Неизвестный статус: {res.status_code} ({res.text}). Переключение ключа...")
                 key_manager.switch_to_next()
                 time.sleep(2)
                 continue
@@ -253,7 +263,7 @@ def load_database():
                 if content:
                     return json.loads(content)
         except Exception as e:
-            print(f"[!] Предупреждение: не удалось прочесть {DATA_FILE} ({e}). Будет создан новый список.")
+            print(f"[!] Предупреждение: не удалось прочесть {DATA_FILE} ({e}). Создается новый список.")
             return []
     return []
 
@@ -299,8 +309,13 @@ def main():
 
         result = analyze_image_with_gemini(incoming_path, key_manager)
         if not result:
-            print("-> Не удалось получить описание. Остановка очереди.")
+            print("-> Не удалось получить ответ от API. Остановка очереди.")
             break
+
+        if result.get("error_corrupt") or result.get("error_bad_request"):
+            print("-> Кадр поврежден или не принят API. Удаление из incoming.\n")
+            os.remove(incoming_path)
+            continue
 
         score = result.get("score", 0)
         print(f"-> Оценка куратора: {score}/10")
