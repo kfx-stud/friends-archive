@@ -41,16 +41,17 @@ class AdminHandler(SimpleHTTPRequestHandler):
     def end_headers(self):
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        self.send_header("Allow", "GET, POST, OPTIONS")
         super().end_headers()
 
     def do_OPTIONS(self):
-        self.send_response(200)
+        self.send_response(200, "OK")
         self.end_headers()
 
     def do_GET(self):
         parsed = urlparse(self.path)
-        path = parsed.path
+        path = parsed.path.rstrip("/")
 
         if path == "/api/pending":
             pending = load_json(PENDING_FILE)
@@ -70,22 +71,24 @@ class AdminHandler(SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps(reqs, ensure_ascii=False).encode("utf-8"))
             return
 
-        if path in ("/", "/admin"):
+        if path in ("", "/", "/admin"):
             self.path = "/admin.html"
 
         return super().do_GET()
 
     def do_POST(self):
         parsed = urlparse(self.path)
-        path = parsed.path
+        path = parsed.path.rstrip("/")
+
         length = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(length).decode("utf-8") if length > 0 else "{}"
-        
+
         try:
             req = json.loads(body)
         except Exception:
             req = {}
 
+        # 1. Подача заявки посетителем
         if path == "/api/submit_request":
             reqs = load_json(REQUESTS_FILE)
             req_item = {
@@ -107,6 +110,7 @@ class AdminHandler(SimpleHTTPRequestHandler):
             self.wfile.write(b'{"status":"ok"}')
             return
 
+        # 2. Обработка заявок посетителей администратором
         if path == "/api/handle_request":
             action = req.get("action")
             req_id = req.get("id")
@@ -154,6 +158,7 @@ class AdminHandler(SimpleHTTPRequestHandler):
             self.wfile.write(b'{"status":"ok"}')
             return
 
+        # 3. Модерация кандидатов
         if path == "/api/moderate":
             action = req.get("action")
             item_id = req.get("id")
@@ -210,6 +215,8 @@ class AdminHandler(SimpleHTTPRequestHandler):
             self.wfile.write(b'{"status":"ok"}')
             return
 
+        # Если путь не распознан
+        print(f"[!] Неизвестный POST-запрос: {path}")
         self.send_response(404)
         self.end_headers()
 
