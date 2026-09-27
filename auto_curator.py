@@ -6,20 +6,25 @@ import re
 import io
 import shutil
 import base64
+from difflib import SequenceMatcher
 import requests
 from PIL import Image
 
 INCOMING_DIR = "incoming"
-IMAGES_DIR = "images"
+PENDING_DIR = "pending_images"
 DELETED_DIR = "deleted"
 DATA_FILE = "data.json"
+PENDING_FILE = "pending.json"
 KEYS_FILE = "keys.txt"
 ENV_FILE = ".env"
 
 MIN_SCORE = 7
 
+TITLE_SIMILARITY_THRESHOLD = 0.70
+CAPTION_SIMILARITY_THRESHOLD = 0.72
+
 os.makedirs(INCOMING_DIR, exist_ok=True)
-os.makedirs(IMAGES_DIR, exist_ok=True)
+os.makedirs(PENDING_DIR, exist_ok=True)
 os.makedirs(DELETED_DIR, exist_ok=True)
 
 
@@ -88,7 +93,6 @@ class KeyManager:
 
 def load_keys():
     keys = []
-    
     if os.path.exists(ENV_FILE):
         with open(ENV_FILE, "r", encoding="utf-8") as f:
             for line in f:
@@ -114,7 +118,6 @@ def load_keys():
 
     if not keys:
         print("Ошибка: API-ключи не найдены ни в .env, ни в keys.txt.")
-        print("Укажите в .env строку GEMINI_API_KEY=... или GEMINI_API_KEYS=key1,key2")
         sys.exit(1)
 
     return keys
@@ -131,7 +134,7 @@ def move_to_deleted(src_path):
     try:
         shutil.move(src_path, target_path)
     except Exception as e:
-        print(f"[!] Не удалось переместить в {DELETED_DIR}: {e}")
+        print(f"[!] Ошибка перемещения в {DELETED_DIR}: {e}")
         if os.path.exists(src_path):
             os.remove(src_path)
 
@@ -150,6 +153,34 @@ def calculate_dhash(image_path, hash_size=8):
             return sum([2 ** i for (i, v) in enumerate(diff) if v])
     except Exception:
         return None
+
+
+def clean_text_for_compare(text):
+    if not text:
+        return ""
+    text = text.lower()
+    return re.sub(r"[^\w\sа-яёa-z0-9]", "", text).strip()
+
+
+def is_duplicate_text(new_title, new_caption, existing_items):
+    c_new_title = clean_text_for_compare(new_title)
+    c_new_caption = clean_text_for_compare(new_caption)
+
+    for item in existing_items:
+        c_item_title = clean_text_for_compare(item.get("title", ""))
+        c_item_caption = clean_text_for_compare(item.get("caption", ""))
+
+        if c_new_title and c_item_title:
+            ratio_title = SequenceMatcher(None, c_new_title, c_item_title).ratio()
+            if ratio_title >= TITLE_SIMILARITY_THRESHOLD:
+                return True, f"Схожее название ({int(ratio_title * 100)}%): '{item.get('title')}'"
+
+        if c_new_caption and c_item_caption:
+            ratio_caption = SequenceMatcher(None, c_new_caption, c_item_caption).ratio()
+            if ratio_caption >= CAPTION_SIMILARITY_THRESHOLD:
+                return True, f"Схожее описание ({int(ratio_caption * 100)}%): '{item.get('caption')}'"
+
+    return False, ""
 
 
 def extract_json_payload(text):
@@ -188,7 +219,7 @@ def analyze_image_with_gemini(image_path, key_manager):
         "5. КОРЗИНА 'АРМЕЙСКАЯ СТРОЕВАЯ':\n"
         "- Дисциплина, строевой шаг, клубный гимн ('Солнышко светит, курочка клюет...'). Использовать редко, только для строгих групповых фото.\n\n"
         "Верни ответ СТРОГО в формате валидного JSON:\n"
-        '{"score": 7, "title": "Заголовок (3-5 слов)", "caption": "Едкий панчлайн (1-2 предложения, раскрывающие выбранную корзину)", "tag": "Тег (Шугар Раш, Лудка, Дибуны, Витамины, Собачки, Основа, Тренер, Дирекция, Легенда)"}'
+        '{"score": 7, "title": "Заголовок (3-5 слов)", "caption": "Едкий панчлайн (1-2 предложения)", "tag": "Тег (Шугар Раш, Лудка, Дибуны, Витамины, Собачки, Основа, Тренер, Дирекция, Легенда)"}'
     )
 
     try:
@@ -199,25 +230,17 @@ def analyze_image_with_gemini(image_path, key_manager):
             rgb_img.save(buffer, format="JPEG", quality=85)
             b64_image = base64.b64encode(buffer.getvalue()).decode("utf-8")
     except Exception as e:
-        print(f"[!] Файл поврежден и не читается ({image_path}): {e}")
+        print(f"[!] Файл поврежден ({image_path}): {e}")
         return {"error_corrupt": True}
 
     payload = {
         "contents": [{
             "parts": [
                 {"text": system_prompt},
-                {
-                    "inline_data": {
-                        "mime_type": "image/jpeg",
-                        "data": b64_image
-                    }
-                }
+                {"inline_data": {"mime_type": "image/jpeg", "data": b64_image}}
             ]
         }],
-        "generationConfig": {
-            "temperature": 0.3,
-            "response_mime_type": "application/json"
-        }
+        "generationConfig": {"temperature": 0.3, "response_mime_type": "application/json"}
     }
 
     headers = {"Content-Type": "application/json"}
@@ -243,11 +266,11 @@ def analyze_image_with_gemini(image_path, key_manager):
             elif res.status_code == 503:
                 errors_503_count += 1
                 if errors_503_count < 10:
-                    print(f"Сервер временно занят (503). Пауза 8 сек... (попытка {errors_503_count}/10)")
+                    print(f"Сервер занят (503). Пауза 8 сек... (попытка {errors_503_count}/10)")
                     time.sleep(8)
                     continue
                 else:
-                    print("Получено 10 ошибок 503 подряд. Смена ключа (пауза на 60 сек)...")
+                    print("10 ошибок 503 подряд. Смена ключа (пауза на 60 сек)...")
                     errors_503_count = 0
                     key_manager.mark_cooldown(seconds=60)
                     continue
@@ -270,7 +293,7 @@ def analyze_image_with_gemini(image_path, key_manager):
 
             else:
                 errors_503_count = 0
-                print(f"Неизвестный статус: {res.status_code} ({res.text}). Переключение ключа...")
+                print(f"Неизвестный статус: {res.status_code}. Смена ключа...")
                 key_manager.switch_to_next()
                 time.sleep(2)
                 continue
@@ -280,26 +303,25 @@ def analyze_image_with_gemini(image_path, key_manager):
             time.sleep(5)
             continue
         except Exception as e:
-            print(f"Ошибка парсинга ответа: {e}. Повтор...")
+            print(f"Ошибка обработки: {e}. Повтор...")
             time.sleep(2)
             continue
 
 
-def load_database():
-    if os.path.exists(DATA_FILE):
+def load_json(filepath):
+    if os.path.exists(filepath):
         try:
-            with open(DATA_FILE, "r", encoding="utf-8") as f:
+            with open(filepath, "r", encoding="utf-8") as f:
                 content = f.read().strip()
                 if content:
                     return json.loads(content)
-        except Exception as e:
-            print(f"[!] Предупреждение: не удалось прочесть {DATA_FILE} ({e}). Создается новый список.")
+        except Exception:
             return []
     return []
 
 
-def save_database(data):
-    with open(DATA_FILE, "w", encoding="utf-8") as f:
+def save_json(filepath, data):
+    with open(filepath, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
         f.flush()
         os.fsync(f.fileno())
@@ -316,14 +338,15 @@ def main():
     incoming_files = [f for f in os.listdir(INCOMING_DIR) if f.lower().endswith(supported_exts)]
     print(f"Кадров на просмотр: {len(incoming_files)}")
 
-    db = load_database()
-    print(f"Уже в базе {DATA_FILE}: {len(db)} записей\n")
+    db = load_json(DATA_FILE)
+    pending = load_json(PENDING_FILE)
 
-    processed_hashes = {item["hash"] for item in db if "hash" in item and item["hash"] is not None}
-    processed_files = {item["file"] for item in db if "file" in item}
+    print(f"Уже на сайте ({DATA_FILE}): {len(db)} | В очереди админки ({PENDING_FILE}): {len(pending)}\n")
+
+    processed_hashes = {x["hash"] for x in (db + pending) if x.get("hash")}
 
     if not incoming_files:
-        print(f"Папка {INCOMING_DIR}/ пуста. Добавьте фотографии для обработки.")
+        print(f"Папка {INCOMING_DIR}/ пуста. Все кадры обработаны.")
         return
 
     total = len(incoming_files)
@@ -351,40 +374,50 @@ def main():
         print(f"-> Оценка куратора: {score}/10")
 
         if score < MIN_SCORE:
-            print(f"-> Не дотягивает до нормы (< {MIN_SCORE}). Перемещение в {DELETED_DIR}/\n")
+            print(f"-> Не дотягивает (< {MIN_SCORE}). Перемещение в {DELETED_DIR}/\n")
             move_to_deleted(incoming_path)
             continue
 
-        new_filename = f"photo_{int(time.time())}_{filename}"
-        dest_path = os.path.join(IMAGES_DIR, new_filename)
+        title = result.get("title", "ФК ГазМяс")
+        caption = result.get("caption", "Момент матча")
+
+        is_dup, dup_reason = is_duplicate_text(title, caption, db + pending)
+        if is_dup:
+            print(f"-> Текстовый повтор: {dup_reason}. В {DELETED_DIR}/\n")
+            move_to_deleted(incoming_path)
+            continue
+
+        # Сохраняем кандидат во временную папку pending_images
+        new_filename = f"pending_{int(time.time())}_{filename}"
+        temp_dest = os.path.join(PENDING_DIR, new_filename)
 
         with Image.open(incoming_path) as img:
             rgb_img = img.convert("RGB")
-            rgb_img.save(dest_path, "JPEG", quality=85)
+            rgb_img.save(temp_dest, "JPEG", quality=85)
 
         os.remove(incoming_path)
 
-        card_entry = {
-            "file": f"images/{new_filename}",
-            "title": result.get("title", "ФК ГазМяс"),
-            "caption": result.get("caption", "Момент матча"),
+        pending_item = {
+            "id": f"item_{int(time.time() * 1000)}",
+            "temp_file": temp_dest.replace("\\", "/"),
+            "original_name": filename,
+            "title": title,
+            "caption": caption,
             "tag": result.get("tag", "Основа"),
-            "tag_class": "alt" if len(db) % 2 == 0 else "",
             "score": score,
             "hash": img_hash
         }
 
-        db.append(card_entry)
-        save_database(db)
+        pending.append(pending_item)
+        save_json(PENDING_FILE, pending)
 
         if img_hash is not None:
             processed_hashes.add(img_hash)
-        processed_files.add(card_entry["file"])
 
-        print(f"-> [OK] Записано в {DATA_FILE}: \"{card_entry['title']}\" (всего в базе: {len(db)})\n")
+        print(f"-> [КАНДИДАТ ОДОБРЕН] Отправлен в админку: \"{title}\" (в очереди: {len(pending)})\n")
         time.sleep(1)
 
-    print(f"Готово! В {DATA_FILE} сохранено записей: {len(db)}")
+    print(f"Анализ завершен. Кандидатов в админке: {len(pending)}")
 
 
 if __name__ == "__main__":

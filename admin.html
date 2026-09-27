@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ГазМяс — Модерация заявок</title>
+  <style>
+    :root {
+      --bg: #0c0f14;
+      --card-bg: #161b22;
+      --accent: #ffd700;
+      --primary: #c90000;
+      --green: #238636;
+      --red: #da3633;
+      --text: #ffffff;
+      --muted: #8b949e;
+      --border: #30363d;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+
+    header {
+      background: #11141a;
+      border-bottom: 2px solid var(--accent);
+      padding: 0.8rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand { font-size: 1.2rem; font-weight: 900; text-transform: uppercase; color: var(--accent); }
+    .counter-badge { background: var(--primary); padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: 800; font-size: 0.9rem; }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    .moderation-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      max-width: 900px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 1.5rem;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    }
+
+    .image-preview {
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .image-preview img {
+      width: 100%;
+      height: 100%;
+      max-height: 480px;
+      object-fit: contain;
+    }
+    .score-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.85);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      font-weight: 900;
+      font-size: 0.85rem;
+    }
+
+    .form-pane {
+      padding: 1.5rem 1.5rem 1.5rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .field-group { display: flex; flex-direction: column; gap: 0.4rem; }
+    .field-group label { font-size: 0.75rem; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+    .field-group input, .field-group textarea {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 0.6rem;
+      border-radius: 6px;
+      font-size: 0.95rem;
+    }
+    .field-group textarea { resize: vertical; min-height: 80px; }
+    .field-group input:focus, .field-group textarea:focus { border-color: var(--accent); outline: none; }
+
+    .actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: auto;
+      padding-top: 1rem;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      cursor: pointer;
+      text-transform: uppercase;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      transition: transform 0.1s, opacity 0.15s;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn small { font-size: 0.65rem; opacity: 0.75; text-transform: none; }
+
+    .btn-approve { background: var(--green); color: #fff; }
+    .btn-reject { background: var(--red); color: #fff; }
+    .btn-approve:hover { opacity: 0.9; }
+    .btn-reject:hover { opacity: 0.9; }
+
+    .empty-state {
+      text-align: center;
+      padding: 4rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">ФК ГазМяс — Штаб модерации</div>
+    <div class="counter-badge" id="queueCount">Кандидатов: 0</div>
+  </header>
+
+  <main id="mainContainer">
+    <div class="empty-state" id="emptyState">Загрузка очереди...</div>
+  </main>
+
+  <script>
+    let queue = [];
+    let currentIndex = 0;
+
+    async function fetchQueue() {
+      try {
+        const res = await fetch("/api/pending?t=" + Date.now());
+        queue = await res.json();
+        updateCard();
+      } catch (e) {
+        document.getElementById("emptyState").textContent = "Не удалось подключиться к admin_server.py";
+      }
+    }
+
+    function updateCard() {
+      const container = document.getElementById("mainContainer");
+      document.getElementById("queueCount").textContent = "Осталось на модерацию: " + queue.length;
+
+      if (!queue || queue.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <h2>Очередь чиста!</h2>
+            <p style="margin-top: 0.5rem;">Все кадры либо одобрены на сайт, либо отправлены в deleted.</p>
+          </div>
+        `;
+        return;
+      }
+
+      const item = queue[0];
+
+      container.innerHTML = `
+        <div class="moderation-card">
+          <div class="image-preview">
+            <img src="${item.temp_file}" alt="Preview">
+            <div class="score-badge">Оценка AI: ${item.score}/10</div>
+          </div>
+          <div class="form-pane">
+            <div class="field-group">
+              <label>Заголовок (Title)</label>
+              <input type="text" id="editTitle" value="${escapeHtml(item.title || '')}">
+            </div>
+            <div class="field-group">
+              <label>Тег</label>
+              <input type="text" id="editTag" value="${escapeHtml(item.tag || 'Основа')}">
+            </div>
+            <div class="field-group">
+              <label>Панчлайн / Описание (Caption)</label>
+              <textarea id="editCaption">${escapeHtml(item.caption || '')}</textarea>
+            </div>
+
+            <div class="actions">
+              <button class="btn btn-reject" onclick="moderate('reject')">
+                В корзину
+                <small>[D] или [Delete]</small>
+              </button>
+              <button class="btn btn-approve" onclick="moderate('approve')">
+                Одобрить на сайт
+                <small>[A] или [Enter]</small>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function moderate(action) {
+      if (!queue.length) return;
+      const current = queue[0];
+
+      const payload = {
+        action: action,
+        id: current.id,
+        title: document.getElementById("editTitle").value.trim(),
+        caption: document.getElementById("editCaption").value.trim(),
+        tag: document.getElementById("editTag").value.trim()
+      };
+
+      try {
+        await fetch("/api/moderate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        queue.shift();
+        updateCard();
+      } catch (e) {
+        alert("Ошибка связи с сервером.");
+      }
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    window.addEventListener("keydown", (e) => {
+      // Игнорируем горячие клавиши, если курсор внутри текстового поля
+      if (["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) {
+        if (e.key === "Enter" && e.ctrlKey) {
+          moderate("approve");
+        }
+        return;
+      }
+
+      if (e.key === "a" || e.key === "A" || e.key === "ф" || e.key === "Ф" || e.key === "Enter") {
+        moderate("approve");
+      } else if (e.key === "d" || e.key === "D" || e.key === "в" || e.key === "В" || e.key === "Delete") {
+        moderate("reject");
+      }
+    });
+
+    fetchQueue();
+  </script>
+</body>
+</html>
