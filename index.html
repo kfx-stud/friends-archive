@@ -291,7 +291,7 @@
       text-transform: uppercase;
     }
 
-    /* Блок двойного поиска */
+    /* Блок поиска */
     .search-panel {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -1050,7 +1050,7 @@
       <div class="squad-count" id="squad-counter">Загрузка состава...</div>
     </div>
 
-    <!-- Панель двойного поиска -->
+    <!-- Поиск по названию и по описанию -->
     <div class="search-panel">
       <div class="search-box">
         <label for="searchTitle">Поиск по названию</label>
@@ -1084,6 +1084,7 @@
     </div>
   </div>
 
+  <!-- Модальное окно Sugar Rush -->
   <div class="slot-modal-overlay" id="slotOverlay" onclick="closeSlotOnBackdrop(event)">
     <div class="sr-machine" id="srMachine">
       <div class="sr-top-bar">
@@ -1161,6 +1162,13 @@
   <script>
     let allSquadData = [];
     let editingCardIndex = -1;
+
+    function getApiUrl(endpoint) {
+      if (window.location.protocol === "file:" || (window.location.port && window.location.port !== "8080")) {
+        return "http://localhost:8080" + endpoint;
+      }
+      return endpoint;
+    }
 
     async function loadSquad() {
       const container = document.getElementById("gallery");
@@ -1245,7 +1253,7 @@
       if (!confirm(`Отправить заявку дирекции на удаление кадра "${item.title}"?`)) return;
 
       try {
-        const res = await fetch("/api/submit_request", {
+        const res = await fetch(getApiUrl("/api/submit_request"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -1258,10 +1266,10 @@
         if (res.ok) {
           alert("Заявка на удаление передана в тренерский штаб!");
         } else {
-          alert("Сервер временно недоступен.");
+          alert("Сбой сервера (" + res.status + ").");
         }
       } catch (e) {
-        alert("Заявка не отправлена. Убедитесь, что запущен admin_server.py");
+        alert("Сервер временно недоступен. Убедитесь, что запущен admin.bat (admin_server.py).");
       }
     }
 
@@ -1290,7 +1298,7 @@
       }
 
       try {
-        const res = await fetch("/api/submit_request", {
+        const res = await fetch(getApiUrl("/api/submit_request"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -1307,10 +1315,10 @@
           alert("Заявка на изменение отправлена модераторам!");
           closeUserEditModal();
         } else {
-          alert("Сбой сервера.");
+          alert("Сбой сервера (" + res.status + ").");
         }
       } catch (e) {
-        alert("Заявка не отправлена. Убедитесь, что запущен admin_server.py");
+        alert("Сервер временно недоступен. Убедитесь, что запущен admin.bat (admin_server.py).");
       }
     }
 

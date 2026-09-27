@@ -38,6 +38,16 @@ def save_json(filepath, data):
 
 
 class AdminHandler(SimpleHTTPRequestHandler):
+    def end_headers(self):
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        super().end_headers()
+
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self.end_headers()
+
     def do_GET(self):
         parsed = urlparse(self.path)
         path = parsed.path
@@ -69,17 +79,20 @@ class AdminHandler(SimpleHTTPRequestHandler):
         parsed = urlparse(self.path)
         path = parsed.path
         length = int(self.headers.get("Content-Length", 0))
-        body = self.rfile.read(length).decode("utf-8")
-        req = json.loads(body) if body else {}
+        body = self.rfile.read(length).decode("utf-8") if length > 0 else "{}"
+        
+        try:
+            req = json.loads(body)
+        except Exception:
+            req = {}
 
-        # 1. Подача заявки посетителем с сайта (index.html)
         if path == "/api/submit_request":
             reqs = load_json(REQUESTS_FILE)
             req_item = {
                 "id": f"req_{int(time.time() * 1000)}",
                 "time": time.strftime("%d.%m.%Y %H:%M"),
                 "file": req.get("file"),
-                "type": req.get("type"),  # "delete" или "edit"
+                "type": req.get("type"),
                 "current_title": req.get("current_title", ""),
                 "current_caption": req.get("current_caption", ""),
                 "new_title": req.get("new_title", ""),
@@ -94,9 +107,8 @@ class AdminHandler(SimpleHTTPRequestHandler):
             self.wfile.write(b'{"status":"ok"}')
             return
 
-        # 2. Модерация заявок посетителей администратором (admin.html)
         if path == "/api/handle_request":
-            action = req.get("action")  # "apply" или "dismiss"
+            action = req.get("action")
             req_id = req.get("id")
 
             reqs = load_json(REQUESTS_FILE)
@@ -112,7 +124,6 @@ class AdminHandler(SimpleHTTPRequestHandler):
                 file_target = target.get("file")
 
                 if target.get("type") == "delete":
-                    # Удаляем из data.json и переносим файл в deleted/
                     db = [item for item in db if item.get("file") != file_target]
                     save_json(DATA_FILE, db)
 
@@ -143,7 +154,6 @@ class AdminHandler(SimpleHTTPRequestHandler):
             self.wfile.write(b'{"status":"ok"}')
             return
 
-        # 3. Модерация первичных фото от Gemini
         if path == "/api/moderate":
             action = req.get("action")
             item_id = req.get("id")
