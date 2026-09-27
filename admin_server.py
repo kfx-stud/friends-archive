@@ -7,6 +7,7 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 PORT = 8080
 PENDING_FILE = "pending.json"
+REQUESTS_FILE = "requests.json"
 DATA_FILE = "data.json"
 IMAGES_DIR = "images"
 DELETED_DIR = "deleted"
@@ -50,6 +51,15 @@ class AdminHandler(SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps(pending, ensure_ascii=False).encode("utf-8"))
             return
 
+        if path == "/api/requests":
+            reqs = load_json(REQUESTS_FILE)
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+            self.end_headers()
+            self.wfile.write(json.dumps(reqs, ensure_ascii=False).encode("utf-8"))
+            return
+
         if path in ("/", "/admin"):
             self.path = "/admin.html"
 
@@ -58,12 +68,83 @@ class AdminHandler(SimpleHTTPRequestHandler):
     def do_POST(self):
         parsed = urlparse(self.path)
         path = parsed.path
+        length = int(self.headers.get("Content-Length", 0))
+        body = self.rfile.read(length).decode("utf-8")
+        req = json.loads(body) if body else {}
 
+        # 1. Подача заявки посетителем с сайта (index.html)
+        if path == "/api/submit_request":
+            reqs = load_json(REQUESTS_FILE)
+            req_item = {
+                "id": f"req_{int(time.time() * 1000)}",
+                "time": time.strftime("%d.%m.%Y %H:%M"),
+                "file": req.get("file"),
+                "type": req.get("type"),  # "delete" или "edit"
+                "current_title": req.get("current_title", ""),
+                "current_caption": req.get("current_caption", ""),
+                "new_title": req.get("new_title", ""),
+                "new_caption": req.get("new_caption", "")
+            }
+            reqs.append(req_item)
+            save_json(REQUESTS_FILE, reqs)
+
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(b'{"status":"ok"}')
+            return
+
+        # 2. Модерация заявок посетителей администратором (admin.html)
+        if path == "/api/handle_request":
+            action = req.get("action")  # "apply" или "dismiss"
+            req_id = req.get("id")
+
+            reqs = load_json(REQUESTS_FILE)
+            target = next((x for x in reqs if x.get("id") == req_id), None)
+
+            if not target:
+                self.send_response(404)
+                self.end_headers()
+                return
+
+            if action == "apply":
+                db = load_json(DATA_FILE)
+                file_target = target.get("file")
+
+                if target.get("type") == "delete":
+                    # Удаляем из data.json и переносим файл в deleted/
+                    db = [item for item in db if item.get("file") != file_target]
+                    save_json(DATA_FILE, db)
+
+                    if os.path.exists(file_target):
+                        filename = os.path.basename(file_target)
+                        dest_del = os.path.join(DELETED_DIR, filename)
+                        if os.path.exists(dest_del):
+                            base, ext = os.path.splitext(filename)
+                            dest_del = os.path.join(DELETED_DIR, f"{base}_{int(time.time())}{ext}")
+                        shutil.move(file_target, dest_del)
+
+                elif target.get("type") == "edit":
+                    for item in db:
+                        if item.get("file") == file_target:
+                            if target.get("new_title"):
+                                item["title"] = target["new_title"]
+                            if target.get("new_caption"):
+                                item["caption"] = target["new_caption"]
+                            break
+                    save_json(DATA_FILE, db)
+
+            reqs = [x for x in reqs if x.get("id") != req_id]
+            save_json(REQUESTS_FILE, reqs)
+
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(b'{"status":"ok"}')
+            return
+
+        # 3. Модерация первичных фото от Gemini
         if path == "/api/moderate":
-            length = int(self.headers.get("Content-Length", 0))
-            body = self.rfile.read(length).decode("utf-8")
-            req = json.loads(body)
-
             action = req.get("action")
             item_id = req.get("id")
             updated_title = req.get("title")

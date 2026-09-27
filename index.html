@@ -275,7 +275,7 @@
       align-items: flex-end;
       border-bottom: 2px solid var(--surface-border);
       padding-bottom: 0.75rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
     }
 
     .section-header h2 {
@@ -289,6 +289,52 @@
       font-weight: 800;
       font-size: 0.9rem;
       text-transform: uppercase;
+    }
+
+    /* Блок двойного поиска */
+    .search-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      padding: 1rem;
+      border-radius: 8px;
+    }
+
+    .search-box {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .search-box label {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--accent);
+      letter-spacing: 0.5px;
+    }
+
+    .search-box input {
+      background: #090c10;
+      border: 1px solid var(--surface-border);
+      border-radius: 6px;
+      padding: 0.65rem 0.9rem;
+      color: #fff;
+      font-size: 0.9rem;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
+    }
+
+    .search-box input::placeholder {
+      color: #556271;
     }
 
     .squad-grid {
@@ -347,6 +393,44 @@
       color: #38bdf8;
     }
 
+    /* Кнопки запросов от посетителя */
+    .card-user-actions {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      display: flex;
+      gap: 6px;
+      z-index: 5;
+    }
+
+    .user-act-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(15, 18, 23, 0.85);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1rem;
+      backdrop-filter: blur(4px);
+      transition: background 0.15s, transform 0.1s, border-color 0.15s;
+    }
+
+    .user-act-btn:hover {
+      transform: scale(1.08);
+      border-color: var(--accent);
+      color: var(--accent);
+      background: #1e2430;
+    }
+
+    .user-act-btn.btn-del:hover {
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+
     .card-content {
       padding: 1.2rem;
       display: flex;
@@ -381,6 +465,95 @@
       font-weight: 700;
     }
 
+    /* Модалка редактирования посетителем */
+    .user-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .user-edit-modal {
+      background: var(--surface);
+      border: 1px solid var(--accent);
+      border-radius: 12px;
+      max-width: 500px;
+      width: 100%;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    }
+
+    .user-edit-modal h3 {
+      text-transform: uppercase;
+      font-size: 1.1rem;
+      color: var(--accent);
+    }
+
+    .user-edit-modal label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+      display: block;
+    }
+
+    .user-edit-modal input, .user-edit-modal textarea {
+      width: 100%;
+      background: #090c10;
+      border: 1px solid var(--surface-border);
+      border-radius: 6px;
+      color: #fff;
+      padding: 0.65rem;
+      font-size: 0.95rem;
+    }
+
+    .user-edit-modal textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .user-edit-modal input:focus, .user-edit-modal textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .user-modal-btns {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.8rem;
+      margin-top: 0.5rem;
+    }
+
+    .btn-cancel {
+      background: transparent;
+      border: 1px solid var(--surface-border);
+      color: var(--text-muted);
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .btn-submit-req {
+      background: var(--primary);
+      border: 1px solid var(--accent);
+      color: #fff;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
     footer {
       text-align: center;
       padding: 2.5rem 1rem;
@@ -396,6 +569,7 @@
       font-weight: 700;
     }
 
+    /* Модальное окно Sugar Rush 7x7 */
     .slot-modal-overlay {
       display: none;
       position: fixed;
@@ -556,6 +730,7 @@
       font-size: 1.85rem;
       position: relative;
       cursor: default;
+      overflow: visible;
       transition: background-color 0.25s, box-shadow 0.25s;
     }
 
@@ -564,22 +739,37 @@
       border: 1px dashed #ff2e93;
     }
 
-    .sr-cell.sliding-down {
-      transition: transform 0.35s cubic-bezier(0.25, 0.9, 0.35, 1.15) !important;
-      z-index: 2;
+    .sr-symbol {
+      display: inline-block;
+      will-change: transform, opacity;
+      transform: translate3d(0, 0, 0);
     }
 
-    @keyframes dropFromAbove {
+    .sr-symbol.sliding {
+      animation: slideDownToSlot 0.36s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+
+    @keyframes slideDownToSlot {
       0% {
-        transform: translateY(var(--drop-offset, -120px)) scale(0.7);
+        transform: translateY(calc(var(--slide-rows, -1) * -100%));
+      }
+      100% {
+        transform: translateY(0);
+      }
+    }
+
+    .sr-symbol.dropping {
+      animation: dropNewCandy 0.4s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+    }
+
+    @keyframes dropNewCandy {
+      0% {
+        transform: translateY(calc(var(--drop-offset, -3) * -100% - 40px)) scale(0.6);
         opacity: 0;
       }
       60% {
-        transform: translateY(8px) scale(1.05);
+        transform: translateY(6px) scale(1.08);
         opacity: 1;
-      }
-      80% {
-        transform: translateY(-4px) scale(0.98);
       }
       100% {
         transform: translateY(0) scale(1);
@@ -587,31 +777,23 @@
       }
     }
 
-    .sr-cell.incoming-drop {
-      animation: dropFromAbove 0.38s cubic-bezier(0.2, 0.8, 0.25, 1.2) forwards;
+    .sr-symbol.exploding {
+      animation: candyExplode 0.38s ease-in-out forwards;
     }
 
-    .sr-cell.falling {
-      animation: candyFall 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    }
-
-    @keyframes candyFall {
-      0% { transform: translateY(-80px) scale(0.6); opacity: 0; }
-      60% { transform: translateY(6px) scale(1.08); opacity: 1; }
-      80% { transform: translateY(-3px) scale(0.96); }
-      100% { transform: translateY(0) scale(1); opacity: 1; }
-    }
-
-    .sr-cell.explode {
-      animation: clusterExplode 0.45s forwards ease-in-out;
-      z-index: 5;
-    }
-
-    @keyframes clusterExplode {
-      0% { transform: scale(1); filter: brightness(1); }
-      30% { transform: scale(1.35) rotate(-6deg); filter: brightness(1.8) drop-shadow(0 0 10px #ffd700); }
-      60% { transform: scale(1.45) rotate(6deg); filter: brightness(2) drop-shadow(0 0 15px #ff2e93); }
-      100% { transform: scale(0) rotate(18deg); opacity: 0; }
+    @keyframes candyExplode {
+      0% {
+        transform: scale(1);
+        filter: brightness(1);
+      }
+      40% {
+        transform: scale(1.4) rotate(10deg);
+        filter: brightness(1.8) drop-shadow(0 0 12px #ff2e93);
+      }
+      100% {
+        transform: scale(0) rotate(-15deg);
+        opacity: 0;
+      }
     }
 
     .sr-multiplier-badge {
@@ -777,6 +959,9 @@
     }
 
     @media (max-width: 650px) {
+      .search-panel {
+        grid-template-columns: 1fr;
+      }
       .sr-body-wrap {
         flex-direction: column;
       }
@@ -865,8 +1050,39 @@
       <div class="squad-count" id="squad-counter">Загрузка состава...</div>
     </div>
 
+    <!-- Панель двойного поиска -->
+    <div class="search-panel">
+      <div class="search-box">
+        <label for="searchTitle">Поиск по названию</label>
+        <input type="text" id="searchTitle" placeholder="Введите слово из названия..." oninput="handleSearch()">
+      </div>
+      <div class="search-box">
+        <label for="searchCaption">Поиск по описанию</label>
+        <input type="text" id="searchCaption" placeholder="Введите панчлайн или фразу..." oninput="handleSearch()">
+      </div>
+    </div>
+
     <div class="squad-grid" id="gallery"></div>
   </main>
+
+  <!-- Модальное окно заявки на редактирование -->
+  <div class="user-modal-overlay" id="userEditOverlay">
+    <div class="user-edit-modal">
+      <h3>Заявка на правку карточки</h3>
+      <div>
+        <label>Новое название (Title)</label>
+        <input type="text" id="reqNewTitle">
+      </div>
+      <div>
+        <label>Новое описание (Caption)</label>
+        <textarea id="reqNewCaption"></textarea>
+      </div>
+      <div class="user-modal-btns">
+        <button class="btn-cancel" onclick="closeUserEditModal()">Отмена</button>
+        <button class="btn-submit-req" onclick="submitEditRequest()">Отправить заявку</button>
+      </div>
+    </div>
+  </div>
 
   <div class="slot-modal-overlay" id="slotOverlay" onclick="closeSlotOnBackdrop(event)">
     <div class="sr-machine" id="srMachine">
@@ -943,6 +1159,9 @@
   </footer>
 
   <script>
+    let allSquadData = [];
+    let editingCardIndex = -1;
+
     async function loadSquad() {
       const container = document.getElementById("gallery");
       const counter = document.getElementById("squad-counter");
@@ -950,45 +1169,154 @@
       try {
         const response = await fetch("data.json?t=" + new Date().getTime());
         if (!response.ok) throw new Error("HTTP error " + response.status);
-        const cards = await response.json();
+        allSquadData = await response.json();
 
-        if (!Array.isArray(cards) || cards.length === 0) {
+        if (!Array.isArray(allSquadData) || allSquadData.length === 0) {
           counter.textContent = "Игроков в обойме: 0";
-          container.innerHTML = "<p style='color: var(--text-muted);'>Обойма пуста. Добавьте кадры в incoming/ и запустите auto_curator.py.</p>";
+          container.innerHTML = "<p style='color: var(--text-muted);'>Обойма пуста.</p>";
           return;
         }
 
-        counter.textContent = `Игроков в обойме: ${cards.length}`;
-        container.innerHTML = "";
-
-        cards.forEach((item, index) => {
-          const cardEl = document.createElement("div");
-          cardEl.className = "player-card";
-          const badgeClass = item.tag_class ? `player-badge ${item.tag_class}` : "player-badge";
-
-          cardEl.innerHTML = `
-            <div class="image-container">
-              <img src="${item.file}" alt="${item.title}" loading="lazy">
-              <span class="${badgeClass}">${item.tag || "Игрок"}</span>
-            </div>
-            <div class="card-content">
-              <div class="card-title">${item.title}</div>
-              <div class="card-caption">${item.caption}</div>
-              <div class="card-footer">
-                <span>№ ${index + 1}</span>
-                <span>Статус: Основа</span>
-              </div>
-            </div>
-          `;
-          container.appendChild(cardEl);
-        });
+        renderFilteredSquad();
       } catch (err) {
-        console.warn("data.json недоступен или пуст:", err);
         counter.textContent = "Игроков в обойме: 0";
         container.innerHTML = "<p style='color: var(--text-muted);'>Состав не загружен (запустите через локальный веб-сервер или куратор).</p>";
       }
     }
 
+    function handleSearch() {
+      renderFilteredSquad();
+    }
+
+    function renderFilteredSquad() {
+      const container = document.getElementById("gallery");
+      const counter = document.getElementById("squad-counter");
+      const titleQuery = (document.getElementById("searchTitle").value || "").trim().toLowerCase();
+      const captionQuery = (document.getElementById("searchCaption").value || "").trim().toLowerCase();
+
+      const filtered = allSquadData.filter(item => {
+        const titleMatch = !titleQuery || (item.title && item.title.toLowerCase().includes(titleQuery));
+        const captionMatch = !captionQuery || (item.caption && item.caption.toLowerCase().includes(captionQuery));
+        return titleMatch && captionMatch;
+      });
+
+      if (titleQuery || captionQuery) {
+        counter.textContent = "Найдено: " + filtered.length + " из " + allSquadData.length;
+      } else {
+        counter.textContent = "Игроков в обойме: " + allSquadData.length;
+      }
+
+      container.innerHTML = "";
+
+      if (filtered.length === 0) {
+        container.innerHTML = "<p style='color: var(--text-muted); grid-column: 1 / -1; text-align: center; padding: 2rem;'>Ничего не найдено по заданным параметрам.</p>";
+        return;
+      }
+
+      filtered.forEach((item) => {
+        const originalIndex = allSquadData.indexOf(item);
+        const cardEl = document.createElement("div");
+        cardEl.className = "player-card";
+        const badgeClass = item.tag_class ? "player-badge " + item.tag_class : "player-badge";
+
+        cardEl.innerHTML = 
+          '<div class="image-container">' +
+            '<div class="card-user-actions">' +
+              '<button class="user-act-btn btn-del" onclick="requestDelete(' + originalIndex + ')" title="Предложить удалить фотку">✕</button>' +
+              '<button class="user-act-btn" onclick="openUserEditModal(' + originalIndex + ')" title="Предложить новое название/описание">✎</button>' +
+            '</div>' +
+            '<img src="' + item.file + '" alt="' + item.title + '" loading="lazy">' +
+            '<span class="' + badgeClass + '">' + (item.tag || "Игрок") + '</span>' +
+          '</div>' +
+          '<div class="card-content">' +
+            '<div class="card-title">' + item.title + '</div>' +
+            '<div class="card-caption">' + item.caption + '</div>' +
+            '<div class="card-footer">' +
+              '<span>№ ' + (originalIndex + 1) + '</span>' +
+              '<span>Статус: Основа</span>' +
+            '</div>' +
+          '</div>';
+        container.appendChild(cardEl);
+      });
+    }
+
+    async function requestDelete(index) {
+      const item = allSquadData[index];
+      if (!confirm(`Отправить заявку дирекции на удаление кадра "${item.title}"?`)) return;
+
+      try {
+        const res = await fetch("/api/submit_request", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            file: item.file,
+            type: "delete",
+            current_title: item.title,
+            current_caption: item.caption
+          })
+        });
+        if (res.ok) {
+          alert("Заявка на удаление передана в тренерский штаб!");
+        } else {
+          alert("Сервер временно недоступен.");
+        }
+      } catch (e) {
+        alert("Заявка не отправлена. Убедитесь, что запущен admin_server.py");
+      }
+    }
+
+    function openUserEditModal(index) {
+      editingCardIndex = index;
+      const item = allSquadData[index];
+      document.getElementById("reqNewTitle").value = item.title || "";
+      document.getElementById("reqNewCaption").value = item.caption || "";
+      document.getElementById("userEditOverlay").style.display = "flex";
+    }
+
+    function closeUserEditModal() {
+      document.getElementById("userEditOverlay").style.display = "none";
+      editingCardIndex = -1;
+    }
+
+    async function submitEditRequest() {
+      if (editingCardIndex < 0) return;
+      const item = allSquadData[editingCardIndex];
+      const newTitle = document.getElementById("reqNewTitle").value.trim();
+      const newCaption = document.getElementById("reqNewCaption").value.trim();
+
+      if (!newTitle) {
+        alert("Укажите заголовок!");
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/submit_request", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            file: item.file,
+            type: "edit",
+            current_title: item.title,
+            current_caption: item.caption,
+            new_title: newTitle,
+            new_caption: newCaption
+          })
+        });
+
+        if (res.ok) {
+          alert("Заявка на изменение отправлена модераторам!");
+          closeUserEditModal();
+        } else {
+          alert("Сбой сервера.");
+        }
+      } catch (e) {
+        alert("Заявка не отправлена. Убедитесь, что запущен admin_server.py");
+      }
+    }
+
+    /* -------------------------------------------------------------
+       ЛОГИКА СЛОТА SUGAR RUSH 7x7
+       ------------------------------------------------------------- */
     const ROWS = 7;
     const COLS = 7;
     const MAX_WIN_MULT = 5000;
@@ -1027,8 +1355,13 @@
 
           const cell = document.createElement("div");
           cell.className = "sr-cell";
-          cell.id = `cell-${r}-${c}`;
-          cell.textContent = grid[r][c];
+          cell.id = "cell-" + r + "-" + c;
+
+          const sym = document.createElement("span");
+          sym.className = "sr-symbol";
+          sym.textContent = grid[r][c];
+          cell.appendChild(sym);
+
           gridEl.appendChild(cell);
         }
       }
@@ -1192,7 +1525,7 @@
         freeSpinsLeft--;
         updateUI();
 
-        document.getElementById("winNotification").textContent = `Фриспин! Осталось спинов: ${freeSpinsLeft}`;
+        document.getElementById("winNotification").textContent = "Фриспин! Осталось спинов: " + freeSpinsLeft;
         const roundWin = await runCascadeGame();
         totalBonusWin += roundWin;
 
@@ -1208,7 +1541,7 @@
 
       isFreeSpinsRound = false;
       updateUI();
-      document.getElementById("winNotification").innerHTML = `🎉 БОНУСНЫЙ РАУНД ЗАВЕРШЕН! Занос: +${totalBonusWin.toLocaleString("ru-RU")} ₽!`;
+      document.getElementById("winNotification").innerHTML = "🎉 БОНУСНЫЙ РАУНД ЗАВЕРШЕН! Занос: +" + totalBonusWin.toLocaleString("ru-RU") + " ₽!";
       shakeMachine();
     }
 
@@ -1248,52 +1581,87 @@
       return dropMap;
     }
 
-    function renderTumbleAnimation(dropMap) {
-      const cellHeight = 56;
-
+    function renderGrid(animateDrop = false) {
       for (let r = 0; r < ROWS; r++) {
         for (let c = 0; c < COLS; c++) {
-          const cellEl = document.getElementById(`cell-${r}-${c}`);
+          const cellEl = document.getElementById("cell-" + r + "-" + c);
           if (!cellEl) continue;
 
-          cellEl.className = "sr-cell";
-          cellEl.textContent = grid[r][c] || "";
-          cellEl.style.transform = "";
+          let sym = cellEl.querySelector(".sr-symbol");
+          if (!sym) {
+            sym = document.createElement("span");
+            sym.className = "sr-symbol";
+            cellEl.appendChild(sym);
+          }
 
-          const movement = dropMap.find(m => m.toR === r && m.col === c);
-          if (movement) {
-            if (movement.isNew) {
-              cellEl.classList.add("incoming-drop");
-              const offsetPx = -(movement.distance * cellHeight + 60);
-              cellEl.style.setProperty("--drop-offset", `${offsetPx}px`);
-              cellEl.style.animationDelay = `${c * 0.025}s`;
+          sym.textContent = grid[r][c] || "";
+          sym.className = "sr-symbol";
+          sym.style.removeProperty("--drop-offset");
+          sym.style.removeProperty("--slide-rows");
+
+          if (animateDrop) {
+            sym.style.setProperty("--drop-offset", (ROWS - r + 1));
+            void sym.offsetWidth;
+            sym.classList.add("dropping");
+            sym.style.animationDelay = ((c * 0.03) + (r * 0.015)) + "s";
+          }
+
+          updateSpotUI(cellEl, r, c);
+        }
+      }
+    }
+
+    function renderTumbleAnimation(dropMap) {
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          const cellEl = document.getElementById("cell-" + r + "-" + c);
+          if (!cellEl) continue;
+
+          let sym = cellEl.querySelector(".sr-symbol");
+          if (!sym) {
+            sym = document.createElement("span");
+            sym.className = "sr-symbol";
+            cellEl.appendChild(sym);
+          }
+
+          sym.textContent = grid[r][c] || "";
+          sym.className = "sr-symbol";
+
+          const move = dropMap.find(m => m.toR === r && m.col === c);
+          if (move) {
+            if (move.isNew) {
+              sym.style.setProperty("--drop-offset", move.distance + 1);
+              void sym.offsetWidth;
+              sym.classList.add("dropping");
+              sym.style.animationDelay = (c * 0.025) + "s";
             } else {
-              const slideOffset = -(movement.distance * cellHeight);
-              cellEl.style.transform = `translateY(${slideOffset}px)`;
-              
-              requestAnimationFrame(() => {
-                cellEl.classList.add("sliding-down");
-                cellEl.style.transform = "translateY(0px)";
-              });
+              sym.style.setProperty("--slide-rows", move.distance);
+              void sym.offsetWidth;
+              sym.classList.add("sliding");
             }
           }
 
-          const spot = spotState[r][c];
-          let badge = cellEl.querySelector(".sr-multiplier-badge");
-          if (badge) badge.remove();
-
-          if (spot.mult > 1) {
-            cellEl.style.backgroundColor = spot.mult >= 8 ? "rgba(255, 46, 147, 0.55)" : "rgba(255, 215, 0, 0.45)";
-            badge = document.createElement("span");
-            badge.className = "sr-multiplier-badge";
-            badge.textContent = `x${spot.mult}`;
-            cellEl.appendChild(badge);
-          } else if (spot.marked) {
-            cellEl.classList.add("marked-spot");
-          } else {
-            cellEl.style.backgroundColor = "rgba(255, 255, 255, 0.45)";
-          }
+          updateSpotUI(cellEl, r, c);
         }
+      }
+    }
+
+    function updateSpotUI(cellEl, r, c) {
+      const spot = spotState[r][c];
+      let badge = cellEl.querySelector(".sr-multiplier-badge");
+      if (badge) badge.remove();
+
+      cellEl.classList.remove("marked-spot");
+      if (spot.mult > 1) {
+        cellEl.style.backgroundColor = spot.mult >= 8 ? "rgba(255, 46, 147, 0.55)" : "rgba(255, 215, 0, 0.45)";
+        badge = document.createElement("span");
+        badge.className = "sr-multiplier-badge";
+        badge.textContent = "x" + spot.mult;
+        cellEl.appendChild(badge);
+      } else if (spot.marked) {
+        cellEl.classList.add("marked-spot");
+      } else {
+        cellEl.style.backgroundColor = "rgba(255, 255, 255, 0.45)";
       }
     }
 
@@ -1302,9 +1670,7 @@
       const spinBtn = document.getElementById("srSpinBtn");
       if (spinBtn) spinBtn.disabled = true;
       const winNotify = document.getElementById("winNotification");
-      if (winNotify) {
-        winNotify.classList.remove("bigwin");
-      }
+      if (winNotify) winNotify.classList.remove("bigwin");
 
       for (let r = 0; r < ROWS; r++) {
         for (let c = 0; c < COLS; c++) {
@@ -1314,7 +1680,7 @@
       renderGrid(true);
       playBeep(340, "triangle", 0.15);
 
-      await sleep(380);
+      await sleep(400);
 
       let scatterCount = 0;
       for (let r = 0; r < ROWS; r++) {
@@ -1323,8 +1689,13 @@
         }
       }
       if (scatterCount >= 3) {
-        const awardedSpins = scatterCount === 3 ? 10 : (scatterCount === 4 ? 12 : (scatterCount === 5 ? 15 : (scatterCount === 6 ? 20 : 30)));
-        if (winNotify) winNotify.innerHTML = `🎰 ВЫПАЛО ${scatterCount} СКАТТЕРА! +${awardedSpins} СПИНОВ!`;
+        let awardedSpins = 10;
+        if (scatterCount === 4) awardedSpins = 12;
+        else if (scatterCount === 5) awardedSpins = 15;
+        else if (scatterCount === 6) awardedSpins = 20;
+        else if (scatterCount >= 7) awardedSpins = 30;
+
+        if (winNotify) winNotify.innerHTML = "🎰 ВЫПАЛО " + scatterCount + " СКАТТЕРА! +" + awardedSpins + " СПИНОВ!";
         shakeMachine();
         playBeep(980, "square", 0.5);
         await sleep(700);
@@ -1371,10 +1742,12 @@
               spot.mult = Math.min(128, spot.mult * 2);
             }
 
-            const cellEl = document.getElementById(`cell-${cell.r}-${cell.c}`);
+            const cellEl = document.getElementById("cell-" + cell.r + "-" + cell.c);
             if (cellEl) {
-              cellEl.classList.remove("falling", "incoming-drop", "sliding-down");
-              cellEl.classList.add("explode");
+              const sym = cellEl.querySelector(".sr-symbol");
+              if (sym) {
+                sym.className = "sr-symbol exploding";
+              }
             }
           }
         }
@@ -1383,10 +1756,10 @@
         stepWin = Math.round(stepWin);
         totalRoundWin += stepWin;
 
-        if (winNotify) winNotify.innerHTML = `💥 Каскад #${cascadeCount}! Занос: +${stepWin.toLocaleString("ru-RU")} ₽`;
+        if (winNotify) winNotify.innerHTML = "💥 Каскад #" + cascadeCount + "! Занос: +" + stepWin.toLocaleString("ru-RU") + " ₽";
         if (stepWin > bet * 5) shakeMachine();
 
-        await sleep(420);
+        await sleep(380);
 
         for (const cluster of clusters) {
           for (const cell of cluster.cells) {
@@ -1397,14 +1770,14 @@
         const dropMap = applyGravityAndRefill();
         renderTumbleAnimation(dropMap);
 
-        await sleep(380);
+        await sleep(420);
       }
 
       if (totalRoundWin > 0) {
         balance += totalRoundWin;
         if (winNotify) {
           winNotify.classList.add("bigwin");
-          winNotify.innerHTML = `🎉 ЗАНОС СПИНА: +${totalRoundWin.toLocaleString("ru-RU")} ₽!`;
+          winNotify.innerHTML = "🎉 ЗАНОС СПИНА: +" + totalRoundWin.toLocaleString("ru-RU") + " ₽!";
         }
         shakeMachine();
         playBeep(920, "square", 0.4);
@@ -1458,39 +1831,6 @@
         }
       }
       return winningClusters;
-    }
-
-    function renderGrid(animateDrop = false) {
-      for (let r = 0; r < ROWS; r++) {
-        for (let c = 0; c < COLS; c++) {
-          const cellEl = document.getElementById(`cell-${r}-${c}`);
-          if (!cellEl) continue;
-
-          cellEl.className = "sr-cell";
-          cellEl.textContent = grid[r][c] || "";
-
-          if (animateDrop) {
-            cellEl.classList.add("falling");
-            cellEl.style.animationDelay = `${(c * 0.03) + (r * 0.015)}s`;
-          }
-
-          const spot = spotState[r][c];
-          let badge = cellEl.querySelector(".sr-multiplier-badge");
-          if (badge) badge.remove();
-
-          if (spot.mult > 1) {
-            cellEl.style.backgroundColor = spot.mult >= 8 ? "rgba(255, 46, 147, 0.55)" : "rgba(255, 215, 0, 0.45)";
-            badge = document.createElement("span");
-            badge.className = "sr-multiplier-badge";
-            badge.textContent = `x${spot.mult}`;
-            cellEl.appendChild(badge);
-          } else if (spot.marked) {
-            cellEl.classList.add("marked-spot");
-          } else {
-            cellEl.style.backgroundColor = "rgba(255, 255, 255, 0.45)";
-          }
-        }
-      }
     }
 
     function sleep(ms) {
