@@ -401,132 +401,269 @@
       font-weight: 700;
     }
 
-    /* Модалка слота Sugar Rush */
+    /* Модальное окно: Sugar Rush 7x7 оригинальный автомат */
     .slot-modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(8px);
+      background: rgba(8, 3, 18, 0.92);
+      backdrop-filter: blur(10px);
       z-index: 1000;
       align-items: center;
       justify-content: center;
-      padding: 1rem;
-    }
-
-    .slot-modal {
-      background: linear-gradient(180deg, #1b0f2a 0%, #10081a 100%);
-      border: 3px solid var(--sugar-pink);
-      border-radius: 16px;
-      width: 100%;
-      max-width: 440px;
-      padding: 1.5rem;
-      box-shadow: 0 0 30px rgba(255, 46, 147, 0.5);
-      text-align: center;
-      position: relative;
-    }
-
-    .slot-close {
-      position: absolute;
-      top: 10px;
-      right: 14px;
-      background: transparent;
-      border: none;
-      color: #fff;
-      font-size: 1.5rem;
-      cursor: pointer;
-    }
-
-    .slot-title {
-      font-size: 1.4rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      background: linear-gradient(90deg, #ffd700, #ff2e93);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 0.2rem;
-    }
-
-    .slot-subtitle {
-      font-size: 0.8rem;
-      color: #d1b8ea;
-      margin-bottom: 1rem;
-    }
-
-    .slot-bank {
-      display: flex;
-      justify-content: space-around;
-      background: rgba(0, 0, 0, 0.4);
       padding: 0.5rem;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 215, 0, 0.3);
-      margin-bottom: 1rem;
-      font-weight: 800;
-      font-size: 0.95rem;
     }
 
-    .slot-reels {
+    .sr-machine {
+      background: radial-gradient(circle at 50% 20%, #68b8f8 0%, #2f6aa6 100%);
+      border: 4px solid #fff;
+      border-radius: 24px;
+      box-shadow: 0 0 40px rgba(255, 46, 147, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.6);
+      width: 100%;
+      max-width: 820px;
+      padding: 1rem 1.2rem;
+      position: relative;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       gap: 0.8rem;
-      background: rgba(0, 0, 0, 0.6);
-      padding: 1.2rem;
-      border-radius: 12px;
-      border: 2px solid var(--sugar-purple);
-      margin-bottom: 1.2rem;
+      user-select: none;
     }
 
-    .slot-reel {
-      width: 90px;
-      height: 90px;
-      background: #25123d;
-      border: 2px solid var(--accent);
-      border-radius: 10px;
+    .sr-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sr-logo-title {
+      font-size: 1.8rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 0 0 10px #ff2e93, 3px 3px 0 #9b51e0;
+      font-style: italic;
+    }
+
+    .sr-close-btn {
+      background: #ff2e93;
+      border: 2px solid #fff;
+      color: #fff;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-weight: 900;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.8rem;
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
-      user-select: none;
+    }
+
+    .sr-body-wrap {
+      display: flex;
+      gap: 1rem;
+      align-items: stretch;
+    }
+
+    /* Боковая кнопка Buy Free Spins */
+    .sr-buy-bonus {
+      background: linear-gradient(180deg, #ff41a2 0%, #d41470 100%);
+      border: 3px solid #ffd700;
+      border-radius: 14px;
+      padding: 0.8rem 0.5rem;
+      width: 130px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(255, 65, 162, 0.5);
+      transition: transform 0.15s;
+    }
+
+    .sr-buy-bonus:hover {
+      transform: scale(1.04);
+    }
+
+    .sr-buy-bonus span:nth-child(1) {
+      font-size: 1.1rem;
+      font-weight: 900;
+      line-height: 1.1;
+      text-shadow: 1px 1px 2px #000;
+    }
+
+    .sr-buy-bonus span:nth-child(2) {
+      font-size: 0.75rem;
+      margin-top: 4px;
+      color: #ffd700;
+      font-weight: 800;
+    }
+
+    .sr-buy-price {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 900;
+      margin-top: 6px;
+      color: #ffd700;
+    }
+
+    /* Сетка 7х7 */
+    .sr-grid-container {
+      flex-grow: 1;
+      background: linear-gradient(180deg, rgba(230, 243, 255, 0.95) 0%, rgba(195, 226, 255, 0.95) 100%);
+      border: 3px solid #ff9cd6;
+      border-radius: 16px;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-template-rows: repeat(7, 1fr);
+      gap: 3px;
+      padding: 6px;
+      aspect-ratio: 1 / 1;
+      max-height: 440px;
+      margin: 0 auto;
+      box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .sr-cell {
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.9rem;
+      position: relative;
+      cursor: default;
+      transition: transform 0.15s, background-color 0.2s;
+    }
+
+    .sr-cell.pop {
+      animation: cellPop 0.3s forwards ease-in-out;
+    }
+
+    @keyframes cellPop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.3) rotate(8deg); filter: brightness(1.6); }
+      100% { transform: scale(0); opacity: 0; }
+    }
+
+    .sr-multiplier-badge {
+      position: absolute;
+      top: 1px;
+      right: 1px;
+      background: #ff2e93;
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 900;
+      border-radius: 4px;
+      padding: 0 3px;
+      border: 1px solid #ffd700;
+      z-index: 2;
+    }
+
+    /* Нижняя панель слота (Pragmatic Bar) */
+    .sr-bottom-bar {
+      background: linear-gradient(180deg, #1b3d68 0%, #102642 100%);
+      border: 2px solid #559ee7;
+      border-radius: 14px;
+      padding: 0.6rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .sr-counters {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .sr-counter-box {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sr-counter-box small {
+      font-size: 0.65rem;
+      color: #8cc4ff;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .sr-counter-box strong {
+      font-size: 1.1rem;
+      color: #ffd700;
+      font-weight: 900;
+    }
+
+    .sr-win-notify {
+      font-size: 0.95rem;
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0 0 8px #ff2e93;
+      min-height: 22px;
+    }
+
+    .sr-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .sr-bet-btn {
+      background: #1e4b82;
+      border: 1px solid #5ca0ed;
+      color: #fff;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      font-weight: 900;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    .sr-spin-button {
+      background: radial-gradient(circle, #ffe600 0%, #ff8c00 100%);
+      border: 3px solid #fff;
+      border-radius: 50%;
+      width: 58px;
+      height: 58px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
       transition: transform 0.1s;
     }
 
-    .slot-reel.spin {
-      animation: reelShake 0.12s infinite;
+    .sr-spin-button:hover {
+      transform: scale(1.08);
     }
 
-    @keyframes reelShake {
-      0% { transform: translateY(-4px); }
-      50% { transform: translateY(4px); }
-      100% { transform: translateY(-4px); }
-    }
-
-    .slot-status {
-      min-height: 24px;
-      font-size: 0.9rem;
-      font-weight: 800;
-      color: var(--accent);
-      margin-bottom: 1rem;
-    }
-
-    .slot-spin-btn {
-      width: 100%;
-      background: linear-gradient(180deg, #ff2e93 0%, #c9006e 100%);
-      border: 2px solid var(--accent);
-      color: #fff;
-      font-size: 1.2rem;
-      font-weight: 900;
-      padding: 0.8rem;
-      border-radius: 10px;
-      cursor: pointer;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      box-shadow: 0 0 15px rgba(255, 46, 147, 0.6);
-    }
-
-    .slot-spin-btn:disabled {
+    .sr-spin-button:disabled {
       opacity: 0.6;
       cursor: not-allowed;
+      transform: none;
+    }
+
+    @media (max-width: 650px) {
+      .sr-body-wrap {
+        flex-direction: column;
+      }
+      .sr-buy-bonus {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 0.4rem;
+      }
+      .sr-cell {
+        font-size: 1.3rem;
+      }
     }
   </style>
 </head>
@@ -542,7 +679,7 @@
       </div>
     </div>
     <div class="nav-actions">
-      <button class="btn-sugar" onclick="openSlotModal()">🎰 Sugar Rush / Занос</button>
+      <button class="btn-sugar" onclick="openSlotModal()">🍭 Sugar Rush (Казик)</button>
     </div>
   </header>
 
@@ -556,7 +693,6 @@
   </div>
 
   <main class="container">
-    <!-- Инфо-панель клуба -->
     <div class="club-stats-grid">
       <div class="info-card">
         <span>Домашняя Арена</span>
@@ -569,9 +705,9 @@
         <small>Трансфер строго под рэпчину Мэддкида</small>
       </div>
       <div class="info-card sugar-card" onclick="openSlotModal()" title="Кликни, чтобы крутить">
-        <span>Отдел Бурмалды</span>
-        <strong>Кафедра Лудки & Sugar Rush</strong>
-        <small>25 фриспинов (должно быть 10)</small>
+        <span>Кафедра Бурмалды</span>
+        <strong>Sugar Rush 7x7 Pragmatic</strong>
+        <small>Кластеры, каскады, x128 споты</small>
       </div>
       <div class="info-card">
         <span>Тренерский Штаб</span>
@@ -580,7 +716,6 @@
       </div>
     </div>
 
-    <!-- Манифест и цитата директора -->
     <div class="club-quote-section">
       <div class="quote-body">
         <div class="quote-text">«Если повезет — будет бизнес, если нет — алкоголизм. Друг о друге не забывайте, ГазМяс не смейте развалить мне, опездолы!»</div>
@@ -588,82 +723,100 @@
       </div>
     </div>
 
-    <!-- Регламент и правила селекции -->
     <div class="rules-card">
       <h3>Регламент трансферного окна и отбора в заявку</h3>
       <ul class="rules-list">
         <li><strong>Раунд чистилища:</strong> Выдержать адское пекло в бане от директора — та же исповедь, только через пот.</li>
-        <li><strong>Дисциплина на поле:</strong> Строго запрещен слив мида на Котле против Лины и полное «афк».</li>
-        <li><strong>Теоретический зачет:</strong> Базовое понимание цитат сериала «Реальные пацаны» (Базанов, Колян, Вован).</li>
-        <li><strong>Клубный кодекс:</strong> «Per aspera ad astra fututio» — через тернии к победам без негатива.</li>
+        <li><strong>Дисциплина на поле:</strong> Строго запрещен слив мида на Котле против Лины и полное «афк»[cite: 1].</li>
+        <li><strong>Теоретический зачет:</strong> Базовое понимание цитат сериала «Реальные пацаны» (Базанов, Колян, Вован)[cite: 1].</li>
+        <li><strong>Клубный кодекс:</strong> «Per aspera ad astra fututio» — через тернии к победам без негатива[cite: 1].</li>
         <li><strong>Гражданская оборона:</strong> Чугунная ванна держит ударную волну 20 км, пластмассовая — не спасает нихуя.</li>
         <li><strong>Железнодорожное правило:</strong> «Муравьи бегают по колесам — пизда поезду».</li>
-        <li><strong>Теория лудки:</strong> Помнить, что 99% лудоманов останавливаются аккурат за секунду до мега-заноса.</li>
+        <li><strong>Теория лудки:</strong> Помнить, что 99% лудоманов останавливаются аккурат за секунду до мега-заноса[cite: 1].</li>
         <li><strong>Боевой рацион:</strong> Каша с малиной и червями (кличка «блевус», статус «не женат»).</li>
       </ul>
     </div>
 
-    <!-- Секция карточек игроков -->
     <div class="section-header">
       <h2>Заявка на сезон</h2>
       <div class="squad-count" id="squad-counter">Загрузка состава...</div>
     </div>
 
-    <div class="squad-grid" id="gallery">
-      <!-- Наполняется автоматически скриптом из data.json -->
-    </div>
+    <div class="squad-grid" id="gallery"></div>
   </main>
 
-  <!-- Всплывающий слот Sugar Rush -->
+  <!-- Модальное окно: Sugar Rush 7x7 -->
   <div class="slot-modal-overlay" id="slotOverlay" onclick="closeSlotOnBackdrop(event)">
-    <div class="slot-modal">
-      <button class="slot-close" onclick="closeSlotModal()">✕</button>
-      <div class="slot-title">🍭 ГазМяс: Sugar Rush</div>
-      <div class="slot-subtitle">Официальный симулятор бурмалды спонсора клуба</div>
-
-      <div class="slot-bank">
-        <div>Баланс: <span id="slotBalance" style="color: #ffd700;">3000</span> ₽</div>
-        <div>Ставка: <span>200</span> ₽</div>
+    <div class="sr-machine">
+      <div class="sr-top-bar">
+        <div class="sr-logo-title">🍬 Sugar Rush 7×7</div>
+        <button class="sr-close-btn" onclick="closeSlotModal()">✕</button>
       </div>
 
-      <div class="slot-reels">
-        <div class="slot-reel" id="reel1">🍬</div>
-        <div class="slot-reel" id="reel2">🍓</div>
-        <div class="slot-reel" id="reel3">🍇</div>
+      <div class="sr-body-wrap">
+        <!-- Блок Buy Free Spins (как на скрине) -->
+        <div class="sr-buy-bonus" onclick="buyBonus()">
+          <span>BUY<br>FREE<br>SPINS</span>
+          <span>БОНУСКА</span>
+          <div class="sr-buy-price" id="buyBonusPrice">10 000 ₽</div>
+        </div>
+
+        <!-- Сетка 7х7 -->
+        <div class="sr-grid-container" id="slotGrid">
+          <!-- 49 ячеек генерируются через JS -->
+        </div>
       </div>
 
-      <div class="slot-status" id="slotStatus">Крути барабан, забирай занос!</div>
-      <button class="slot-spin-btn" id="spinBtn" onclick="spinSlot()">Спин (200 ₽)</button>
+      <div class="sr-bottom-bar">
+        <div class="sr-counters">
+          <div class="sr-counter-box">
+            <small>КРЕДИТ</small>
+            <strong id="balanceDisplay">5 000 ₽</strong>
+          </div>
+          <div class="sr-counter-box">
+            <small>СТАВКА</small>
+            <strong id="betDisplay">100 ₽</strong>
+          </div>
+        </div>
+
+        <div class="sr-win-notify" id="winNotification">Вращайте кластеры!</div>
+
+        <div class="sr-controls">
+          <button class="sr-bet-btn" onclick="changeBet(-20)">−</button>
+          <button class="sr-bet-btn" onclick="changeBet(20)">+</button>
+          <button class="sr-spin-button" id="srSpinBtn" onclick="triggerSpin()">↻</button>
+        </div>
+      </div>
     </div>
   </div>
 
   <footer>
     <p>© 2026 <span>ФК «ГазМяс»</span>. Все права защищены дворовым комитетом Санкт-Петербурга.</p>
-    <p style="margin-top: 0.3rem;">Дирекция: Платон Нодь (Первый и Единственный) • Креативный продюсер: Артем Визиров • Технический штаб: kfx</p>
+    <p style="margin-top: 0.3rem;">Дирекция: Платон Нодь (Первый и Единственный) • Креативный продюсер: Артем Визиров[cite: 1] • Технический штаб: kfx</p>
   </footer>
 
   <script>
+    /* Загрузка галереи игроков */
     async function loadSquad() {
       const container = document.getElementById("gallery");
       const counter = document.getElementById("squad-counter");
 
       try {
         const response = await fetch("data.json?t=" + new Date().getTime());
-        if (!response.ok) throw new Error("Ошибка загрузки data.json");
+        if (!response.ok) throw new Error("Ошибка data.json");
         const cards = await response.json();
 
         counter.textContent = `Игроков в обойме: ${cards.length}`;
         container.innerHTML = "";
 
         if (cards.length === 0) {
-          container.innerHTML = "<p style='color: var(--text-muted);'>Обойма пуста. Добавьте фотографии в incoming/ и запустите auto_curator.py.</p>";
+          container.innerHTML = "<p style='color: var(--text-muted);'>Обойма пуста.</p>";
           return;
         }
 
         cards.forEach((item, index) => {
           const cardEl = document.createElement("div");
           cardEl.className = "player-card";
-
           const badgeClass = item.tag_class ? `player-badge ${item.tag_class}` : "player-badge";
 
           cardEl.innerHTML = `
@@ -683,19 +836,66 @@
           container.appendChild(cardEl);
         });
       } catch (err) {
-        console.error(err);
         counter.textContent = "Сбой трансферного листа";
-        container.innerHTML = "<p style='color: #ef4444;'>Не удалось загрузить заявку игроков из data.json.</p>";
       }
     }
 
-    const SYMBOLS = ["🍬", "🍓", "🍇", "⭐", "💣", "🍭"];
-    let balance = 3000;
-    const SPIN_COST = 200;
-    let isSpinning = false;
+    /* -------------------------------------------------------------
+       ПОЛНОЦЕННЫЙ ДВИЖОК SUGAR RUSH (7x7 CLUSTER PAYS & CASCADES)
+       ------------------------------------------------------------- */
+    const ROWS = 7;
+    const COLS = 7;
+    // Конфетные символы по мотивам Sugar Rush (мишки, леденцы, сердечки, драже)
+    const CANDIES = ["🐻", "🍬", "🍭", "💖", "⭐", "🍇", "🍓"];
+
+    let balance = 5000;
+    let bet = 100;
+    let grid = [];
+    let multipliers = []; // Матрица множителей ячеек (1, 2, 4, 8 ...)
+    let isProcessing = false;
+
+    function initSlotEngine() {
+      const gridEl = document.getElementById("slotGrid");
+      gridEl.innerHTML = "";
+      grid = [];
+      multipliers = [];
+
+      for (let r = 0; r < ROWS; r++) {
+        grid[r] = [];
+        multipliers[r] = [];
+        for (let c = 0; c < COLS; c++) {
+          grid[r][c] = getRandomCandy();
+          multipliers[r][c] = 1;
+
+          const cell = document.createElement("div");
+          cell.className = "sr-cell";
+          cell.id = `cell-${r}-${c}`;
+          cell.textContent = grid[r][c];
+          gridEl.appendChild(cell);
+        }
+      }
+      updateUI();
+    }
+
+    function getRandomCandy() {
+      return CANDIES[Math.floor(Math.random() * CANDIES.length)];
+    }
+
+    function updateUI() {
+      document.getElementById("balanceDisplay").textContent = balance + " ₽";
+      document.getElementById("betDisplay").textContent = bet + " ₽";
+      document.getElementById("buyBonusPrice").textContent = (bet * 100) + " ₽";
+    }
+
+    function changeBet(delta) {
+      if (isProcessing) return;
+      bet = Math.max(20, bet + delta);
+      updateUI();
+    }
 
     function openSlotModal() {
       document.getElementById("slotOverlay").style.display = "flex";
+      if (grid.length === 0) initSlotEngine();
     }
 
     function closeSlotModal() {
@@ -721,78 +921,222 @@
       } catch (e) {}
     }
 
-    function spinSlot() {
-      if (isSpinning) return;
-      if (balance < SPIN_COST) {
-        document.getElementById("slotStatus").textContent = "Баланс исчерпан! Дядя Миша подвезет 1000 ₽";
-        balance += 1000;
-        document.getElementById("slotBalance").textContent = balance;
+    /* Запуск обычного спина */
+    async function triggerSpin() {
+      if (isProcessing) return;
+      if (balance < bet) {
+        document.getElementById("winNotification").textContent = "Дядя Миша подкинул 2 000 ₽ на ход ноги!";
+        balance += 2000;
+        updateUI();
         return;
       }
 
-      balance -= SPIN_COST;
-      document.getElementById("slotBalance").textContent = balance;
-      document.getElementById("slotStatus").textContent = "Бурмалдим...";
-      isSpinning = true;
-      document.getElementById("spinBtn").disabled = true;
-
-      const r1 = document.getElementById("reel1");
-      const r2 = document.getElementById("reel2");
-      const r3 = document.getElementById("reel3");
-
-      r1.classList.add("spin");
-      r2.classList.add("spin");
-      r3.classList.add("spin");
-
-      playBeep(300, "triangle", 0.3);
-
-      setTimeout(() => {
-        const res1 = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
-        r1.textContent = res1;
-        r1.classList.remove("spin");
-        playBeep(450, "sine", 0.1);
-      }, 500);
-
-      setTimeout(() => {
-        const res2 = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
-        r2.textContent = res2;
-        r2.classList.remove("spin");
-        playBeep(550, "sine", 0.1);
-      }, 900);
-
-      setTimeout(() => {
-        const res3 = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
-        r3.textContent = res3;
-        r3.classList.remove("spin");
-        playBeep(650, "sine", 0.15);
-
-        isSpinning = false;
-        document.getElementById("spinBtn").disabled = false;
-
-        checkWin(r1.textContent, r2.textContent, r3.textContent);
-      }, 1300);
+      balance -= bet;
+      updateUI();
+      await runCascadeGame();
     }
 
-    function checkWin(s1, s2, s3) {
-      const status = document.getElementById("slotStatus");
-      if (s1 === s2 && s2 === s3) {
-        let win = 5000;
-        if (s1 === "🍭" || s1 === "💣") win = 10000;
-        balance += win;
-        status.innerHTML = `🔥 МЕГА ЗАВОЗ! ВЫИГРЫШ: +${win} ₽! 🔥`;
-        playBeep(880, "square", 0.4);
-      } else if (s1 === s2 || s2 === s3 || s1 === s3) {
-        const win = 600;
-        balance += win;
-        status.textContent = `Ретригер бонуски! +${win} ₽`;
-        playBeep(600, "triangle", 0.2);
-      } else {
-        status.textContent = "Мимо! 99% лудоманов отступают перед джекпотом.";
+    /* Покупка бонуски (x100 от ставки) */
+    async function buyBonus() {
+      if (isProcessing) return;
+      const bonusCost = bet * 100;
+      if (balance < bonusCost) {
+        document.getElementById("winNotification").textContent = "Не хватает на покупку бонуски!";
+        return;
       }
-      document.getElementById("slotBalance").textContent = balance;
+
+      balance -= bonusCost;
+      updateUI();
+      document.getElementById("winNotification").textContent = "🔥 КУПЛЕНА БОНУСКА SUGAR RUSH! 🔥";
+      playBeep(800, "square", 0.3);
+
+      // Разогреваем случайные споты множителями x2/x4
+      for (let i = 0; i < 6; i++) {
+        const r = Math.floor(Math.random() * ROWS);
+        const c = Math.floor(Math.random() * COLS);
+        multipliers[r][c] = 2;
+      }
+      await runCascadeGame();
     }
 
-    document.addEventListener("DOMContentLoaded", loadSquad);
+    async function runCascadeGame() {
+      isProcessing = true;
+      document.getElementById("srSpinBtn").disabled = true;
+      document.getElementById("winNotification").textContent = "Падение конфет...";
+
+      // Полное обновление поля новыми конфетами
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          grid[r][c] = getRandomCandy();
+        }
+      }
+      renderGrid();
+      playBeep(320, "triangle", 0.15);
+
+      await sleep(350);
+
+      let totalRoundWin = 0;
+      let cascadeCount = 0;
+
+      while (true) {
+        const clusters = findClusters();
+        if (clusters.length === 0) break;
+
+        cascadeCount++;
+        let stepWin = 0;
+
+        // Взрываем сыгравшие символы и обновляем множители спотов
+        for (const cluster of clusters) {
+          const candyType = cluster.type;
+          const size = cluster.cells.length;
+
+          // Базовый расчет выплаты за кластер
+          let baseClusterPay = (bet * 0.25) * (size - 4);
+
+          for (const cell of cluster.cells) {
+            const currentMult = multipliers[cell.r][cell.c];
+            stepWin += (baseClusterPay / size) * currentMult;
+
+            // Удваиваем множитель ячейки для следующего каскада (макс x128)
+            multipliers[cell.r][cell.c] = Math.min(128, multipliers[cell.r][cell.c] * 2);
+
+            const cellEl = document.getElementById(`cell-${cell.r}-${cell.c}`);
+            if (cellEl) cellEl.classList.add("pop");
+          }
+        }
+
+        playBeep(580 + (cascadeCount * 60), "sine", 0.2);
+        stepWin = Math.round(stepWin);
+        totalRoundWin += stepWin;
+
+        document.getElementById("winNotification").innerHTML = `💥 Каскад #${cascadeCount}! Занос: +${stepWin} ₽`;
+        await sleep(300);
+
+        // Удаляем взорванные конфеты
+        for (const cluster of clusters) {
+          for (const cell of cluster.cells) {
+            grid[cell.r][cell.c] = null;
+          }
+        }
+
+        // Гравитация (падение вниз) и досыпка сверху
+        applyGravityAndRefill();
+        renderGrid();
+        await sleep(400);
+      }
+
+      if (totalRoundWin > 0) {
+        balance += totalRoundWin;
+        document.getElementById("winNotification").innerHTML = `🎉 ИТОГО ВЫИГРЫШ: +${totalRoundWin} ₽!`;
+        playBeep(880, "square", 0.35);
+      } else {
+        document.getElementById("winNotification").textContent = "Пусто. 99% лудоманов выходят перед заносом!";
+      }
+
+      updateUI();
+      isProcessing = false;
+      document.getElementById("srSpinBtn").disabled = false;
+    }
+
+    /* Поиск соединенных кластеров от 5 штук (Breadth-First Search) */
+    function findClusters() {
+      const visited = Array.from({ length: ROWS }, () => Array(COLS).fill(false));
+      const winningClusters = [];
+
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          if (!visited[r][c] && grid[r][c] !== null) {
+            const candy = grid[r][c];
+            const clusterCells = [];
+            const queue = [{ r, c }];
+            visited[r][c] = true;
+
+            while (queue.length > 0) {
+              const current = queue.shift();
+              clusterCells.push(current);
+
+              const neighbors = [
+                { r: current.r - 1, c: current.c },
+                { r: current.r + 1, c: current.c },
+                { r: current.r, c: current.c - 1 },
+                { r: current.r, c: current.c + 1 }
+              ];
+
+              for (const n of neighbors) {
+                if (n.r >= 0 && n.r < ROWS && n.c >= 0 && n.c < COLS) {
+                  if (!visited[n.r][n.c] && grid[n.r][n.c] === candy) {
+                    visited[n.r][n.c] = true;
+                    queue.push(n);
+                  }
+                }
+              }
+            }
+
+            // В Sugar Rush кластер играет, если в нем 5 или больше одинаковых символов
+            if (clusterCells.length >= 5) {
+              winningClusters.push({ type: candy, cells: clusterCells });
+            }
+          }
+        }
+      }
+      return winningClusters;
+    }
+
+    /* Гравитация конфет вниз и генерация новых сверху */
+    function applyGravityAndRefill() {
+      for (let c = 0; c < COLS; c++) {
+        let emptyRow = ROWS - 1;
+        for (let r = ROWS - 1; r >= 0; r--) {
+          if (grid[r][c] !== null) {
+            if (emptyRow !== r) {
+              grid[emptyRow][c] = grid[r][c];
+              grid[r][c] = null;
+            }
+            emptyRow--;
+          }
+        }
+        for (let r = emptyRow; r >= 0; r--) {
+          grid[r][c] = getRandomCandy();
+        }
+      }
+    }
+
+    /* Отрисовка символов и множителей ячеек */
+    function renderGrid() {
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          const cellEl = document.getElementById(`cell-${r}-${c}`);
+          if (!cellEl) continue;
+
+          cellEl.className = "sr-cell";
+          cellEl.textContent = grid[r][c] || "";
+
+          // Подсветка нагретых спотов (желтый/розовый фон)
+          const mult = multipliers[r][c];
+          if (mult > 1) {
+            cellEl.style.backgroundColor = mult >= 8 ? "rgba(255, 46, 147, 0.45)" : "rgba(255, 215, 0, 0.35)";
+            let badge = cellEl.querySelector(".sr-multiplier-badge");
+            if (!badge) {
+              badge = document.createElement("span");
+              badge.className = "sr-multiplier-badge";
+              cellEl.appendChild(badge);
+            }
+            badge.textContent = `x${mult}`;
+          } else {
+            cellEl.style.backgroundColor = "rgba(255, 255, 255, 0.4)";
+          }
+        }
+      }
+    }
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadSquad();
+      initSlotEngine();
+    });
   </script>
 </body>
 </html>
