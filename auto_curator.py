@@ -4,12 +4,14 @@ import json
 import time
 import re
 import io
+import shutil
 import base64
 import requests
 from PIL import Image
 
 INCOMING_DIR = "incoming"
 IMAGES_DIR = "images"
+DELETED_DIR = "deleted"
 DATA_FILE = "data.json"
 KEYS_FILE = "keys.txt"
 ENV_FILE = ".env"
@@ -18,6 +20,7 @@ MIN_SCORE = 7
 
 os.makedirs(INCOMING_DIR, exist_ok=True)
 os.makedirs(IMAGES_DIR, exist_ok=True)
+os.makedirs(DELETED_DIR, exist_ok=True)
 
 
 class KeyManager:
@@ -117,6 +120,22 @@ def load_keys():
     return keys
 
 
+def move_to_deleted(src_path):
+    filename = os.path.basename(src_path)
+    target_path = os.path.join(DELETED_DIR, filename)
+
+    if os.path.exists(target_path):
+        base, ext = os.path.splitext(filename)
+        target_path = os.path.join(DELETED_DIR, f"{base}_{int(time.time())}{ext}")
+
+    try:
+        shutil.move(src_path, target_path)
+    except Exception as e:
+        print(f"[!] Не удалось переместить в {DELETED_DIR}: {e}")
+        if os.path.exists(src_path):
+            os.remove(src_path)
+
+
 def calculate_dhash(image_path, hash_size=8):
     try:
         with Image.open(image_path) as img:
@@ -144,7 +163,7 @@ def extract_json_payload(text):
 def analyze_image_with_gemini(image_path, key_manager):
     system_prompt = (
         "Ты беспощадный арт-директор и архивариус дворового футбольного клуба 'ФК ГазМяс'. "
-        "Твоя задача — объективно оценить историческую и мемную ценность кадра и написать едкое, живое описание.\n\n"
+        "Твоя задача - объективно оценить историческую и мемную ценность кадра и написать едкое, живое описание.\n\n"
         "ШКАЛА ОЦЕНКИ SCORE (СТРОГО 1-10, НЕ ЗАВЫШАЙ БАЛЛЫ ИЗ ВЕЖЛИВОСТИ!):\n"
         "- 1-4 балла: смазанные пальцы, пустые стены, скучные бытовые фото без действия, рандомные скриншоты переписок, размытые лица.\n"
         "- 5-6 баллов: обычное селфи, стандартная посиделка, ничего легендарного или смешного.\n"
@@ -240,7 +259,6 @@ def analyze_image_with_gemini(image_path, key_manager):
                 continue
 
             elif res.status_code == 400:
-                # Ошибка 400 относится к формату самого кадра, ключи живые
                 print(f"[!] Ошибка запроса 400 (Bad Request): {res.text}")
                 return {"error_bad_request": True}
 
@@ -315,8 +333,8 @@ def main():
 
         img_hash = calculate_dhash(incoming_path)
         if img_hash is not None and img_hash in processed_hashes:
-            print("-> Дубликат кадра (по хэшу). Удаление из incoming.")
-            os.remove(incoming_path)
+            print(f"-> Дубликат кадра (по хэшу). Перемещение в {DELETED_DIR}/")
+            move_to_deleted(incoming_path)
             continue
 
         result = analyze_image_with_gemini(incoming_path, key_manager)
@@ -325,16 +343,16 @@ def main():
             break
 
         if result.get("error_corrupt") or result.get("error_bad_request"):
-            print("-> Кадр поврежден или не принят API. Удаление из incoming.\n")
-            os.remove(incoming_path)
+            print(f"-> Кадр поврежден или не принят API. Перемещение в {DELETED_DIR}/\n")
+            move_to_deleted(incoming_path)
             continue
 
         score = result.get("score", 0)
         print(f"-> Оценка куратора: {score}/10")
 
         if score < MIN_SCORE:
-            print(f"-> Не дотягивает до нормы (< {MIN_SCORE}). Отсеян.\n")
-            os.remove(incoming_path)
+            print(f"-> Не дотягивает до нормы (< {MIN_SCORE}). Перемещение в {DELETED_DIR}/\n")
+            move_to_deleted(incoming_path)
             continue
 
         new_filename = f"photo_{int(time.time())}_{filename}"
