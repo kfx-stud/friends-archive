@@ -342,6 +342,11 @@
       letter-spacing: 0.5px;
     }
 
+    .player-badge.alt {
+      border-color: #38bdf8;
+      color: #38bdf8;
+    }
+
     .card-content {
       padding: 1.2rem;
       display: flex;
@@ -391,7 +396,6 @@
       font-weight: 700;
     }
 
-    /* Модальное окно Sugar Rush 7x7 */
     .slot-modal-overlay {
       display: none;
       position: fixed;
@@ -876,23 +880,23 @@
 
       <div class="sr-body-wrap">
         <div class="sr-rules-modal" id="srRulesModal">
-          <h4>Официальная таблица выплат (от ставки)[cite: 3, 10]</h4>
+          <h4>Официальная таблица выплат (от ставки)</h4>
           <table class="sr-rules-table">
             <thead>
               <tr><th>Символ</th><th>5 шт</th><th>6-9 шт</th><th>10-14 шт</th><th>15+ шт</th></tr>
             </thead>
             <tbody>
-              <tr><td>🔴 Леденец[cite: 3, 10]</td><td>1.0x[cite: 3, 10]</td><td>1.5x - 2.5x[cite: 3, 10]</td><td>5.0x - 70x[cite: 3, 10]</td><td><strong>150x</strong>[cite: 3, 10]</td></tr>
-              <tr><td>🧡 Сердце[cite: 3, 10]</td><td>0.75x[cite: 3, 10]</td><td>1.0x - 2.0x[cite: 3, 10]</td><td>4.0x - 60x[cite: 3, 10]</td><td><strong>100x</strong>[cite: 3, 10]</td></tr>
-              <tr><td>🍆 Драже[cite: 3, 10]</td><td>0.5x[cite: 3, 10]</td><td>0.75x - 1.5x[cite: 3, 10]</td><td>3.0x - 40x[cite: 3, 10]</td><td><strong>60x</strong>[cite: 3, 10]</td></tr>
-              <tr><td>⭐ Звезда[cite: 3, 10]</td><td>0.4x[cite: 3, 10]</td><td>0.5x - 1.25x[cite: 3, 10]</td><td>2.0x - 20x[cite: 3, 10]</td><td><strong>40x</strong>[cite: 3, 10]</td></tr>
-              <tr><td>🐻 Мишка кр.[cite: 3, 10]</td><td>0.3x[cite: 3, 10]</td><td>0.4x - 1.0x[cite: 3, 10]</td><td>1.5x - 15x[cite: 3, 10]</td><td><strong>30x</strong>[cite: 3, 10]</td></tr>
-              <tr><td>🟣 Мишка фиол.[cite: 3, 10]</td><td>0.25x[cite: 3, 10]</td><td>0.3x - 0.75x[cite: 3, 10]</td><td>1.25x - 12x[cite: 3, 10]</td><td><strong>25x</strong>[cite: 3, 10]</td></tr>
-              <tr><td>🟠 Мишка ор.[cite: 3, 10]</td><td>0.2x[cite: 3, 10]</td><td>0.25x - 0.5x[cite: 3, 10]</td><td>1.0x - 10x[cite: 3, 10]</td><td><strong>20x</strong>[cite: 3, 10]</td></tr>
+              <tr><td>🔴 Леденец</td><td>1.0x</td><td>1.5x - 2.5x</td><td>5.0x - 70x</td><td><strong>150x</strong></td></tr>
+              <tr><td>🧡 Сердце</td><td>0.75x</td><td>1.0x - 2.0x</td><td>4.0x - 60x</td><td><strong>100x</strong></td></tr>
+              <tr><td>🍆 Драже</td><td>0.5x</td><td>0.75x - 1.5x</td><td>3.0x - 40x</td><td><strong>60x</strong></td></tr>
+              <tr><td>⭐ Звезда</td><td>0.4x</td><td>0.5x - 1.25x</td><td>2.0x - 20x</td><td><strong>40x</strong></td></tr>
+              <tr><td>🐻 Мишка кр.</td><td>0.3x</td><td>0.4x - 1.0x</td><td>1.5x - 15x</td><td><strong>30x</strong></td></tr>
+              <tr><td>🟣 Мишка фиол.</td><td>0.25x</td><td>0.3x - 0.75x</td><td>1.25x - 12x</td><td><strong>25x</strong></td></tr>
+              <tr><td>🟠 Мишка ор.</td><td>0.2x</td><td>0.25x - 0.5x</td><td>1.0x - 10x</td><td><strong>20x</strong></td></tr>
             </tbody>
           </table>
           <p style="font-size: 0.75rem; color: #8cc4ff; margin-top: 0.4rem;">
-            <strong>Multiplier Spots:</strong> Первый взрыв отмечает ячейку[cite: 4]. Второй взрыв на той же ячейке дает <strong>x2</strong>, далее удваивается до <strong>x128</strong>[cite: 4]. Несколько множителей в одном кластере <strong>складываются</strong>[cite: 4]!
+            <strong>Multiplier Spots:</strong> Первый взрыв отмечает ячейку. Второй взрыв на той же ячейке дает <strong>x2</strong>, далее удваивается до <strong>x128</strong>. Несколько множителей в одном кластере <strong>складываются</strong>!
           </p>
           <button class="btn-sugar" style="align-self: center; margin-top: 0.5rem;" onclick="toggleRulesModal()">Закрыть</button>
         </div>
@@ -945,16 +949,17 @@
 
       try {
         const response = await fetch("data.json?t=" + new Date().getTime());
-        if (!response.ok) throw new Error("Ошибка data.json");
+        if (!response.ok) throw new Error("HTTP error " + response.status);
         const cards = await response.json();
+
+        if (!Array.isArray(cards) || cards.length === 0) {
+          counter.textContent = "Игроков в обойме: 0";
+          container.innerHTML = "<p style='color: var(--text-muted);'>Обойма пуста. Добавьте кадры в incoming/ и запустите auto_curator.py.</p>";
+          return;
+        }
 
         counter.textContent = `Игроков в обойме: ${cards.length}`;
         container.innerHTML = "";
-
-        if (cards.length === 0) {
-          container.innerHTML = "<p style='color: var(--text-muted);'>Обойма пуста.</p>";
-          return;
-        }
 
         cards.forEach((item, index) => {
           const cardEl = document.createElement("div");
@@ -978,13 +983,12 @@
           container.appendChild(cardEl);
         });
       } catch (err) {
-        counter.textContent = "Сбой трансферного листа";
+        console.warn("data.json недоступен или пуст:", err);
+        counter.textContent = "Игроков в обойме: 0";
+        container.innerHTML = "<p style='color: var(--text-muted);'>Состав не загружен (запустите через локальный веб-сервер или куратор).</p>";
       }
     }
 
-    /* -------------------------------------------------------------
-       ОРИГИНАЛЬНАЯ МАТЕМАТИКА И ВЗВЕШЕННОЕ РАСПРЕДЕЛЕНИЕ СИМВОЛОВ
-       ------------------------------------------------------------- */
     const ROWS = 7;
     const COLS = 7;
     const MAX_WIN_MULT = 5000;
@@ -1009,6 +1013,7 @@
 
     function initSlotEngine() {
       const gridEl = document.getElementById("slotGrid");
+      if (!gridEl) return;
       gridEl.innerHTML = "";
       grid = [];
       spotState = [];
@@ -1030,9 +1035,7 @@
       updateUI();
     }
 
-    // Взвешенное выпадение: частые кластеры из дешёвых конфет, редкий Scatter
     function getRandomCandy() {
-      // 0.35% шанс выпадения Scatter на ячейку (сбалансировано для 49 ячеек)
       if (Math.random() < 0.0035) {
         return "🎰";
       }
@@ -1068,16 +1071,23 @@
     }
 
     function updateUI() {
-      document.getElementById("balanceDisplay").textContent = balance.toLocaleString("ru-RU") + " ₽";
-      document.getElementById("betDisplay").textContent = bet.toLocaleString("ru-RU") + " ₽";
-      document.getElementById("buyBonusPrice").textContent = (bet * 100).toLocaleString("ru-RU") + " ₽";
-
+      const bDisp = document.getElementById("balanceDisplay");
+      const betDisp = document.getElementById("betDisplay");
+      const buyPrice = document.getElementById("buyBonusPrice");
       const fsBox = document.getElementById("freeSpinsCounterBox");
-      if (isFreeSpinsRound) {
-        fsBox.style.display = "flex";
-        document.getElementById("freeSpinsDisplay").textContent = freeSpinsLeft;
-      } else {
-        fsBox.style.display = "none";
+      const fsDisp = document.getElementById("freeSpinsDisplay");
+
+      if (bDisp) bDisp.textContent = balance.toLocaleString("ru-RU") + " ₽";
+      if (betDisp) betDisp.textContent = bet.toLocaleString("ru-RU") + " ₽";
+      if (buyPrice) buyPrice.textContent = (bet * 100).toLocaleString("ru-RU") + " ₽";
+
+      if (fsBox && fsDisp) {
+        if (isFreeSpinsRound) {
+          fsBox.style.display = "flex";
+          fsDisp.textContent = freeSpinsLeft;
+        } else {
+          fsBox.style.display = "none";
+        }
       }
     }
 
@@ -1088,13 +1098,17 @@
     }
 
     function openSlotModal() {
-      document.getElementById("slotOverlay").style.display = "flex";
-      if (grid.length === 0) initSlotEngine();
+      const overlay = document.getElementById("slotOverlay");
+      if (overlay) {
+        overlay.style.display = "flex";
+        if (grid.length === 0) initSlotEngine();
+      }
     }
 
     function closeSlotModal() {
       if (isFreeSpinsRound) return;
-      document.getElementById("slotOverlay").style.display = "none";
+      const overlay = document.getElementById("slotOverlay");
+      if (overlay) overlay.style.display = "none";
     }
 
     function closeSlotOnBackdrop(e) {
@@ -1103,7 +1117,9 @@
 
     function toggleRulesModal() {
       const modal = document.getElementById("srRulesModal");
-      modal.style.display = modal.style.display === "flex" ? "none" : "flex";
+      if (modal) {
+        modal.style.display = modal.style.display === "flex" ? "none" : "flex";
+      }
     }
 
     function playBeep(freq = 440, type = "sine", duration = 0.1) {
@@ -1123,6 +1139,7 @@
 
     function shakeMachine() {
       const machine = document.getElementById("srMachine");
+      if (!machine) return;
       machine.classList.remove("shake");
       void machine.offsetWidth;
       machine.classList.add("shake");
@@ -1181,7 +1198,7 @@
 
         if (totalBonusWin >= bet * MAX_WIN_MULT) {
           totalBonusWin = bet * MAX_WIN_MULT;
-          document.getElementById("winNotification").innerHTML = `🚨 MAX WIN 5 000X ДОСТИГНУТ! 🚨`;
+          document.getElementById("winNotification").innerHTML = "🚨 MAX WIN 5 000X ДОСТИГНУТ! 🚨";
           shakeMachine();
           break;
         }
@@ -1282,9 +1299,12 @@
 
     async function runCascadeGame() {
       isProcessing = true;
-      document.getElementById("srSpinBtn").disabled = true;
+      const spinBtn = document.getElementById("srSpinBtn");
+      if (spinBtn) spinBtn.disabled = true;
       const winNotify = document.getElementById("winNotification");
-      winNotify.classList.remove("bigwin");
+      if (winNotify) {
+        winNotify.classList.remove("bigwin");
+      }
 
       for (let r = 0; r < ROWS; r++) {
         for (let c = 0; c < COLS; c++) {
@@ -1303,8 +1323,8 @@
         }
       }
       if (scatterCount >= 3) {
-        const awardedSpins = scatterCount === 3 ? 10 : (scatterCount === 4 ? 12 : (scatterCount === 5 ? 15 : (scatterCount === 6 ? 20 : 30)));[cite: 4]
-        winNotify.innerHTML = `🎰 ВЫПАЛО ${scatterCount} СКАТТЕРА! +${awardedSpins} СПИНОВ!`;
+        const awardedSpins = scatterCount === 3 ? 10 : (scatterCount === 4 ? 12 : (scatterCount === 5 ? 15 : (scatterCount === 6 ? 20 : 30)));
+        if (winNotify) winNotify.innerHTML = `🎰 ВЫПАЛО ${scatterCount} СКАТТЕРА! +${awardedSpins} СПИНОВ!`;
         shakeMachine();
         playBeep(980, "square", 0.5);
         await sleep(700);
@@ -1314,7 +1334,7 @@
           startFreeSpinsSession(awardedSpins);
           return 0;
         } else {
-          freeSpinsLeft += awardedSpins;[cite: 4]
+          freeSpinsLeft += awardedSpins;
           updateUI();
         }
       }
@@ -1336,7 +1356,7 @@
 
           let clusterMultiplierSum = 0;
           for (const cell of cluster.cells) {
-            clusterMultiplierSum += (spotState[cell.r][cell.c].mult || 1);[cite: 4]
+            clusterMultiplierSum += (spotState[cell.r][cell.c].mult || 1);
           }
 
           stepWin += basePay * (clusterMultiplierSum / count);
@@ -1344,11 +1364,11 @@
           for (const cell of cluster.cells) {
             const spot = spotState[cell.r][cell.c];
             if (!spot.marked) {
-              spot.marked = true;[cite: 4]
+              spot.marked = true;
             } else if (spot.mult === 0) {
-              spot.mult = 2;[cite: 4]
+              spot.mult = 2;
             } else {
-              spot.mult = Math.min(128, spot.mult * 2);[cite: 4]
+              spot.mult = Math.min(128, spot.mult * 2);
             }
 
             const cellEl = document.getElementById(`cell-${cell.r}-${cell.c}`);
@@ -1363,7 +1383,7 @@
         stepWin = Math.round(stepWin);
         totalRoundWin += stepWin;
 
-        winNotify.innerHTML = `💥 Каскад #${cascadeCount}! Занос: +${stepWin.toLocaleString("ru-RU")} ₽`;
+        if (winNotify) winNotify.innerHTML = `💥 Каскад #${cascadeCount}! Занос: +${stepWin.toLocaleString("ru-RU")} ₽`;
         if (stepWin > bet * 5) shakeMachine();
 
         await sleep(420);
@@ -1382,17 +1402,19 @@
 
       if (totalRoundWin > 0) {
         balance += totalRoundWin;
-        winNotify.classList.add("bigwin");
-        winNotify.innerHTML = `🎉 ЗАНОС СПИНА: +${totalRoundWin.toLocaleString("ru-RU")} ₽!`;
+        if (winNotify) {
+          winNotify.classList.add("bigwin");
+          winNotify.innerHTML = `🎉 ЗАНОС СПИНА: +${totalRoundWin.toLocaleString("ru-RU")} ₽!`;
+        }
         shakeMachine();
         playBeep(920, "square", 0.4);
-      } else if (!isFreeSpinsRound) {
+      } else if (!isFreeSpinsRound && winNotify) {
         winNotify.textContent = "Пусто. 99% лудоманов выходят перед заносом!";
       }
 
       updateUI();
       isProcessing = false;
-      document.getElementById("srSpinBtn").disabled = false;
+      if (spinBtn) spinBtn.disabled = false;
       return totalRoundWin;
     }
 
@@ -1476,7 +1498,8 @@
     }
 
     window.addEventListener("keydown", (e) => {
-      if (document.getElementById("slotOverlay").style.display === "flex") {
+      const overlay = document.getElementById("slotOverlay");
+      if (overlay && overlay.style.display === "flex") {
         if (e.code === "Space" || e.code === "Enter") {
           e.preventDefault();
           triggerSpin();
