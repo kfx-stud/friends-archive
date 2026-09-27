@@ -198,7 +198,7 @@ def analyze_image_with_gemini(image_path, key_manager):
             print("[X] Все доступные API-ключи исчерпаны.")
             return None
 
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key={api_key}"
 
         try:
             res = requests.post(url, headers=headers, json=payload, timeout=30)
