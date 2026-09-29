@@ -18,6 +18,7 @@ PENDING_FILE = "pending.json"
 KEYS_FILE = "keys.txt"
 ENV_FILE = ".env"
 
+MODEL_NAME = "gemini-3.8-flash"
 MIN_SCORE = 7
 
 TITLE_SIMILARITY_THRESHOLD = 0.70
@@ -26,6 +27,17 @@ CAPTION_SIMILARITY_THRESHOLD = 0.72
 os.makedirs(INCOMING_DIR, exist_ok=True)
 os.makedirs(PENDING_DIR, exist_ok=True)
 os.makedirs(DELETED_DIR, exist_ok=True)
+
+# Инициализация постоянной HTTP-сессии
+session = requests.Session()
+session.headers.update({
+    "Content-Type": "application/json",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+})
+
+# Если VPN запущен в режиме локального SOCKS5/HTTP прокси (например, 10808, 20808 или 7890),
+# раскомментируй строку ниже и укажи свой порт:
+# session.proxies = {"http": "socks5://127.0.0.1:20808", "https": "socks5://127.0.0.1:20808"}
 
 
 class KeyManager:
@@ -203,19 +215,19 @@ def analyze_image_with_gemini(image_path, key_manager):
         "КЛЮЧЕВЫЕ ТЕМАТИЧЕСКИЕ КОРЗИНЫ (СТРОГО ЧЕРЕДУЙ ИХ, НЕЛЬЗЯ ПОВТОРЯТЬ ОДНО И ТО ЖЕ!):\n"
         "Категорически запрещено вставлять Базанова, Свит Бонанзу или цитату про солнышко в каждый кадр. Выбирай только ОДНУ наиболее подходящую тему под конкретный визуал:\n\n"
         "1. КОРЗИНА 'ЛУДКА И ШУГАР РАШ' (ГЛАВНЫЙ ПРИОРИТЕТ В АЗАРТЕ):\n"
-        "- Шугар Раш (Sugar Rush), кластеры 7х7, споты х128, покупка бонуски, розовая бурмалда, мармеладные мишки.\n"
+        "- Шугар Раш (Sugar Rush), покупка бонуски, розовая бурмалда, мармеладные мишки, концы (кони) бурмалдцы.\n"
         "- Теорема лудки: 99% лудоманов останавливаются ровно за шаг до мега-заноса.\n"
+        "- 'Прикормить собачек для повышения шансов на бонуску'.\n"
         "- 'Гоша, мы не пойдем в 666' (отказ от гиблой суеты, выбор надежного слота или пути домой).\n\n"
         "2. КОРЗИНА 'БЫТ, ПРИРОДА И ВИТАМИНЫ':\n"
         "- Дибуны ('нихуя Дибуны отстроили', дачные хроники, станция, лес).\n"
-        "- 'Прикормить собачек' (забота о фауне, дворовые шашлыки, делёж сосисок).\n"
-        "- 'Яблоки зеленые сорвал да поел', ворованный кислый крыжовник, виноград, витаминный заряд перед вторым таймом.\n\n"
+        "- 'Яблоки зеленые сорвал да поел', виноград, витаминный заряд перед вторым таймом.\n\n"
         "3. КОРЗИНА 'РЕАЛЬНЫЕ ПАЦАНЫ':\n"
-        "- Районный вайб, цитаты и повадки: Базанов (дал джазу), Колян, Вован, Эдик.\n"
+        "- Районный вайб, цитаты и повадки: Базанов, Колян, Вован, Эдик.\n"
         "- Использовать ТОЛЬКО если на фото видна конкретная районная нелепость или характерная поза.\n\n"
         "4. КОРЗИНА 'ЛОКАЦИИ И РУКОВОДСТВО':\n"
         "- Гараж на Гороховой, Франк на Сенной, Кресты (Карл Фридрих), Студос.\n"
-        "- Директор Платон Нодь (Первый и Единственный), Менеджер Артем Визиров, Тренер Иван Плыгун, саппорт kfx.\n\n"
+        "- Директор Платон Нодь (Первый и Единственный), Менеджер Артем Визиров, Тренер Иван Плыгун, Базанов Саня, Базанов Серега.\n\n"
         "5. КОРЗИНА 'АРМЕЙСКАЯ СТРОЕВАЯ':\n"
         "- Дисциплина, строевой шаг, клубный гимн ('Солнышко светит, курочка клюет...'). Использовать редко, только для строгих групповых фото.\n\n"
         "Верни ответ СТРОГО в формате валидного JSON:\n"
@@ -225,9 +237,9 @@ def analyze_image_with_gemini(image_path, key_manager):
     try:
         with Image.open(image_path) as img:
             rgb_img = img.convert("RGB")
-            rgb_img.thumbnail((1600, 1600), Image.Resampling.LANCZOS)
+            rgb_img.thumbnail((1024, 1024), Image.Resampling.LANCZOS)
             buffer = io.BytesIO()
-            rgb_img.save(buffer, format="JPEG", quality=85)
+            rgb_img.save(buffer, format="JPEG", quality=75)
             b64_image = base64.b64encode(buffer.getvalue()).decode("utf-8")
     except Exception as e:
         print(f"[!] Файл поврежден ({image_path}): {e}")
@@ -243,7 +255,6 @@ def analyze_image_with_gemini(image_path, key_manager):
         "generationConfig": {"temperature": 0.3, "response_mime_type": "application/json"}
     }
 
-    headers = {"Content-Type": "application/json"}
     errors_503_count = 0
 
     while True:
@@ -252,10 +263,10 @@ def analyze_image_with_gemini(image_path, key_manager):
             print("[X] Все доступные API-ключи исчерпаны.")
             return None
 
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key={api_key}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL_NAME}:generateContent?key={api_key}"
 
         try:
-            res = requests.post(url, headers=headers, json=payload, timeout=30)
+            res = session.post(url, json=payload, timeout=60)
 
             if res.status_code == 200:
                 errors_503_count = 0
@@ -265,45 +276,45 @@ def analyze_image_with_gemini(image_path, key_manager):
 
             elif res.status_code == 503:
                 errors_503_count += 1
-                if errors_503_count < 10:
-                    print(f"Сервер занят (503). Пауза 8 сек... (попытка {errors_503_count}/10)")
-                    time.sleep(8)
+                if errors_503_count < 3:
+                    print(f"Сервер занят (503). Пауза 5 сек... (попытка {errors_503_count}/3)")
+                    time.sleep(5)
                     continue
                 else:
-                    print("10 ошибок 503 подряд. Смена ключа (пауза на 60 сек)...")
+                    print("Модель перегружена (503). Смена ключа на 30 сек...")
                     errors_503_count = 0
-                    key_manager.mark_cooldown(seconds=60)
+                    key_manager.mark_cooldown(seconds=30)
                     continue
 
             elif res.status_code == 429:
                 errors_503_count = 0
-                print("Превышен лимит запросов (429). Пауза для текущего ключа на 60 сек...")
+                print(f"Превышен лимит (429) для ключа ...{api_key[-6:]}. Пауза на 60 сек...")
                 key_manager.mark_cooldown(seconds=60)
                 continue
 
             elif res.status_code == 400:
-                print(f"[!] Ошибка запроса 400 (Bad Request): {res.text}")
+                print(f"[!] Ошибка 400 (Bad Request): {res.text}")
                 return {"error_bad_request": True}
 
             elif res.status_code in (401, 403):
                 errors_503_count = 0
-                print(f"Ошибка авторизации ({res.status_code}): {res.text}. Исключаем ключ...")
+                print(f"Ошибка авторизации ({res.status_code}) для ключа ...{api_key[-6:]}. Исключаем...")
                 key_manager.mark_dead()
                 continue
 
             else:
                 errors_503_count = 0
-                print(f"Неизвестный статус: {res.status_code}. Смена ключа...")
+                print(f"Статус {res.status_code}: {res.text[:120]}. Переключение ключа...")
                 key_manager.switch_to_next()
                 time.sleep(2)
                 continue
 
-        except requests.exceptions.RequestException as e:
-            print(f"Сетевой сбой: {e}. Пауза 5 сек...")
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:
+            print(f"Сетевой сбой ({type(e).__name__}). Проверьте подключение/прокси. Пауза 5 сек...")
             time.sleep(5)
             continue
         except Exception as e:
-            print(f"Ошибка обработки: {e}. Повтор...")
+            print(f"Ошибка парсинга/обработки: {e}. Повтор...")
             time.sleep(2)
             continue
 
@@ -331,6 +342,7 @@ def main():
     keys = load_keys()
     key_manager = KeyManager(keys)
 
+    print(f"Используемая модель: {MODEL_NAME}")
     print(f"Загружено ключей: {len(keys)}")
     key_manager.print_status()
 
@@ -387,7 +399,6 @@ def main():
             move_to_deleted(incoming_path)
             continue
 
-        # Сохраняем кандидат во временную папку pending_images
         new_filename = f"pending_{int(time.time())}_{filename}"
         temp_dest = os.path.join(PENDING_DIR, new_filename)
 
