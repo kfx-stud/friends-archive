@@ -53,6 +53,7 @@
 
     main { flex: 1; padding: 2rem; max-width: 1400px; margin: 0 auto; width: 100%; }
 
+    /* Очередь кандидатов */
     .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
     .gallery-item {
       background: var(--card-bg);
@@ -93,21 +94,48 @@
     .item-btn.btn-reject { background: rgba(218, 54, 51, 0.25); color: #f87171; }
     .item-btn.btn-reject:hover { background: var(--red); color: #fff; }
 
-    /* Таблица заявок */
+    /* Таблица заявок с возможностью редактирования */
     .requests-list { display: flex; flex-direction: column; gap: 1rem; }
     .req-card {
       background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
-      padding: 1.2rem; display: grid; grid-template-columns: 140px 1fr 180px; gap: 1.5rem; align-items: center;
+      padding: 1.2rem; display: grid; grid-template-columns: 140px 1fr 180px; gap: 1.5rem; align-items: start;
     }
-    .req-thumb { width: 140px; height: 100px; background: #000; border-radius: 6px; overflow: hidden; }
+    .req-thumb { width: 140px; height: 105px; background: #000; border-radius: 6px; overflow: hidden; margin-top: 4px; }
     .req-thumb img { width: 100%; height: 100%; object-fit: cover; }
-    .req-badge { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; }
+    .req-badge { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 6px; }
     .req-badge.delete { background: rgba(218, 54, 51, 0.3); color: #f87171; border: 1px solid var(--red); }
     .req-badge.edit { background: rgba(255, 215, 0, 0.2); color: var(--accent); border: 1px solid var(--accent); }
-    .req-actions { display: flex; flex-direction: column; gap: 0.5rem; }
-    .req-btn { padding: 0.6rem; border: none; border-radius: 6px; font-weight: 800; text-transform: uppercase; font-size: 0.8rem; cursor: pointer; }
+    
+    .req-actions { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 4px; }
+    .req-btn { padding: 0.65rem; border: none; border-radius: 6px; font-weight: 800; text-transform: uppercase; font-size: 0.8rem; cursor: pointer; }
 
-    /* Модалка */
+    /* Поля редактирования внутри карточки заявки */
+    .req-input-title {
+      background: #0d1117;
+      border: 1px solid var(--accent);
+      color: #fff;
+      padding: 8px 10px;
+      border-radius: 4px;
+      font-weight: 700;
+      width: 100%;
+      font-size: 0.95rem;
+      margin-bottom: 6px;
+    }
+    .req-input-caption {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 8px 10px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      width: 100%;
+      min-height: 60px;
+      resize: vertical;
+      font-family: inherit;
+    }
+    .req-input-title:focus, .req-input-caption:focus { outline: none; border-color: var(--accent); }
+
+    /* Модальное окно модерации */
     .modal-overlay {
       display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.88);
       backdrop-filter: blur(10px); z-index: 100; align-items: center; justify-content: center; padding: 1rem;
@@ -128,7 +156,7 @@
     .field-group { display: flex; flex-direction: column; gap: 0.35rem; }
     .field-group label { font-size: 0.75rem; text-transform: uppercase; color: var(--muted); font-weight: 700; }
     .field-group input, .field-group textarea {
-      background: #0d1117; border: 1px solid var(--border); color: #fff; padding: 0.65rem; border-radius: 6px; font-size: 0.95rem;
+      background: #0d1117; border: 1px solid var(--border); color: #fff; padding: 0.65rem; border-radius: 6px; font-size: 0.95rem; font-family: inherit;
     }
     .field-group textarea { min-height: 90px; resize: vertical; }
     .modal-actions { display: flex; gap: 1rem; margin-top: auto; padding-top: 1rem; }
@@ -155,7 +183,7 @@
       <div id="galleryContainer" class="gallery-grid"></div>
       <div class="empty-state" id="emptyCandidates" style="display: none;">
         <h2>Очередь чиста!</h2>
-        <p style="margin-top: 0.5rem;">Кандидаты от Gemini и идеи людей подтянутся автоматически.</p>
+        <p style="margin-top: 0.5rem;">Кандидаты от Gemini и идеи болельщиков появятся автоматически.</p>
       </div>
     </div>
 
@@ -163,7 +191,7 @@
       <div id="requestsContainer" class="requests-list"></div>
       <div class="empty-state" id="emptyRequests" style="display: none;">
         <h2>Заявок нет!</h2>
-        <p style="margin-top: 0.5rem;">Посетители пока не присылали правок.</p>
+        <p style="margin-top: 0.5rem;">Посетители пока не присылали правок или жалоб.</p>
       </div>
     </div>
   </main>
@@ -214,7 +242,6 @@
       try {
         const res = await fetch("/api/pending?t=" + Date.now());
         const data = await res.json();
-        // Рендерим только если данные реально изменились
         if (JSON.stringify(data) !== JSON.stringify(queue)) {
           queue = data;
           document.getElementById("tabCandidatesBtn").textContent = `Очередь (${queue.length})`;
@@ -295,15 +322,31 @@
         const row = document.createElement("div");
         row.className = "req-card";
         const isDelete = req.type === 'delete';
-        const badge = isDelete ? '<span class="req-badge delete">Удаление</span>' : '<span class="req-badge edit">Правка</span>';
+        const badge = isDelete 
+          ? '<span class="req-badge delete">Удаление кадра</span>' 
+          : '<span class="req-badge edit">Правка описания</span>';
+
+        const editFieldsHtml = isDelete ? `
+          <div style="margin-top: 4px;"><strong>Было:</strong> ${escapeHtml(req.current_title)} — ${escapeHtml(req.current_caption)}</div>
+        ` : `
+          <div style="font-size: 0.8rem; color: var(--muted); margin-bottom: 6px;">
+            <strong>В базе:</strong> ${escapeHtml(req.current_title)} — ${escapeHtml(req.current_caption)}
+          </div>
+          <div style="display: flex; flex-direction: column;">
+            <input type="text" id="edit_title_${req.id}" class="req-input-title" 
+                   value="${escapeHtml(req.new_title || req.current_title)}" 
+                   placeholder="Заголовок">
+            <textarea id="edit_caption_${req.id}" class="req-input-caption" 
+                      placeholder="Описание / Панчлайн">${escapeHtml(req.new_caption || req.current_caption)}</textarea>
+          </div>
+        `;
 
         row.innerHTML = `
-          <div class="req-thumb"><img src="${req.file}" alt="Thumb"></div>
+          <div class="req-thumb"><img src="${req.file}" alt="Thumb" loading="lazy"></div>
           <div>
             ${badge}
-            <div style="color: var(--muted); font-size: 0.75rem; margin: 4px 0;">Дата: ${req.time}</div>
-            <div><strong>Было:</strong> ${escapeHtml(req.current_title)} - ${escapeHtml(req.current_caption)}</div>
-            ${!isDelete ? `<div style="color: var(--accent); margin-top:4px;"><strong>Предлагают:</strong> ${escapeHtml(req.new_title)} /${escapeHtml(req.new_caption)}</div>` : ''}
+            <div style="color: var(--muted); font-size: 0.75rem; margin-bottom: 6px;">Время заявки: ${req.time}</div>
+            ${editFieldsHtml}
           </div>
           <div class="req-actions">
             <button class="req-btn" style="background: var(--green); color:#fff;" onclick="resolveRequest('${req.id}', 'apply')">Применить</button>
@@ -317,11 +360,28 @@
     async function resolveRequest(reqId, action) {
       isBusy = true;
       try {
+        let customTitle = null;
+        let customCaption = null;
+
+        const titleInput = document.getElementById(`edit_title_${reqId}`);
+        const captionInput = document.getElementById(`edit_caption_${reqId}`);
+
+        if (titleInput && captionInput) {
+          customTitle = titleInput.value.trim();
+          customCaption = captionInput.value.trim();
+        }
+
         await fetch("/api/handle_request", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: reqId, action: action })
+          body: JSON.stringify({ 
+            id: reqId, 
+            action: action,
+            custom_title: customTitle,
+            custom_caption: customCaption
+          })
         });
+
         userRequests = userRequests.filter(x => x.id !== reqId);
         document.getElementById("tabRequestsBtn").textContent = `Заявки посетителей (${userRequests.length})`;
         renderRequests();
@@ -424,7 +484,6 @@
     });
 
     loadData();
-    // Фоновое автообновление без перезагрузки страницы
     setInterval(loadData, 3000);
   </script>
 </body>

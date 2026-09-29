@@ -15,9 +15,9 @@ IMAGES_DIR = "images"
 DELETED_DIR = "deleted"
 PENDING_DIR = "pending_images"
 
-# ВСТАВЬ СВОИ ДАННЫЕ ОТ JSONBIN.IO
-JSONBIN_BIN_ID = "6abbe438ffd5d160533c11f1"
-JSONBIN_MASTER_KEY = "$2a$10$VRoPiN8zdepg2AgC69BLZudokIxDgyL3LmDVPcv5HlHKRAalpZ5Vq"
+# ТВОИ КЛЮЧИ ОТ JSONBIN.IO
+JSONBIN_BIN_ID = "ВСТАВЬ_СВОЙ_BIN_ID"
+JSONBIN_MASTER_KEY = "ВСТАВЬ_СВОЙ_MASTER_KEY"
 
 os.makedirs(IMAGES_DIR, exist_ok=True)
 os.makedirs(DELETED_DIR, exist_ok=True)
@@ -43,6 +43,7 @@ def save_json(filepath, data):
         os.fsync(f.fileno())
 
 
+# Фоновый опрос облака JSONBin
 def sync_cloud_buffer():
     if not JSONBIN_BIN_ID or "ВСТАВЬ" in JSONBIN_BIN_ID:
         return
@@ -62,7 +63,7 @@ def sync_cloud_buffer():
                 else:
                     data = []
 
-                # Игнорируем тестовые маркеры
+                # Фильтруем тестовые заглушки
                 data = [x for x in data if not x.get("init")]
 
                 if len(data) > 0:
@@ -91,16 +92,16 @@ def sync_cloud_buffer():
                     save_json(PENDING_FILE, pending)
                     save_json(REQUESTS_FILE, reqs)
 
-                    # Очищаем очередь в облаке, оставляя валидный контейнер
+                    # Очищаем облачную очередь, сохраняя валидный JSON {"queue": []}
                     requests.put(url, headers={**headers, "Content-Type": "application/json"}, json={"queue": []}, timeout=10)
-                    print("[✓] Облачная очередь перенесена на ПК и очищена.")
+                    print("[✓] Облачный буфер очищен и перенесен на ПК.")
         except Exception:
             pass
 
         time.sleep(5)
 
 
-# Фоновый опрос облака
+# Запуск фоновой синхронизации
 cloud_thread = threading.Thread(target=sync_cloud_buffer, daemon=True)
 cloud_thread.start()
 
@@ -171,6 +172,8 @@ class AdminHandler(SimpleHTTPRequestHandler):
         if path == "/api/handle_request":
             action = req.get("action")
             req_id = req.get("id")
+            custom_title = req.get("custom_title")
+            custom_caption = req.get("custom_caption")
 
             reqs = load_json(REQUESTS_FILE)
             target = next((x for x in reqs if x.get("id") == req_id), None)
@@ -194,10 +197,8 @@ class AdminHandler(SimpleHTTPRequestHandler):
                 elif target.get("type") == "edit":
                     for item in db:
                         if item.get("file") == file_target:
-                            if target.get("new_title"):
-                                item["title"] = target["new_title"]
-                            if target.get("new_caption"):
-                                item["caption"] = target["new_caption"]
+                            item["title"] = custom_title if custom_title is not None else target.get("new_title", item.get("title"))
+                            item["caption"] = custom_caption if custom_caption is not None else target.get("new_caption", item.get("caption"))
                             break
                     save_json(DATA_FILE, db)
 
