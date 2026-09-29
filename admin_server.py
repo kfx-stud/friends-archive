@@ -98,7 +98,7 @@ def sync_cloud_buffer():
         except Exception:
             pass
 
-        time.sleep(5)
+        time.sleep(30)
 
 
 # Запуск фоновой синхронизации
