@@ -16,7 +16,7 @@ DELETED_DIR = "deleted"
 PENDING_DIR = "pending_images"
 
 # ТВОИ КЛЮЧИ ОТ JSONBIN.IO
-JSONBIN_BIN_ID = "66f98725acd3cb34a88dbba1"
+JSONBIN_BIN_ID = "6abbe438ffd5d160533c11f1"
 JSONBIN_MASTER_KEY = "$2a$10$VRoPiN8zdepg2AgC69BLZudokIxDgyL3LmDVPcv5HlHKRAalpZ5Vq"
 
 os.makedirs(IMAGES_DIR, exist_ok=True)
