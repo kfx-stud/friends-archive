@@ -1,280 +1,159 @@
 import os
 import json
 import shutil
-import time
-import threading
-from urllib.parse import urlparse
-from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
-import requests
+from pathlib import Path
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
-PORT = 8080
-PENDING_FILE = "pending.json"
-REQUESTS_FILE = "requests.json"
-DATA_FILE = "data.json"
-IMAGES_DIR = "images"
-DELETED_DIR = "deleted"
-PENDING_DIR = "pending_images"
+PORT = 8000
+BASE_DIR = Path(__file__).resolve().parent
 
-# ТВОИ КЛЮЧИ ОТ JSONBIN.IO
-JSONBIN_BIN_ID = "6abbe438ffd5d160533c11f1"
-JSONBIN_MASTER_KEY = "$2a$10$VRoPiN8zdepg2AgC69BLZudokIxDgyL3LmDVPcv5HlHKRAalpZ5Vq"
+DATA_FILE = BASE_DIR / "data.json"
+PENDING_FILE = BASE_DIR / "pending.json"
+REQUESTS_FILE = BASE_DIR / "requests.json"
 
-os.makedirs(IMAGES_DIR, exist_ok=True)
-os.makedirs(DELETED_DIR, exist_ok=True)
-os.makedirs(PENDING_DIR, exist_ok=True)
+PENDING_DIR = BASE_DIR / "pending"
+IMAGES_DIR = BASE_DIR / "images"
+DELETED_DIR = BASE_DIR / "deleted"
 
-
-def load_json(filepath):
-    if os.path.exists(filepath):
+def read_json_file(path: Path) -> list:
+    if path.exists():
         try:
-            with open(filepath, "r", encoding="utf-8") as f:
-                content = f.read().strip()
-                if content:
-                    return json.loads(content)
+            with open(path, "r", encoding="utf-8") as f:
+                return json.load(f)
         except Exception:
             return []
     return []
 
-
-def save_json(filepath, data):
-    with open(filepath, "w", encoding="utf-8") as f:
+def write_json_file(path: Path, data: list):
+    temp = path.with_suffix(".tmp")
+    with open(temp, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-        f.flush()
-        os.fsync(f.fileno())
+    temp.replace(path)
 
-
-# Фоновый опрос облака JSONBin
-def sync_cloud_buffer():
-    if not JSONBIN_BIN_ID or "ВСТАВЬ" in JSONBIN_BIN_ID:
-        return
-
-    url = f"https://api.jsonbin.io/v3/b/{JSONBIN_BIN_ID}"
-    headers = {"X-Master-Key": JSONBIN_MASTER_KEY}
-
-    while True:
-        try:
-            res = requests.get(f"{url}/latest", headers=headers, timeout=10)
-            if res.status_code == 200:
-                record = res.json().get("record", {})
-                if isinstance(record, dict):
-                    data = record.get("queue", [])
-                elif isinstance(record, list):
-                    data = record
-                else:
-                    data = []
-
-                # Фильтруем тестовые заглушки
-                data = [x for x in data if not x.get("init")]
-
-                if len(data) > 0:
-                    print(f"[*] Получено новых заявок из облака: {len(data)}")
-                    pending = load_json(PENDING_FILE)
-                    reqs = load_json(REQUESTS_FILE)
-
-                    for item in data:
-                        if item.get("type") == "idea":
-                            pending_item = {
-                                "id": item.get("id"),
-                                "temp_file": item.get("image_url"),
-                                "original_name": "Идея от " + item.get("author", "Болельщика"),
-                                "title": item.get("title"),
-                                "caption": item.get("caption"),
-                                "tag": item.get("tag", "Предложка"),
-                                "score": 10,
-                                "is_user_idea": True
-                            }
-                            if not any(x.get("id") == pending_item["id"] for x in pending):
-                                pending.insert(0, pending_item)
-                        else:
-                            if not any(x.get("id") == item.get("id") for x in reqs):
-                                reqs.insert(0, item)
-
-                    save_json(PENDING_FILE, pending)
-                    save_json(REQUESTS_FILE, reqs)
-
-                    # Очищаем облачную очередь, сохраняя валидный JSON {"queue": []}
-                    requests.put(url, headers={**headers, "Content-Type": "application/json"}, json={"queue": []}, timeout=10)
-                    print("[✓] Облачный буфер очищен и перенесен на ПК.")
-        except Exception:
-            pass
-
-        time.sleep(30)
-
-
-# Запуск фоновой синхронизации
-cloud_thread = threading.Thread(target=sync_cloud_buffer, daemon=True)
-cloud_thread.start()
-
-
-class AdminHandler(SimpleHTTPRequestHandler):
+class AdminAPIHandler(SimpleHTTPRequestHandler):
     def end_headers(self):
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
-        self.send_header("Allow", "GET, POST, OPTIONS")
+        # Отключаем кэш браузера для динамического обновления очереди
+        self.send_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
+        self.send_header("Pragma", "no-cache")
         super().end_headers()
 
-    def do_OPTIONS(self):
-        self.send_response(200, "OK")
+    def send_json(self, status_code: int, data: Any):
+        self.send_response(status_code)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
         self.end_headers()
+        self.wfile.write(json.dumps(data, ensure_ascii=False).encode("utf-8"))
 
     def do_GET(self):
-        parsed = urlparse(self.path)
-        path = parsed.path.rstrip("/")
+        # Роут очереди на модерацию
+        if self.path in ("/api/pending", "/pending.json"):
+            items = read_json_file(PENDING_FILE)
+            return self.send_json(200, items)
 
-        if path == "/api/pending":
-            pending = load_json(PENDING_FILE)
-            cleaned = []
-            changed = False
-            for item in pending:
-                t_file = item.get("temp_file", "").replace("/", os.sep).replace("\\", os.sep)
-                if not t_file or os.path.exists(t_file) or item.get("is_user_idea"):
-                    cleaned.append(item)
-                else:
-                    changed = True
+        # Роут опубликованных кадров
+        if self.path in ("/api/data", "/data.json"):
+            items = read_json_file(DATA_FILE)
+            return self.send_json(200, items)
 
-            if changed:
-                save_json(PENDING_FILE, cleaned)
-                pending = cleaned
+        # Роут пользовательских заявок
+        if self.path in ("/api/requests", "/requests.json"):
+            items = read_json_file(REQUESTS_FILE)
+            return self.send_json(200, items)
 
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json; charset=utf-8")
-            self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
-            self.end_headers()
-            self.wfile.write(json.dumps(pending, ensure_ascii=False).encode("utf-8"))
-            return
-
-        if path == "/api/requests":
-            reqs = load_json(REQUESTS_FILE)
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json; charset=utf-8")
-            self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
-            self.end_headers()
-            self.wfile.write(json.dumps(reqs, ensure_ascii=False).encode("utf-8"))
-            return
-
-        if path in ("", "/", "/admin"):
+        # Перенаправление с корня на админку
+        if self.path == "/" or self.path == "/admin":
             self.path = "/admin.html"
 
         return super().do_GET()
 
     def do_POST(self):
-        parsed = urlparse(self.path)
-        path = parsed.path.rstrip("/")
-        length = int(self.headers.get("Content-Length", 0))
-        body = self.rfile.read(length).decode("utf-8") if length > 0 else "{}"
-
+        content_length = int(self.headers.get("Content-Length", 0))
+        body = self.rfile.read(content_length).decode("utf-8")
+        
         try:
-            req = json.loads(body)
+            payload = json.loads(body) if body else {}
         except Exception:
-            req = {}
+            return self.send_json(400, {"error": "Невалидный JSON"})
 
-        if path == "/api/handle_request":
-            action = req.get("action")
-            req_id = req.get("id")
-            custom_title = req.get("custom_title")
-            custom_caption = req.get("custom_caption")
+        # ==========================================
+        # 1. ОДОБРЕНИЕ КАДРА ИЗ ОЧЕРЕДИ
+        # ==========================================
+        if self.path == "/api/approve":
+            item_id = payload.get("id")
+            pending_items = read_json_file(PENDING_FILE)
+            data_items = read_json_file(DATA_FILE)
 
-            reqs = load_json(REQUESTS_FILE)
-            target = next((x for x in reqs if x.get("id") == req_id), None)
+            target_idx = next((i for i, x in enumerate(pending_items) if str(x.get("id")) == str(item_id)), None)
+            if target_idx is None:
+                return self.send_json(404, {"error": "Кадр не найден в pending.json"})
 
-            if not target:
-                self.send_response(404)
-                self.end_headers()
-                return
+            item = pending_items.pop(target_idx)
+            filename = item.get("filename")
 
-            if action == "apply":
-                db = load_json(DATA_FILE)
-                file_target = target.get("file")
+            # Применяем ручные правки из админки (если пользователь отредактировал поля)
+            for field in ("title", "caption", "tag", "date"):
+                if field in payload and payload[field]:
+                    item[field] = payload[field]
 
-                if target.get("type") == "delete":
-                    db = [item for item in db if item.get("file") != file_target]
-                    save_json(DATA_FILE, db)
-                    if os.path.exists(file_target):
-                        filename = os.path.basename(file_target)
-                        shutil.move(file_target, os.path.join(DELETED_DIR, filename))
+            # Перенос файла: pending/ -> images/
+            src_file = PENDING_DIR / filename
+            dest_file = IMAGES_DIR / filename
 
-                elif target.get("type") == "edit":
-                    for item in db:
-                        if item.get("file") == file_target:
-                            item["title"] = custom_title if custom_title is not None else target.get("new_title", item.get("title"))
-                            item["caption"] = custom_caption if custom_caption is not None else target.get("new_caption", item.get("caption"))
-                            break
-                    save_json(DATA_FILE, db)
+            if src_file.exists():
+                shutil.move(str(src_file), str(dest_file))
+            elif not dest_file.exists():
+                return self.send_json(404, {"error": f"Файл {filename} отсутствует на диске"})
 
-            reqs = [x for x in reqs if x.get("id") != req_id]
-            save_json(REQUESTS_FILE, reqs)
+            # Обновление пути карточки для сайта
+            item["image"] = f"images/{filename}"
 
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json")
-            self.end_headers()
-            self.wfile.write(b'{"status":"ok"}')
-            return
+            # Добавляем в начало базы сайта
+            data_items.insert(0, item)
 
-        if path == "/api/moderate":
-            action = req.get("action")
-            item_id = str(req.get("id"))
-            updated_title = req.get("title")
-            updated_caption = req.get("caption")
-            updated_tag = req.get("tag")
+            write_json_file(DATA_FILE, data_items)
+            write_json_file(PENDING_FILE, pending_items)
 
-            pending = load_json(PENDING_FILE)
-            item = next((x for x in pending if str(x.get("id")) == item_id), None)
+            print(f"[Админка] Одобрен кадр: {filename} -> сохранен в data.json")
+            return self.send_json(200, {"success": True, "item": item})
 
-            if not item:
-                self.send_response(200)
-                self.end_headers()
-                self.wfile.write(b'{"status":"already_removed"}')
-                return
+        # ==========================================
+        # 2. ОТКЛОНЕНИЕ / УДАЛЕНИЕ КАДРА
+        # ==========================================
+        if self.path in ("/api/reject", "/api/delete"):
+            item_id = payload.get("id")
+            pending_items = read_json_file(PENDING_FILE)
 
-            raw_path = item.get("temp_file", "")
-            src_file = raw_path.replace("/", os.sep).replace("\\", os.sep)
-            filename = os.path.basename(src_file)
+            target_idx = next((i for i, x in enumerate(pending_items) if str(x.get("id")) == str(item_id)), None)
+            if target_idx is not None:
+                item = pending_items.pop(target_idx)
+                filename = item.get("filename")
+                src_file = PENDING_DIR / filename
+                dest_file = DELETED_DIR / filename
 
-            if action == "approve":
-                db = load_json(DATA_FILE)
-                if item.get("is_user_idea"):
-                    final_path = item.get("temp_file")
-                else:
-                    dest_filename = filename.replace("pending_", "photo_")
-                    dest_file = os.path.join(IMAGES_DIR, dest_filename)
-                    if os.path.exists(src_file):
-                        shutil.move(src_file, dest_file)
-                    final_path = f"images/{dest_filename}".replace("\\", "/")
+                if src_file.exists():
+                    if dest_file.exists():
+                        dest_file.unlink()
+                    shutil.move(str(src_file), str(dest_file))
 
-                card = {
-                    "file": final_path,
-                    "title": updated_title or item.get("title", "ФК ГазМяс"),
-                    "caption": updated_caption or item.get("caption", ""),
-                    "tag": updated_tag or item.get("tag", "Основа"),
-                    "tag_class": "alt" if len(db) % 2 == 0 else "",
-                    "score": item.get("score", 7),
-                    "hash": item.get("hash")
-                }
-                db.append(card)
-                save_json(DATA_FILE, db)
+                write_json_file(PENDING_FILE, pending_items)
+                print(f"[Админка] Отклонен кадр: {filename} -> перемещен в deleted/")
+                return self.send_json(200, {"success": True})
 
-            elif action == "reject":
-                if not item.get("is_user_idea") and os.path.exists(src_file):
-                    shutil.move(src_file, os.path.join(DELETED_DIR, filename))
+            return self.send_json(404, {"error": "Кадр не найден в pending"})
 
-            pending = [x for x in pending if str(x.get("id")) != item_id]
-            save_json(PENDING_FILE, pending)
+        return self.send_json(404, {"error": "Маршрут не найден"})
 
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json")
-            self.end_headers()
-            self.wfile.write(b'{"status":"ok"}')
-            return
+def run_server():
+    for d in (PENDING_DIR, IMAGES_DIR, DELETED_DIR):
+        d.mkdir(parents=True, exist_ok=True)
 
-        self.send_response(404)
-        self.end_headers()
-
-
-if __name__ == "__main__":
-    server = ThreadingHTTPServer(("0.0.0.0", PORT), AdminHandler)
+    server_address = ("", PORT)
+    httpd = ThreadingHTTPServer(server_address, AdminAPIHandler)
     print(f"Админ-сервер запущен: http://localhost:{PORT}/admin.html")
     try:
-        server.serve_forever()
+        httpd.serve_forever()
     except KeyboardInterrupt:
-        print("\nОстановка сервера.")
+        print("\nОстановка сервера...")
+        httpd.server_close()
+
+if __name__ == "__main__":
+    run_server()
