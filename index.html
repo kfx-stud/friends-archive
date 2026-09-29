@@ -9,7 +9,6 @@
       --gm-red: #c90000;
       --gm-red-dark: #800000;
       --gm-gold: #ffd700;
-      --gm-gold-dark: #b8860b;
       --gm-black: #0c0d10;
       --gm-panel: #16181f;
       --gm-border: #2a2e3d;
@@ -33,7 +32,7 @@
     header {
       background: linear-gradient(180deg, #1f0202 0%, var(--gm-panel) 100%);
       border-bottom: 3px solid var(--gm-gold);
-      padding: 1rem 2rem;
+      padding: 0.8rem 2rem;
       position: sticky;
       top: 0;
       z-index: 50;
@@ -54,12 +53,11 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      text-decoration: none;
     }
 
     .club-crest {
-      width: 48px;
-      height: 48px;
+      width: 44px;
+      height: 44px;
       background: linear-gradient(135deg, var(--gm-red) 50%, var(--gm-gold) 50%);
       border-radius: 50%;
       border: 2px solid #fff;
@@ -67,45 +65,24 @@
       align-items: center;
       justify-content: center;
       font-weight: 900;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       color: #fff;
       text-shadow: 1px 1px 2px #000;
       box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
     }
 
-    .club-title {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .club-name {
-      font-size: 1.4rem;
-      font-weight: 900;
-      letter-spacing: 1.5px;
-      color: #fff;
-      text-transform: uppercase;
-    }
-
+    .club-title { display: flex; flex-direction: column; }
+    .club-name { font-size: 1.35rem; font-weight: 900; letter-spacing: 1.5px; color: #fff; text-transform: uppercase; }
     .club-name span { color: var(--gm-gold); }
+    .club-motto { font-size: 0.75rem; color: var(--gm-muted); text-transform: uppercase; letter-spacing: 0.5px; }
 
-    .club-motto {
-      font-size: 0.75rem;
-      color: var(--gm-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .nav-actions {
-      display: flex;
-      gap: 0.75rem;
-      align-items: center;
-    }
+    .nav-actions { display: flex; gap: 0.75rem; align-items: center; }
 
     .btn-club {
       background: var(--gm-red);
       color: #fff;
       border: 1px solid var(--gm-gold);
-      padding: 0.6rem 1.1rem;
+      padding: 0.55rem 1.1rem;
       border-radius: 6px;
       font-weight: 800;
       font-size: 0.8rem;
@@ -118,12 +95,7 @@
       box-shadow: 0 2px 8px rgba(201, 0, 0, 0.4);
       transition: all 0.2s;
     }
-
-    .btn-club:hover {
-      background: #e60000;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
-    }
+    .btn-club:hover { background: #e60000; transform: translateY(-1px); }
 
     .btn-sugar {
       background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
@@ -131,11 +103,88 @@
       box-shadow: 0 2px 8px rgba(236, 72, 153, 0.4);
     }
 
-    .btn-sugar:hover {
-      background: linear-gradient(135deg, #f472b6 0%, #db2777 100%);
+    /* БЛОК НОВОСТЕЙ И СТАТЕЙ КЛУБА */
+    .news-section {
+      max-width: 1400px;
+      margin: 1.5rem auto 0;
+      padding: 0 2rem;
+      width: 100%;
     }
 
-    /* Клубное табло / фильтры */
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--gm-gold);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .news-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr;
+      gap: 1.2rem;
+    }
+
+    @media (max-width: 900px) {
+      .news-grid { grid-template-columns: 1fr; }
+    }
+
+    .news-card {
+      background: var(--gm-panel);
+      border: 1px solid var(--gm-border);
+      border-radius: 8px;
+      padding: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .news-card.featured {
+      border-left: 4px solid var(--gm-red);
+      background: linear-gradient(90deg, rgba(201, 0, 0, 0.1) 0%, var(--gm-panel) 100%);
+    }
+
+    .news-card.sugar-news {
+      border-left: 4px solid #ec4899;
+    }
+
+    .news-card.dibuny-news {
+      border-left: 4px solid #0284c7;
+    }
+
+    .news-badge {
+      align-self: flex-start;
+      font-size: 0.65rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      color: #fff;
+    }
+    .badge-red { background: var(--gm-red); }
+    .badge-pink { background: #db2777; }
+    .badge-blue { background: #0284c7; }
+
+    .news-heading {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.3;
+    }
+
+    .news-desc {
+      font-size: 0.85rem;
+      color: var(--gm-muted);
+      line-height: 1.4;
+    }
+
+    /* Табло / фильтры */
     .club-board {
       max-width: 1400px;
       margin: 1.5rem auto 0;
@@ -146,39 +195,27 @@
     .board-card {
       background: var(--gm-panel);
       border: 1px solid var(--gm-border);
-      border-top: 3px solid var(--gm-red);
       border-radius: 8px;
-      padding: 1rem 1.5rem;
+      padding: 0.8rem 1.2rem;
       display: flex;
       gap: 1rem;
       flex-wrap: wrap;
       align-items: center;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
 
     .board-stat {
       display: flex;
       flex-direction: column;
-      padding-right: 1.5rem;
+      padding-right: 1.2rem;
       border-right: 1px solid var(--gm-border);
     }
 
-    .stat-label {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      color: var(--gm-muted);
-      font-weight: 700;
-    }
-
-    .stat-value {
-      font-size: 1.3rem;
-      font-weight: 900;
-      color: var(--gm-gold);
-    }
+    .stat-label { font-size: 0.65rem; text-transform: uppercase; color: var(--gm-muted); font-weight: 700; }
+    .stat-value { font-size: 1.3rem; font-weight: 900; color: var(--gm-gold); }
 
     .search-input {
       flex: 1;
-      min-width: 200px;
+      min-width: 220px;
       background: #0d0e12;
       border: 1px solid var(--gm-border);
       color: #fff;
@@ -186,13 +223,9 @@
       border-radius: 6px;
       font-size: 0.9rem;
     }
+    .search-input:focus { outline: none; border-color: var(--gm-gold); }
 
-    .search-input:focus {
-      outline: none;
-      border-color: var(--gm-gold);
-    }
-
-    /* Сетка состава */
+    /* Сетка игроков */
     main {
       flex: 1;
       max-width: 1400px;
@@ -203,52 +236,33 @@
 
     .squad-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
       gap: 1.5rem;
     }
 
     .player-card {
       background: var(--gm-panel);
       border: 1px solid var(--gm-border);
-      border-radius: 10px;
+      border-radius: 8px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      position: relative;
-      transition: all 0.25s ease;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      transition: all 0.2s;
     }
-
-    .player-card:hover {
-      border-color: var(--gm-gold);
-      transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(255, 215, 0, 0.15);
-    }
+    .player-card:hover { border-color: var(--gm-gold); transform: translateY(-3px); }
 
     .card-photo-wrap {
       width: 100%;
-      height: 240px;
+      height: 230px;
       background: #000;
       position: relative;
-      overflow: hidden;
     }
-
-    .card-photo-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.3s;
-    }
-
-    .player-card:hover .card-photo-wrap img {
-      transform: scale(1.03);
-    }
+    .card-photo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
     .position-badge {
       position: absolute;
-      top: 10px;
-      left: 10px;
+      top: 8px;
+      left: 8px;
       background: rgba(12, 13, 16, 0.85);
       border: 1px solid var(--gm-gold);
       color: var(--gm-gold);
@@ -257,13 +271,12 @@
       text-transform: uppercase;
       padding: 0.2rem 0.5rem;
       border-radius: 4px;
-      letter-spacing: 0.5px;
     }
 
     .tag-badge {
       position: absolute;
-      top: 10px;
-      right: 10px;
+      top: 8px;
+      right: 8px;
       background: rgba(201, 0, 0, 0.85);
       color: #fff;
       font-size: 0.7rem;
@@ -271,34 +284,19 @@
       text-transform: uppercase;
       padding: 0.2rem 0.6rem;
       border-radius: 4px;
-      border: 1px solid rgba(255,255,255,0.2);
     }
-
-    .tag-badge.alt {
-      background: rgba(14, 116, 144, 0.85);
-    }
+    .tag-badge.alt { background: rgba(14, 116, 144, 0.85); }
 
     .card-body {
-      padding: 1rem 1.2rem;
+      padding: 1rem;
       display: flex;
       flex-direction: column;
       gap: 0.4rem;
       flex: 1;
     }
 
-    .card-title {
-      font-size: 1.05rem;
-      font-weight: 900;
-      color: #fff;
-      line-height: 1.3;
-    }
-
-    .card-caption {
-      font-size: 0.85rem;
-      color: var(--gm-muted);
-      line-height: 1.45;
-      flex: 1;
-    }
+    .card-title { font-size: 1rem; font-weight: 900; color: #fff; line-height: 1.3; }
+    .card-caption { font-size: 0.85rem; color: var(--gm-muted); line-height: 1.4; flex: 1; }
 
     .card-actions {
       display: flex;
@@ -308,7 +306,7 @@
 
     .btn-card-action {
       flex: 1;
-      padding: 0.65rem;
+      padding: 0.6rem;
       border: none;
       background: transparent;
       color: var(--gm-muted);
@@ -316,24 +314,10 @@
       font-weight: 800;
       text-transform: uppercase;
       cursor: pointer;
-      letter-spacing: 0.5px;
-      transition: all 0.15s;
     }
-
-    .btn-card-action:hover {
-      color: #fff;
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    .btn-card-action.del:hover {
-      color: #f87171;
-      background: rgba(218, 54, 51, 0.15);
-    }
-
-    .btn-card-action.edit:hover {
-      color: var(--gm-gold);
-      background: rgba(255, 215, 0, 0.1);
-    }
+    .btn-card-action:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
+    .btn-card-action.del:hover { color: #f87171; background: rgba(218, 54, 51, 0.15); }
+    .btn-card-action.edit:hover { color: var(--gm-gold); background: rgba(255, 215, 0, 0.1); }
 
     /* Модалки */
     .user-modal-overlay {
@@ -351,38 +335,26 @@
     .user-modal {
       background: var(--gm-panel);
       border: 1px solid var(--gm-gold);
-      border-radius: 10px;
+      border-radius: 8px;
       width: 100%;
       max-width: 480px;
       padding: 1.5rem;
       display: flex;
       flex-direction: column;
       gap: 1rem;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
     }
 
     .user-modal h3 {
       color: var(--gm-gold);
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       font-weight: 900;
       text-transform: uppercase;
       border-bottom: 1px solid var(--gm-border);
-      padding-bottom: 0.6rem;
+      padding-bottom: 0.5rem;
     }
 
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
-    }
-
-    .form-group label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      color: var(--gm-muted);
-      font-weight: 700;
-    }
-
+    .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+    .form-group label { font-size: 0.7rem; text-transform: uppercase; color: var(--gm-muted); font-weight: 700; }
     .form-group input, .form-group textarea {
       background: #0d0e12;
       border: 1px solid var(--gm-border);
@@ -391,23 +363,9 @@
       border-radius: 6px;
       font-size: 0.9rem;
     }
+    .form-group textarea { min-height: 80px; resize: vertical; }
 
-    .form-group textarea {
-      min-height: 80px;
-      resize: vertical;
-    }
-
-    .form-group input:focus, .form-group textarea:focus {
-      outline: none;
-      border-color: var(--gm-gold);
-    }
-
-    .user-modal-btns {
-      display: flex;
-      gap: 0.8rem;
-      margin-top: 0.5rem;
-    }
-
+    .user-modal-btns { display: flex; gap: 0.8rem; margin-top: 0.5rem; }
     .user-modal-btns button {
       flex: 1;
       padding: 0.75rem;
@@ -419,27 +377,14 @@
       font-size: 0.8rem;
     }
 
-    .btn-modal-cancel {
-      background: #21262d;
-      color: #c9d1d9;
-    }
-
-    .btn-modal-submit {
-      background: var(--gm-red);
-      color: #fff;
-      border: 1px solid var(--gm-gold);
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 4rem 1rem;
-      color: var(--gm-muted);
-    }
+    .btn-modal-cancel { background: #21262d; color: #c9d1d9; }
+    .btn-modal-submit { background: var(--gm-red); color: #fff; border: 1px solid var(--gm-gold); }
+    .empty-state { text-align: center; padding: 4rem 1rem; color: var(--gm-muted); }
   </style>
 </head>
 <body>
 
-  <!-- Шапка клуба -->
+  <!-- Шапка -->
   <header>
     <div class="header-inner">
       <div class="club-brand">
@@ -456,19 +401,45 @@
     </div>
   </header>
 
-  <!-- Клубная панель статистики и поиска -->
+  <!-- БЛОК ГЛАВНЫХ НОВОСТЕЙ И СТАТЕЙ -->
+  <section class="news-section">
+    <div class="section-title">📰 Вестник ГазМяса / Главные события</div>
+    <div class="news-grid">
+      
+      <div class="news-card featured">
+        <span class="news-badge badge-red">Молния штаба</span>
+        <div class="news-heading">«Гоша, мы не пойдём в 666»: Разбор тактики перед дерби</div>
+        <div class="news-desc">Дирекция клуба утвердила запрет на сомнительные маршруты. Команда сосредоточена на сборах и витаминном комплексе перед вторым таймом.</div>
+      </div>
+
+      <div class="news-card sugar-news">
+        <span class="news-badge badge-pink">Теория лудки</span>
+        <div class="news-heading">Споты х128 и розовая бурмалда: путь к заносу</div>
+        <div class="news-desc">99% нападающих останавливаются ровно за шаг до мега-кластера 7х7. В клубе введен строгий контроль покупки бонусок.</div>
+      </div>
+
+      <div class="news-card dibuny-news">
+        <span class="news-badge badge-blue">Хроники Дибунов</span>
+        <div class="news-heading">«Нихуя Дибуны отстроили»: Отчёт со станции</div>
+        <div class="news-desc">Дачные сборы, ворованный кислый крыжовник и регулярный прикорм местных сторожевых собачек дали плоды.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Табло статистики и поиск -->
   <div class="club-board">
     <div class="board-card">
       <div class="board-stat">
         <span class="stat-label">В заявке</span>
-        <span class="stat-value" id="squadCount">0</span>
+        <span class="stat-value" id="squadCount">27</span>
       </div>
       <input type="text" id="searchInput" class="search-input" placeholder="Поиск по имени, панчлайну или событию..." oninput="handleSearch()">
-      <input type="text" id="tagFilterInput" class="search-input" style="max-width: 240px;" placeholder="Тег (Дибуны, Шугар Раш...)" oninput="handleSearch()">
+      <input type="text" id="tagFilterInput" class="search-input" style="max-width: 260px;" placeholder="Стратегический калибр на Крестах..." oninput="handleSearch()">
     </div>
   </div>
 
-  <!-- Витрина кадров / игроков -->
+  <!-- Витрина кадров -->
   <main>
     <div id="squadGrid" class="squad-grid"></div>
     <div id="emptySquad" class="empty-state" style="display: none;">Кадры не найдены</div>
@@ -521,9 +492,9 @@
   </div>
 
   <script>
-    // ВСТАВЬ СВОИ КЛЮЧИ ОТ JSONBIN.IO
-    const JSONBIN_BIN_ID = "ВСТАВЬ_СВОЙ_BIN_ID";
-    const JSONBIN_MASTER_KEY = "ВСТАВЬ_СВОЙ_MASTER_KEY";
+    // ТВОИ КЛЮЧИ ОТ JSONBIN.IO
+    const JSONBIN_BIN_ID = "66f98725acd3cb34a88dbba1"; // ВСТАВЬ СВОЙ BIN_ID
+    const JSONBIN_MASTER_KEY = "$2a$10$abc..."; // ВСТАВЬ СВОЙ MASTER_KEY
 
     let squadData = [];
     let currentEditIndex = -1;
@@ -594,7 +565,6 @@
       handleSearch();
     }
 
-    // Запись в облачный буфер JSONBin
     async function pushToCloudQueue(newItem) {
       let currentItems = [];
       try {
@@ -628,12 +598,8 @@
       if (!putRes.ok) throw new Error("Cloud write failed");
     }
 
-    function openIdeaModal() {
-      document.getElementById("ideaModal").style.display = "flex";
-    }
-    function closeIdeaModal() {
-      document.getElementById("ideaModal").style.display = "none";
-    }
+    function openIdeaModal() { document.getElementById("ideaModal").style.display = "flex"; }
+    function closeIdeaModal() { document.getElementById("ideaModal").style.display = "none"; }
 
     async function submitNewIdea() {
       const author = document.getElementById("ideaAuthor").value.trim();
