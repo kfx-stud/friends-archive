@@ -3,1862 +3,490 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ФК ГАЗМЯС - Официальный клубный портал</title>
+  <title>ФК ГазМяс — Официальный портал</title>
   <style>
     :root {
-      --primary: #c90000;
-      --primary-dark: #870000;
+      --bg: #0b0e14;
+      --card-bg: #151921;
       --accent: #ffd700;
-      --bg: #0b0d10;
-      --surface: #14181f;
-      --surface-border: #232935;
+      --primary: #c90000;
       --text: #ffffff;
-      --text-muted: #8e9baa;
-      --badge-bg: rgba(0, 0, 0, 0.75);
-      --sugar-pink: #ff2e93;
-      --sugar-purple: #9b51e0;
+      --muted: #8b949e;
+      --border: #2d333b;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
-
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
 
     header {
-      background: linear-gradient(180deg, rgba(201, 0, 0, 0.98) 0%, rgba(135, 0, 0, 0.98) 100%);
-      border-bottom: 3px solid var(--accent);
+      background: #11141a;
+      border-bottom: 2px solid var(--accent);
       padding: 1rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
       position: sticky;
       top: 0;
-      z-index: 100;
-      backdrop-filter: blur(10px);
-    }
-
-    .club-brand {
-      display: flex;
-      align-items: center;
+      z-index: 50;
+      backdrop-filter: blur(8px);
+      flex-wrap: wrap;
       gap: 1rem;
     }
 
-    .club-logo {
-      width: 52px;
-      height: 52px;
-      background: var(--accent);
-      color: #000;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      font-size: 1.6rem;
-      border: 2px solid #fff;
-      box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
-    }
+    .brand { font-size: 1.4rem; font-weight: 900; text-transform: uppercase; color: var(--accent); letter-spacing: 1px; }
 
-    .club-name h1 {
-      font-size: 1.4rem;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      font-weight: 900;
-      line-height: 1.1;
-    }
+    .nav-actions { display: flex; gap: 0.8rem; align-items: center; }
 
-    .club-name p {
-      font-size: 0.8rem;
-      color: var(--accent);
-      text-transform: uppercase;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-    }
-
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .btn-sugar {
-      background: linear-gradient(135deg, var(--sugar-pink) 0%, var(--sugar-purple) 100%);
+    .btn-action {
+      background: var(--primary);
       color: #fff;
       border: 1px solid var(--accent);
       padding: 0.5rem 1rem;
       border-radius: 6px;
       font-weight: 800;
-      font-size: 0.85rem;
       cursor: pointer;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      box-shadow: 0 0 12px rgba(255, 46, 147, 0.4);
-      transition: transform 0.15s, box-shadow 0.15s;
+      font-size: 0.85rem;
+      transition: opacity 0.2s;
+    }
+    .btn-action:hover { opacity: 0.9; }
+
+    .btn-sugar {
+      background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+      border: 1px solid #f472b6;
     }
 
-    .btn-sugar:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 18px rgba(255, 46, 147, 0.7);
+    .btn-idea {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border: 1px solid #34d399;
     }
 
-    .match-banner {
-      background: #0f1217;
-      border-bottom: 1px solid var(--surface-border);
-      padding: 0.8rem 1rem;
+    .search-panel {
+      padding: 1.5rem 2rem 0.5rem 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
       display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 1.5rem;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      font-weight: 800;
+      gap: 1rem;
       flex-wrap: wrap;
     }
 
-    .match-team {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .score {
-      background: var(--primary);
-      padding: 0.25rem 0.9rem;
-      border-radius: 4px;
-      font-size: 1.15rem;
-      letter-spacing: 2px;
-      box-shadow: 0 0 8px rgba(201, 0, 0, 0.6);
-    }
-
-    .match-status {
-      color: var(--accent);
-      font-size: 0.8rem;
-      background: rgba(255, 215, 0, 0.1);
-      padding: 0.2rem 0.6rem;
-      border-radius: 3px;
-      border: 1px solid var(--accent);
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 0 1rem;
-    }
-
-    .club-stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2.5rem;
-    }
-
-    .info-card {
-      background: var(--surface);
-      border: 1px solid var(--surface-border);
-      border-left: 4px solid var(--primary);
-      padding: 1.1rem;
-      border-radius: 6px;
-    }
-
-    .info-card.sugar-card {
-      border-left: 4px solid var(--sugar-pink);
-      cursor: pointer;
-    }
-
-    .info-card span {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      display: block;
-      margin-bottom: 0.35rem;
-      font-weight: 700;
-    }
-
-    .info-card strong {
-      font-size: 1.05rem;
+    .search-input {
+      flex: 1;
+      min-width: 250px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
       color: #fff;
-      display: block;
-    }
-
-    .info-card small {
-      font-size: 0.75rem;
-      color: var(--accent);
-      display: block;
-      margin-top: 0.25rem;
-    }
-
-    .club-quote-section {
-      background: linear-gradient(135deg, #181d26 0%, #12151b 100%);
-      border: 1px solid var(--surface-border);
+      padding: 0.75rem 1rem;
       border-radius: 8px;
-      padding: 1.8rem;
-      margin-bottom: 2.5rem;
-      position: relative;
+      font-size: 0.95rem;
     }
+    .search-input:focus { outline: none; border-color: var(--accent); }
 
-    .club-quote-section::before {
-      content: "“";
-      position: absolute;
-      top: 5px;
-      left: 15px;
-      font-size: 5rem;
-      color: rgba(201, 0, 0, 0.2);
-      font-family: Georgia, serif;
-      line-height: 1;
-    }
-
-    .quote-body {
-      position: relative;
-      z-index: 1;
-    }
-
-    .quote-text {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 0.5rem;
-      font-style: italic;
-    }
-
-    .quote-author {
-      font-size: 0.85rem;
-      color: var(--accent);
-      text-transform: uppercase;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-    }
-
-    .rules-card {
-      background: var(--surface);
-      border: 1px solid var(--surface-border);
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin-bottom: 2.5rem;
-    }
-
-    .rules-card h3 {
-      text-transform: uppercase;
-      font-size: 1.1rem;
-      letter-spacing: 1px;
-      margin-bottom: 1rem;
-      color: var(--accent);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .rules-list {
-      list-style: none;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 0.8rem;
-    }
-
-    .rules-list li {
-      background: rgba(0, 0, 0, 0.3);
-      padding: 0.7rem 0.9rem;
-      border-radius: 4px;
-      font-size: 0.85rem;
-      border-left: 3px solid var(--accent);
-    }
-
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      border-bottom: 2px solid var(--surface-border);
-      padding-bottom: 0.75rem;
-      margin-bottom: 1rem;
-    }
-
-    .section-header h2 {
-      text-transform: uppercase;
-      font-size: 1.6rem;
-      letter-spacing: 1px;
-    }
-
-    .squad-count {
-      color: var(--accent);
-      font-weight: 800;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-    }
-
-    /* Блок поиска */
-    .search-panel {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-      background: var(--surface);
-      border: 1px solid var(--surface-border);
-      padding: 1rem;
-      border-radius: 8px;
-    }
-
-    .search-box {
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-    }
-
-    .search-box label {
-      font-size: 0.75rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      color: var(--accent);
-      letter-spacing: 0.5px;
-    }
-
-    .search-box input {
-      background: #090c10;
-      border: 1px solid var(--surface-border);
-      border-radius: 6px;
-      padding: 0.65rem 0.9rem;
-      color: #fff;
-      font-size: 0.9rem;
-      transition: border-color 0.15s, box-shadow 0.15s;
-    }
-
-    .search-box input:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
-    }
-
-    .search-box input::placeholder {
-      color: #556271;
-    }
+    main { flex: 1; padding: 1.5rem 2rem; max-width: 1400px; margin: 0 auto; width: 100%; }
 
     .squad-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 1.5rem;
     }
 
     .player-card {
-      background: var(--surface);
-      border: 1px solid var(--surface-border);
-      border-radius: 8px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
       position: relative;
       transition: transform 0.2s, border-color 0.2s;
     }
+    .player-card:hover { transform: translateY(-4px); border-color: var(--accent); }
 
-    .player-card:hover {
-      transform: translateY(-4px);
-      border-color: var(--primary);
-    }
-
-    .image-container {
-      position: relative;
+    .card-photo-wrap {
       width: 100%;
-      height: 320px;
+      height: 250px;
       background: #000;
+      position: relative;
     }
+    .card-photo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-    .image-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .player-badge {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      background: var(--badge-bg);
-      border: 1px solid var(--accent);
-      color: var(--accent);
-      font-size: 0.75rem;
-      padding: 0.25rem 0.65rem;
-      border-radius: 4px;
-      text-transform: uppercase;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-    }
-
-    .player-badge.alt {
-      border-color: #38bdf8;
-      color: #38bdf8;
-    }
-
-    /* Кнопки запросов от посетителя */
-    .card-user-actions {
+    .tag-badge {
       position: absolute;
       top: 10px;
-      left: 10px;
-      display: flex;
-      gap: 6px;
-      z-index: 5;
-    }
-
-    .user-act-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: 6px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      background: rgba(15, 18, 23, 0.85);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 1rem;
-      backdrop-filter: blur(4px);
-      transition: background 0.15s, transform 0.1s, border-color 0.15s;
-    }
-
-    .user-act-btn:hover {
-      transform: scale(1.08);
-      border-color: var(--accent);
+      right: 10px;
+      background: rgba(0, 0, 0, 0.85);
+      border: 1px solid var(--accent);
       color: var(--accent);
-      background: #1e2430;
-    }
-
-    .user-act-btn.btn-del:hover {
-      border-color: #ef4444;
-      color: #ef4444;
-    }
-
-    .card-content {
-      padding: 1.2rem;
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-    }
-
-    .card-title {
-      font-size: 1.15rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
       font-weight: 800;
       text-transform: uppercase;
-      margin-bottom: 0.5rem;
-      color: #fff;
     }
+    .tag-badge.alt { border-color: #38bdf8; color: #38bdf8; }
 
-    .card-caption {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-      flex-grow: 1;
-    }
+    .card-body { padding: 1.2rem; display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
+    .card-title { font-size: 1.1rem; font-weight: 800; color: #fff; line-height: 1.3; }
+    .card-caption { font-size: 0.9rem; color: var(--muted); line-height: 1.45; flex: 1; }
 
-    .card-footer {
-      margin-top: 1.2rem;
-      padding-top: 0.75rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    .card-user-actions {
       display: flex;
-      justify-content: space-between;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      font-weight: 700;
+      border-top: 1px solid var(--border);
+      background: rgba(0, 0, 0, 0.2);
     }
+    .btn-card-action {
+      flex: 1;
+      padding: 0.65rem;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: color 0.15s, background 0.15s;
+    }
+    .btn-card-action:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
+    .btn-card-action.del:hover { color: #f87171; background: rgba(218, 54, 51, 0.15); }
+    .btn-card-action.edit:hover { color: var(--accent); background: rgba(255, 215, 0, 0.1); }
 
-    /* Модалка редактирования посетителем */
+    /* Модальные окна */
     .user-modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.85);
       backdrop-filter: blur(8px);
-      z-index: 1000;
+      z-index: 100;
       align-items: center;
       justify-content: center;
       padding: 1rem;
     }
 
-    .user-edit-modal {
-      background: var(--surface);
-      border: 1px solid var(--accent);
+    .user-modal {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
       border-radius: 12px;
-      max-width: 500px;
       width: 100%;
+      max-width: 500px;
       padding: 1.5rem;
       display: flex;
       flex-direction: column;
       gap: 1rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
     }
-
-    .user-edit-modal h3 {
-      text-transform: uppercase;
-      font-size: 1.1rem;
-      color: var(--accent);
-    }
-
-    .user-edit-modal label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      font-weight: 700;
-      margin-bottom: 0.3rem;
-      display: block;
-    }
-
-    .user-edit-modal input, .user-edit-modal textarea {
-      width: 100%;
-      background: #090c10;
-      border: 1px solid var(--surface-border);
-      border-radius: 6px;
+    .user-modal h3 { color: var(--accent); font-size: 1.15rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+    .form-group label { font-size: 0.75rem; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+    .form-group input, .form-group textarea {
+      background: #0b0e14;
+      border: 1px solid var(--border);
       color: #fff;
       padding: 0.65rem;
+      border-radius: 6px;
       font-size: 0.95rem;
     }
+    .form-group textarea { min-height: 80px; resize: vertical; }
+    .form-group input:focus, .form-group textarea:focus { border-color: var(--accent); outline: none; }
 
-    .user-edit-modal textarea {
-      min-height: 90px;
-      resize: vertical;
-    }
-
-    .user-edit-modal input:focus, .user-edit-modal textarea:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-
-    .user-modal-btns {
-      display: flex;
-      justify-content: flex-end;
-      gap: 0.8rem;
-      margin-top: 0.5rem;
-    }
-
-    .btn-cancel {
-      background: transparent;
-      border: 1px solid var(--surface-border);
-      color: var(--text-muted);
-      padding: 0.6rem 1rem;
+    .user-modal-btns { display: flex; gap: 0.8rem; margin-top: 0.5rem; }
+    .user-modal-btns button {
+      flex: 1;
+      padding: 0.75rem;
       border-radius: 6px;
-      cursor: pointer;
-      font-weight: 700;
-    }
-
-    .btn-submit-req {
-      background: var(--primary);
-      border: 1px solid var(--accent);
-      color: #fff;
-      padding: 0.6rem 1.2rem;
-      border-radius: 6px;
-      cursor: pointer;
       font-weight: 800;
-      text-transform: uppercase;
-    }
-
-    footer {
-      text-align: center;
-      padding: 2.5rem 1rem;
-      background: #07090b;
-      border-top: 1px solid var(--surface-border);
-      color: var(--text-muted);
-      font-size: 0.8rem;
-      margin-top: 4rem;
-    }
-
-    footer span {
-      color: var(--accent);
-      font-weight: 700;
-    }
-
-    /* Модальное окно Sugar Rush 7x7 */
-    .slot-modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(8, 3, 18, 0.94);
-      backdrop-filter: blur(12px);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-      padding: 0.5rem;
-    }
-
-    .sr-machine {
-      background: radial-gradient(circle at 50% 20%, #68b8f8 0%, #25588c 100%);
-      border: 4px solid #fff;
-      border-radius: 24px;
-      box-shadow: 0 0 50px rgba(255, 46, 147, 0.7), inset 0 0 15px rgba(255, 255, 255, 0.7);
-      width: 100%;
-      max-width: 860px;
-      padding: 1rem 1.2rem;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      gap: 0.8rem;
-      user-select: none;
-    }
-
-    .sr-machine.shake {
-      animation: machineShake 0.35s ease-in-out;
-    }
-
-    @keyframes machineShake {
-      0%, 100% { transform: translate(0, 0); }
-      20% { transform: translate(-4px, 4px); }
-      40% { transform: translate(4px, -3px); }
-      60% { transform: translate(-3px, 2px); }
-      80% { transform: translate(3px, -2px); }
-    }
-
-    .sr-top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .sr-logo-title {
-      font-size: 1.8rem;
-      font-weight: 900;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: #fff;
-      text-shadow: 0 0 12px #ff2e93, 3px 3px 0 #9b51e0;
-      font-style: italic;
-    }
-
-    .sr-header-tools {
-      display: flex;
-      gap: 0.5rem;
-      align-items: center;
-    }
-
-    .sr-info-btn, .sr-close-btn {
-      background: #ff2e93;
-      border: 2px solid #fff;
-      color: #fff;
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      font-weight: 900;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.15s;
-    }
-
-    .sr-info-btn:hover, .sr-close-btn:hover {
-      transform: scale(1.1);
-    }
-
-    .sr-body-wrap {
-      display: flex;
-      gap: 1rem;
-      align-items: stretch;
-      position: relative;
-    }
-
-    .sr-buy-bonus {
-      background: linear-gradient(180deg, #ff41a2 0%, #d41470 100%);
-      border: 3px solid #ffd700;
-      border-radius: 14px;
-      padding: 0.8rem 0.5rem;
-      width: 130px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      color: #fff;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(255, 65, 162, 0.5);
-      transition: transform 0.15s, box-shadow 0.15s;
-    }
-
-    .sr-buy-bonus:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
-    }
-
-    .sr-buy-bonus span:nth-child(1) {
-      font-size: 1.1rem;
-      font-weight: 900;
-      line-height: 1.1;
-      text-shadow: 1px 1px 2px #000;
-    }
-
-    .sr-buy-bonus span:nth-child(2) {
-      font-size: 0.75rem;
-      margin-top: 4px;
-      color: #ffd700;
-      font-weight: 800;
-    }
-
-    .sr-buy-price {
-      background: rgba(0, 0, 0, 0.4);
-      padding: 0.2rem 0.5rem;
-      border-radius: 6px;
+      border: none;
+      text-transform: uppercase;
       font-size: 0.85rem;
-      font-weight: 900;
-      margin-top: 6px;
-      color: #ffd700;
     }
+    .btn-modal-cancel { background: #21262d; color: #c9d1d9; }
+    .btn-modal-submit { background: var(--green, #238636); color: #fff; }
 
-    .sr-grid-container {
-      flex-grow: 1;
-      background: linear-gradient(180deg, rgba(230, 243, 255, 0.95) 0%, rgba(195, 226, 255, 0.95) 100%);
-      border: 3px solid #ff9cd6;
-      border-radius: 16px;
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      grid-template-rows: repeat(7, 1fr);
-      gap: 4px;
-      padding: 6px;
-      aspect-ratio: 1 / 1;
-      max-height: 440px;
-      margin: 0 auto;
-      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.25);
-      overflow: hidden;
-      position: relative;
-    }
-
-    .sr-cell {
-      background: rgba(255, 255, 255, 0.45);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.85rem;
-      position: relative;
-      cursor: default;
-      overflow: visible;
-      transition: background-color 0.25s, box-shadow 0.25s;
-    }
-
-    .sr-cell.marked-spot {
-      background: rgba(255, 200, 230, 0.65) !important;
-      border: 1px dashed #ff2e93;
-    }
-
-    .sr-symbol {
-      display: inline-block;
-      will-change: transform, opacity;
-      transform: translate3d(0, 0, 0);
-    }
-
-    .sr-symbol.sliding {
-      animation: slideDownToSlot 0.36s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-    }
-
-    @keyframes slideDownToSlot {
-      0% {
-        transform: translateY(calc(var(--slide-rows, -1) * -100%));
-      }
-      100% {
-        transform: translateY(0);
-      }
-    }
-
-    .sr-symbol.dropping {
-      animation: dropNewCandy 0.4s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
-    }
-
-    @keyframes dropNewCandy {
-      0% {
-        transform: translateY(calc(var(--drop-offset, -3) * -100% - 40px)) scale(0.6);
-        opacity: 0;
-      }
-      60% {
-        transform: translateY(6px) scale(1.08);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-      }
-    }
-
-    .sr-symbol.exploding {
-      animation: candyExplode 0.38s ease-in-out forwards;
-    }
-
-    @keyframes candyExplode {
-      0% {
-        transform: scale(1);
-        filter: brightness(1);
-      }
-      40% {
-        transform: scale(1.4) rotate(10deg);
-        filter: brightness(1.8) drop-shadow(0 0 12px #ff2e93);
-      }
-      100% {
-        transform: scale(0) rotate(-15deg);
-        opacity: 0;
-      }
-    }
-
-    .sr-multiplier-badge {
-      position: absolute;
-      top: 1px;
-      right: 1px;
-      background: #ff2e93;
-      color: #fff;
-      font-size: 0.65rem;
-      font-weight: 900;
-      border-radius: 4px;
-      padding: 0 4px;
-      border: 1px solid #ffd700;
-      box-shadow: 0 0 6px rgba(255, 215, 0, 0.7);
-      animation: badgePulse 0.3s ease;
-      z-index: 2;
-    }
-
-    @keyframes badgePulse {
-      0% { transform: scale(0.5); }
-      50% { transform: scale(1.3); }
-      100% { transform: scale(1); }
-    }
-
-    .sr-bottom-bar {
-      background: linear-gradient(180deg, #1b3d68 0%, #102642 100%);
-      border: 2px solid #559ee7;
-      border-radius: 14px;
-      padding: 0.6rem 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .sr-counters {
-      display: flex;
-      gap: 1.5rem;
-    }
-
-    .sr-counter-box {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .sr-counter-box small {
-      font-size: 0.65rem;
-      color: #8cc4ff;
-      text-transform: uppercase;
-      font-weight: 800;
-    }
-
-    .sr-counter-box strong {
-      font-size: 1.15rem;
-      color: #ffd700;
-      font-weight: 900;
-    }
-
-    .sr-win-notify {
-      font-size: 0.95rem;
-      font-weight: 900;
-      color: #fff;
-      text-shadow: 0 0 8px #ff2e93;
-      min-height: 22px;
-      transition: transform 0.2s, color 0.2s;
-    }
-
-    .sr-win-notify.bigwin {
-      color: #ffd700;
-      transform: scale(1.1);
-      text-shadow: 0 0 12px #ff2e93, 0 0 20px #ffd700;
-    }
-
-    .sr-controls {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-
-    .sr-bet-btn {
-      background: #1e4b82;
-      border: 1px solid #5ca0ed;
-      color: #fff;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      font-weight: 900;
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: background 0.15s, transform 0.1s;
-    }
-
-    .sr-bet-btn:hover {
-      background: #2b67b0;
-      transform: scale(1.05);
-    }
-
-    .sr-spin-button {
-      background: radial-gradient(circle, #ffe600 0%, #ff8c00 100%);
-      border: 3px solid #fff;
-      border-radius: 50%;
-      width: 58px;
-      height: 58px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.7rem;
-      box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
-      transition: transform 0.1s, box-shadow 0.1s;
-    }
-
-    .sr-spin-button:hover:not(:disabled) {
-      transform: scale(1.1);
-      box-shadow: 0 0 25px rgba(255, 215, 0, 1);
-    }
-
-    .sr-spin-button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .sr-rules-modal {
-      display: none;
-      position: absolute;
-      inset: 10px;
-      background: rgba(12, 6, 26, 0.98);
-      border: 2px solid var(--accent);
-      border-radius: 18px;
-      padding: 1.2rem;
-      z-index: 20;
-      overflow-y: auto;
-      flex-direction: column;
-      gap: 0.8rem;
-    }
-
-    .sr-rules-modal h4 {
-      color: var(--accent);
-      text-transform: uppercase;
-      font-size: 1.1rem;
-      text-align: center;
-      letter-spacing: 1px;
-    }
-
-    .sr-rules-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.75rem;
-      text-align: center;
-      margin-top: 0.5rem;
-    }
-
-    .sr-rules-table th, .sr-rules-table td {
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 4px;
-    }
-
-    .sr-rules-table th {
-      background: #1e293b;
-      color: var(--accent);
-    }
-
-    @media (max-width: 650px) {
-      .search-panel {
-        grid-template-columns: 1fr;
-      }
-      .sr-body-wrap {
-        flex-direction: column;
-      }
-      .sr-buy-bonus {
-        width: 100%;
-        flex-direction: row;
-        justify-content: space-around;
-        padding: 0.4rem;
-      }
-      .sr-cell {
-        font-size: 1.3rem;
-      }
-    }
+    .empty-state { text-align: center; padding: 4rem 1rem; color: var(--muted); }
   </style>
 </head>
 <body>
 
   <header>
-    <div class="club-brand">
-      <div class="club-logo">ГМ</div>
-      <div class="club-name">
-        <h1>ФК ГазМяс</h1>
-        <p>Архив клуба • Сезон 8: Финал</p>
-      </div>
-    </div>
+    <div class="brand">ФК ГазМяс — Портал</div>
     <div class="nav-actions">
-      <button class="btn-sugar" onclick="openSlotModal()">🍭 Sugar Rush (Казик)</button>
+      <button class="btn-action btn-idea" onclick="openIdeaModal()">💡 Предложить идею</button>
+      <button class="btn-action btn-sugar" onclick="filterSugarRush()">🍭 Sugar Rush</button>
     </div>
   </header>
 
-  <div class="match-banner">
-    <div class="match-team">ФК ГазМяс</div>
-    <div class="score">4 : 3</div>
-    <div class="match-team">ФК ПивЗавод</div>
-    <span class="match-status">Победа (ОТ) • Вторая лига</span>
-    <span style="color: var(--text-muted); font-size: 0.8rem;">Серия пенальти в гараже на Гороховой</span>
+  <div class="search-panel">
+    <input type="text" id="searchInput" class="search-input" placeholder="Поиск по заголовку, фамилии, панчлайну..." oninput="handleSearch()">
+    <input type="text" id="tagFilterInput" class="search-input" style="max-width: 280px;" placeholder="Фильтр по тегу (Основа, Дибуны...)" oninput="handleSearch()">
   </div>
 
-  <main class="container">
-    <div class="club-stats-grid">
-      <div class="info-card">
-        <span>Домашняя Арена</span>
-        <strong>«Гараж на Гороховой»</strong>
-        <small>Резерв: «Карл Фридрих» на Крестах</small>
-      </div>
-      <div class="info-card">
-        <span>Транспортная служба</span>
-        <strong>«Дядя Миша»</strong>
-        <small>Трансфер строго под рэпчину Мэддкида</small>
-      </div>
-      <div class="info-card sugar-card" onclick="openSlotModal()" title="Кликни, чтобы крутить">
-        <span>Кафедра Бурмалды</span>
-        <strong>Sugar Rush 7x7 Pragmatic</strong>
-        <small>Каскадный съезд сверху, множители до x128</small>
-      </div>
-      <div class="info-card">
-        <span>Тренерский Штаб</span>
-        <strong>Иван Плыгун (Главный тренер)</strong>
-        <small>Кафедра юридической латыни и бурмалды</small>
-      </div>
-    </div>
-
-    <div class="club-quote-section">
-      <div class="quote-body">
-        <div class="quote-text">«Если повезет - будет бизнес, если нет - алкоголизм. Друг о друге не забывайте, ГазМяс не смейте развалить мне, опездолы!»</div>
-        <div class="quote-author">- Платон Петрович Нодь, Первый и Единственный Директор ФК ГазМяс</div>
-      </div>
-    </div>
-
-    <div class="rules-card">
-      <h3>Регламент трансферного окна и отбора в заявку</h3>
-      <ul class="rules-list">
-        <li><strong>Раунд чистилища:</strong> Выдержать адское пекло в бане от директора - та же исповедь, только через пот.</li>
-        <li><strong>Дисциплина на поле:</strong> Строго запрещен слив мида на Котле против Лины и полное «афк».</li>
-        <li><strong>Теоретический зачет:</strong> Базовое понимание цитат сериала «Реальные пацаны» (Базанов, Колян, Вован).</li>
-        <li><strong>Клубный кодекс:</strong> «Per aspera ad astra fututio» - через тернии к победам без негатива.</li>
-        <li><strong>Гражданская оборона:</strong> Чугунная ванна держит ударную волну 20 км, пластмассовая - не спасает нихуя.</li>
-        <li><strong>Железнодорожное правило:</strong> «Муравьи бегают по колесам - пизда поезду».</li>
-        <li><strong>Теория лудки:</strong> Помнить, что 99% лудоманов останавливаются аккурат за секунду до мега-заноса.</li>
-        <li><strong>Боевой рацион:</strong> Каша с малиной и червями (кличка «блевус», статус «не женат»).</li>
-      </ul>
-    </div>
-
-    <div class="section-header">
-      <h2>Заявка на сезон</h2>
-      <div class="squad-count" id="squad-counter">Загрузка состава...</div>
-    </div>
-
-    <!-- Поиск по названию и по описанию -->
-    <div class="search-panel">
-      <div class="search-box">
-        <label for="searchTitle">Поиск по названию</label>
-        <input type="text" id="searchTitle" placeholder="Введите слово из названия..." oninput="handleSearch()">
-      </div>
-      <div class="search-box">
-        <label for="searchCaption">Поиск по описанию</label>
-        <input type="text" id="searchCaption" placeholder="Введите панчлайн или фразу..." oninput="handleSearch()">
-      </div>
-    </div>
-
-    <div class="squad-grid" id="gallery"></div>
+  <main>
+    <div id="squadGrid" class="squad-grid"></div>
+    <div id="emptySquad" class="empty-state" style="display: none;">Ничего не найдено</div>
   </main>
 
-  <!-- Модальное окно заявки на редактирование -->
-  <div class="user-modal-overlay" id="userEditOverlay">
-    <div class="user-edit-modal">
-      <h3>Заявка на правку карточки</h3>
-      <div>
-        <label>Новое название (Title)</label>
-        <input type="text" id="reqNewTitle">
+  <!-- Модалка: Предложить новую идею -->
+  <div class="user-modal-overlay" id="ideaModal">
+    <div class="user-modal">
+      <h3>Предложить кадр или мем</h3>
+      <div class="form-group">
+        <label>Ваш позывной / Ник</label>
+        <input type="text" id="ideaAuthor" placeholder="Например: Гоша из 666">
       </div>
-      <div>
-        <label>Новое описание (Caption)</label>
-        <textarea id="reqNewCaption"></textarea>
+      <div class="form-group">
+        <label>Заголовок кадра</label>
+        <input type="text" id="ideaTitle" placeholder="Короткий заголовок...">
+      </div>
+      <div class="form-group">
+        <label>Панчлайн / История</label>
+        <textarea id="ideaCaption" placeholder="Опишите момент или цитату..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Ссылка на картинку (URL)</label>
+        <input type="text" id="ideaImgUrl" placeholder="https://... (необязательно)">
       </div>
       <div class="user-modal-btns">
-        <button class="btn-cancel" onclick="closeUserEditModal()">Отмена</button>
-        <button class="btn-submit-req" onclick="submitEditRequest()">Отправить заявку</button>
+        <button class="btn-modal-cancel" onclick="closeIdeaModal()">Отмена</button>
+        <button class="btn-modal-submit" style="background: #10b981;" onclick="submitNewIdea()">Отправить в штаб</button>
       </div>
     </div>
   </div>
 
-  <!-- Модальное окно Sugar Rush -->
-  <div class="slot-modal-overlay" id="slotOverlay" onclick="closeSlotOnBackdrop(event)">
-    <div class="sr-machine" id="srMachine">
-      <div class="sr-top-bar">
-        <div class="sr-logo-title">🍬 Sugar Rush 7×7</div>
-        <div class="sr-header-tools">
-          <button class="sr-info-btn" onclick="toggleRulesModal()" title="Правила и таблица выплат">i</button>
-          <button class="sr-close-btn" onclick="closeSlotModal()">✕</button>
-        </div>
+  <!-- Модалка: Предложить правку -->
+  <div class="user-modal-overlay" id="editModal">
+    <div class="user-modal">
+      <h3>Предложить правку для кадра</h3>
+      <div class="form-group">
+        <label>Новый заголовок</label>
+        <input type="text" id="editTitle">
       </div>
-
-      <div class="sr-body-wrap">
-        <div class="sr-rules-modal" id="srRulesModal">
-          <h4>Официальная таблица выплат (от ставки)</h4>
-          <table class="sr-rules-table">
-            <thead>
-              <tr><th>Символ</th><th>5 шт</th><th>6-9 шт</th><th>10-14 шт</th><th>15+ шт</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>🔴 Леденец</td><td>1.0x</td><td>1.5x - 2.5x</td><td>5.0x - 70x</td><td><strong>150x</strong></td></tr>
-              <tr><td>🧡 Сердце</td><td>0.75x</td><td>1.0x - 2.0x</td><td>4.0x - 60x</td><td><strong>100x</strong></td></tr>
-              <tr><td>🍆 Драже</td><td>0.5x</td><td>0.75x - 1.5x</td><td>3.0x - 40x</td><td><strong>60x</strong></td></tr>
-              <tr><td>⭐ Звезда</td><td>0.4x</td><td>0.5x - 1.25x</td><td>2.0x - 20x</td><td><strong>40x</strong></td></tr>
-              <tr><td>🐻 Мишка кр.</td><td>0.3x</td><td>0.4x - 1.0x</td><td>1.5x - 15x</td><td><strong>30x</strong></td></tr>
-              <tr><td>🟣 Мишка фиол.</td><td>0.25x</td><td>0.3x - 0.75x</td><td>1.25x - 12x</td><td><strong>25x</strong></td></tr>
-              <tr><td>🟠 Мишка ор.</td><td>0.2x</td><td>0.25x - 0.5x</td><td>1.0x - 10x</td><td><strong>20x</strong></td></tr>
-            </tbody>
-          </table>
-          <p style="font-size: 0.75rem; color: #8cc4ff; margin-top: 0.4rem;">
-            <strong>Multiplier Spots:</strong> Первый взрыв отмечает ячейку. Второй взрыв на той же ячейке дает <strong>x2</strong>, далее удваивается до <strong>x128</strong>. Несколько множителей в одном кластере <strong>складываются</strong>!
-          </p>
-          <button class="btn-sugar" style="align-self: center; margin-top: 0.5rem;" onclick="toggleRulesModal()">Закрыть</button>
-        </div>
-
-        <div class="sr-buy-bonus" onclick="buyBonus()">
-          <span>BUY<br>FREE<br>SPINS</span>
-          <span>БОНУСКА</span>
-          <div class="sr-buy-price" id="buyBonusPrice">10 000 ₽</div>
-        </div>
-
-        <div class="sr-grid-container" id="slotGrid"></div>
+      <div class="form-group">
+        <label>Новое описание / панчлайн</label>
+        <textarea id="editCaption"></textarea>
       </div>
-
-      <div class="sr-bottom-bar">
-        <div class="sr-counters">
-          <div class="sr-counter-box">
-            <small>КРЕДИТ</small>
-            <strong id="balanceDisplay">30 000 ₽</strong>
-          </div>
-          <div class="sr-counter-box">
-            <small>СТАВКА</small>
-            <strong id="betDisplay">100 ₽</strong>
-          </div>
-          <div class="sr-counter-box" id="freeSpinsCounterBox" style="display: none;">
-            <small style="color: #ffd700;">ФРИСПИНЫ</small>
-            <strong id="freeSpinsDisplay" style="color: #ff2e93;">0</strong>
-          </div>
-        </div>
-
-        <div class="sr-win-notify" id="winNotification">Вращайте кластеры! (Пробел / Enter)</div>
-
-        <div class="sr-controls">
-          <button class="sr-bet-btn" onclick="changeBet(-20)">−</button>
-          <button class="sr-bet-btn" onclick="changeBet(20)">+</button>
-          <button class="sr-spin-button" id="srSpinBtn" onclick="triggerSpin()">↻</button>
-        </div>
+      <div class="user-modal-btns">
+        <button class="btn-modal-cancel" onclick="closeEditModal()">Отмена</button>
+        <button class="btn-modal-submit" onclick="submitEditRequest()">Отправить правку</button>
       </div>
     </div>
   </div>
-
-  <footer>
-    <p>© 2026 <span>ФК «ГазМяс»</span>. Все права защищены дворовым комитетом Санкт-Петербурга.</p>
-    <p style="margin-top: 0.3rem;">Дирекция: Платон Нодь • Креативный продюсер: Артем Визиров • Технический штаб: kfx</p>
-  </footer>
 
   <script>
-    let allSquadData = [];
-    let editingCardIndex = -1;
+    // ВСТАВЬ СВОИ ДАННЫЕ ОТ JSONBIN.IO
+    const JSONBIN_BIN_ID = "ВСТАВЬ_СВОЙ_BIN_ID";
+    const JSONBIN_MASTER_KEY = "ВСТАВЬ_СВОЙ_MASTER_KEY";
 
-    function getApiUrl(endpoint) {
-      if (window.location.protocol === "file:" || (window.location.port && window.location.port !== "8080")) {
-        return "http://localhost:8080" + endpoint;
-      }
-      return endpoint;
-    }
+    let squadData = [];
+    let currentEditIndex = -1;
 
     async function loadSquad() {
-      const container = document.getElementById("gallery");
-      const counter = document.getElementById("squad-counter");
-
       try {
-        const response = await fetch("data.json?t=" + new Date().getTime());
-        if (!response.ok) throw new Error("HTTP error " + response.status);
-        allSquadData = await response.json();
-
-        if (!Array.isArray(allSquadData) || allSquadData.length === 0) {
-          counter.textContent = "Игроков в обойме: 0";
-          container.innerHTML = "<p style='color: var(--text-muted);'>Обойма пуста.</p>";
-          return;
-        }
-
-        renderFilteredSquad();
+        const res = await fetch("data.json?t=" + Date.now());
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        squadData = await res.json();
+        renderSquad(squadData);
       } catch (err) {
-        counter.textContent = "Игроков в обойме: 0";
-        container.innerHTML = "<p style='color: var(--text-muted);'>Состав не загружен (запустите через локальный веб-сервер или куратор).</p>";
+        document.getElementById("emptySquad").style.display = "block";
+        document.getElementById("emptySquad").textContent = "Состав не загружен (запустите через локальный веб-сервер или проверьте data.json).";
       }
     }
 
-    function handleSearch() {
-      renderFilteredSquad();
-    }
+    function renderSquad(items) {
+      const grid = document.getElementById("squadGrid");
+      const empty = document.getElementById("emptySquad");
 
-    function renderFilteredSquad() {
-      const container = document.getElementById("gallery");
-      const counter = document.getElementById("squad-counter");
-      const titleQuery = (document.getElementById("searchTitle").value || "").trim().toLowerCase();
-      const captionQuery = (document.getElementById("searchCaption").value || "").trim().toLowerCase();
-
-      const filtered = allSquadData.filter(item => {
-        const titleMatch = !titleQuery || (item.title && item.title.toLowerCase().includes(titleQuery));
-        const captionMatch = !captionQuery || (item.caption && item.caption.toLowerCase().includes(captionQuery));
-        return titleMatch && captionMatch;
-      });
-
-      if (titleQuery || captionQuery) {
-        counter.textContent = "Найдено: " + filtered.length + " из " + allSquadData.length;
-      } else {
-        counter.textContent = "Игроков в обойме: " + allSquadData.length;
-      }
-
-      container.innerHTML = "";
-
-      if (filtered.length === 0) {
-        container.innerHTML = "<p style='color: var(--text-muted); grid-column: 1 / -1; text-align: center; padding: 2rem;'>Ничего не найдено по заданным параметрам.</p>";
+      if (!items || items.length === 0) {
+        grid.innerHTML = "";
+        empty.style.display = "block";
         return;
       }
 
-      filtered.forEach((item) => {
-        const originalIndex = allSquadData.indexOf(item);
-        const cardEl = document.createElement("div");
-        cardEl.className = "player-card";
-        const badgeClass = item.tag_class ? "player-badge " + item.tag_class : "player-badge";
+      empty.style.display = "none";
+      grid.innerHTML = "";
 
-        cardEl.innerHTML = 
-          '<div class="image-container">' +
-            '<div class="card-user-actions">' +
-              '<button class="user-act-btn btn-del" onclick="requestDelete(' + originalIndex + ')" title="Предложить удалить фотку">✕</button>' +
-              '<button class="user-act-btn" onclick="openUserEditModal(' + originalIndex + ')" title="Предложить новое название/описание">✎</button>' +
-            '</div>' +
-            '<img src="' + item.file + '" alt="' + item.title + '" loading="lazy">' +
-            '<span class="' + badgeClass + '">' + (item.tag || "Игрок") + '</span>' +
-          '</div>' +
-          '<div class="card-content">' +
-            '<div class="card-title">' + item.title + '</div>' +
-            '<div class="card-caption">' + item.caption + '</div>' +
-            '<div class="card-footer">' +
-              '<span>№ ' + (originalIndex + 1) + '</span>' +
-              '<span>Статус: Основа</span>' +
-            '</div>' +
-          '</div>';
-        container.appendChild(cardEl);
+      items.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.className = "player-card";
+        card.innerHTML = `
+          <div class="card-photo-wrap">
+            <img src="${item.file}" alt="${escapeHtml(item.title)}" loading="lazy">
+            <div class="tag-badge ${item.tag_class || ''}">${escapeHtml(item.tag || 'Основа')}</div>
+          </div>
+          <div class="card-body">
+            <div class="card-title">${escapeHtml(item.title)}</div>
+            <div class="card-caption">${escapeHtml(item.caption)}</div>
+          </div>
+          <div class="card-user-actions">
+            <button class="btn-card-action edit" onclick="openEditModal(${index})">✎ Правка</button>
+            <button class="btn-card-action del" onclick="requestDelete(${index})">✕ Удалить</button>
+          </div>
+        `;
+        grid.appendChild(card);
       });
     }
 
-    async function requestDelete(index) {
-      const item = allSquadData[index];
-      if (!confirm(`Отправить заявку дирекции на удаление кадра "${item.title}"?`)) return;
+    function handleSearch() {
+      const q = document.getElementById("searchInput").value.toLowerCase().trim();
+      const tagQ = document.getElementById("tagFilterInput").value.toLowerCase().trim();
 
+      const filtered = squadData.filter(item => {
+        const matchText = (item.title || "").toLowerCase().includes(q) || (item.caption || "").toLowerCase().includes(q);
+        const matchTag = tagQ === "" || (item.tag || "").toLowerCase().includes(tagQ);
+        return matchText && matchTag;
+      });
+
+      renderSquad(filtered);
+    }
+
+    function filterSugarRush() {
+      document.getElementById("searchInput").value = "Sugar Rush";
+      handleSearch();
+    }
+
+    // Запись в облачный буфер JSONBin
+    async function pushToCloudQueue(newItem) {
+      let currentItems = [];
       try {
-        const res = await fetch(getApiUrl("/api/submit_request"), {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            file: item.file,
-            type: "delete",
-            current_title: item.title,
-            current_caption: item.caption
-          })
+        const getRes = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+          headers: { "X-Master-Key": JSONBIN_MASTER_KEY }
         });
-        if (res.ok) {
-          alert("Заявка на удаление передана в тренерский штаб!");
-        } else {
-          alert("Сбой сервера (" + res.status + ").");
+        if (getRes.ok) {
+          const data = await getRes.json();
+          if (Array.isArray(data.record)) {
+            currentItems = data.record;
+          } else if (data.record && Array.isArray(data.record.queue)) {
+            currentItems = data.record.queue;
+          }
         }
       } catch (e) {
-        alert("Сервер временно недоступен. Убедитесь, что запущен admin.bat (admin_server.py).");
+        currentItems = [];
+      }
+
+      currentItems = currentItems.filter(item => !item.init);
+      currentItems.unshift(newItem);
+
+      const putRes = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Master-Key": JSONBIN_MASTER_KEY
+        },
+        body: JSON.stringify({ queue: currentItems })
+      });
+
+      if (!putRes.ok) throw new Error("Cloud write failed");
+    }
+
+    function openIdeaModal() {
+      document.getElementById("ideaModal").style.display = "flex";
+    }
+    function closeIdeaModal() {
+      document.getElementById("ideaModal").style.display = "none";
+    }
+
+    async function submitNewIdea() {
+      const author = document.getElementById("ideaAuthor").value.trim();
+      const title = document.getElementById("ideaTitle").value.trim();
+      const caption = document.getElementById("ideaCaption").value.trim();
+      const imageUrl = document.getElementById("ideaImgUrl").value.trim();
+
+      if (!title || !caption) {
+        alert("Заполните заголовок и описание!");
+        return;
+      }
+
+      const ideaItem = {
+        id: "idea_" + Date.now(),
+        time: new Date().toLocaleString("ru-RU"),
+        type: "idea",
+        author: author || "Болельщик",
+        title: title,
+        caption: caption,
+        image_url: imageUrl || "images/placeholder.jpg",
+        tag: "Предложка"
+      };
+
+      try {
+        await pushToCloudQueue(ideaItem);
+        alert("Идея успешно отправлена в штаб модерации ГазМяса!");
+        document.getElementById("ideaTitle").value = "";
+        document.getElementById("ideaCaption").value = "";
+        document.getElementById("ideaImgUrl").value = "";
+        closeIdeaModal();
+      } catch (e) {
+        alert("Сбой связи с облачным штабом. Попробуйте позже.");
       }
     }
 
-    function openUserEditModal(index) {
-      editingCardIndex = index;
-      const item = allSquadData[index];
-      document.getElementById("reqNewTitle").value = item.title || "";
-      document.getElementById("reqNewCaption").value = item.caption || "";
-      document.getElementById("userEditOverlay").style.display = "flex";
+    function openEditModal(index) {
+      currentEditIndex = index;
+      const item = squadData[index];
+      document.getElementById("editTitle").value = item.title;
+      document.getElementById("editCaption").value = item.caption;
+      document.getElementById("editModal").style.display = "flex";
     }
-
-    function closeUserEditModal() {
-      document.getElementById("userEditOverlay").style.display = "none";
-      editingCardIndex = -1;
+    function closeEditModal() {
+      document.getElementById("editModal").style.display = "none";
+      currentEditIndex = -1;
     }
 
     async function submitEditRequest() {
-      if (editingCardIndex < 0) return;
-      const item = allSquadData[editingCardIndex];
-      const newTitle = document.getElementById("reqNewTitle").value.trim();
-      const newCaption = document.getElementById("reqNewCaption").value.trim();
+      if (currentEditIndex < 0) return;
+      const item = squadData[currentEditIndex];
+      const newTitle = document.getElementById("editTitle").value.trim();
+      const newCaption = document.getElementById("editCaption").value.trim();
 
       if (!newTitle) {
         alert("Укажите заголовок!");
         return;
       }
 
-      try {
-        const res = await fetch(getApiUrl("/api/submit_request"), {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            file: item.file,
-            type: "edit",
-            current_title: item.title,
-            current_caption: item.caption,
-            new_title: newTitle,
-            new_caption: newCaption
-          })
-        });
+      const reqItem = {
+        id: "req_" + Date.now(),
+        time: new Date().toLocaleString("ru-RU"),
+        file: item.file,
+        type: "edit",
+        current_title: item.title,
+        current_caption: item.caption,
+        new_title: newTitle,
+        new_caption: newCaption
+      };
 
-        if (res.ok) {
-          alert("Заявка на изменение отправлена модераторам!");
-          closeUserEditModal();
-        } else {
-          alert("Сбой сервера (" + res.status + ").");
-        }
+      try {
+        await pushToCloudQueue(reqItem);
+        alert("Правка отправлена дирекции клуба!");
+        closeEditModal();
       } catch (e) {
-        alert("Сервер временно недоступен. Убедитесь, что запущен admin.bat (admin_server.py).");
+        alert("Сбой связи с облаком.");
       }
     }
 
-    /* -------------------------------------------------------------
-       ЛОГИКА СЛОТА SUGAR RUSH 7x7
-       ------------------------------------------------------------- */
-    const ROWS = 7;
-    const COLS = 7;
-    const MAX_WIN_MULT = 5000;
+    async function requestDelete(index) {
+      const item = squadData[index];
+      if (!confirm(`Отправить заявку на удаление кадра "${item.title}"?`)) return;
 
-    const PAYTABLE = {
-      "🔴": [1.0,  1.5,  1.75, 2.0,  2.5,  5.0,  7.5,  15.0, 35.0, 70.0, 150.0],
-      "🧡": [0.75, 1.0,  1.25, 1.5,  2.0,  4.0,  6.0,  12.5, 30.0, 60.0, 100.0],
-      "🍆": [0.5,  0.75, 1.0,  1.25, 1.5,  3.0,  4.5,  10.0, 20.0, 40.0, 60.0],
-      "⭐": [0.4,  0.5,  0.75, 1.0,  1.25, 2.0,  3.0,  5.0,  10.0, 20.0, 40.0],
-      "🐻": [0.3,  0.4,  0.5,  0.75, 1.0,  1.5,  2.5,  3.5,  8.0,  15.0, 30.0],
-      "🟣": [0.25, 0.3,  0.4,  0.5,  0.75, 1.25, 2.0,  3.0,  6.0,  12.0, 25.0],
-      "🟠": [0.2,  0.25, 0.3,  0.4,  0.5,  1.0,  1.5,  2.5,  5.0,  10.0, 20.0]
-    };
+      const reqItem = {
+        id: "req_" + Date.now(),
+        time: new Date().toLocaleString("ru-RU"),
+        file: item.file,
+        type: "delete",
+        current_title: item.title,
+        current_caption: item.caption
+      };
 
-    let balance = 30000;
-    let bet = 100;
-    let grid = [];
-    let spotState = [];
-    let isProcessing = false;
-    let freeSpinsLeft = 0;
-    let isFreeSpinsRound = false;
-
-    function initSlotEngine() {
-      const gridEl = document.getElementById("slotGrid");
-      if (!gridEl) return;
-      gridEl.innerHTML = "";
-      grid = [];
-      spotState = [];
-
-      for (let r = 0; r < ROWS; r++) {
-        grid[r] = [];
-        spotState[r] = [];
-        for (let c = 0; c < COLS; c++) {
-          grid[r][c] = getRandomCandy();
-          spotState[r][c] = { marked: false, mult: 0 };
-
-          const cell = document.createElement("div");
-          cell.className = "sr-cell";
-          cell.id = "cell-" + r + "-" + c;
-
-          const sym = document.createElement("span");
-          sym.className = "sr-symbol";
-          sym.textContent = grid[r][c];
-          cell.appendChild(sym);
-
-          gridEl.appendChild(cell);
-        }
-      }
-      updateUI();
-    }
-
-    function getRandomCandy() {
-      if (Math.random() < 0.0035) {
-        return "🎰";
-      }
-
-      const weights = [
-        { symbol: "🟠", weight: 26 },
-        { symbol: "🟣", weight: 22 },
-        { symbol: "🐻", weight: 18 },
-        { symbol: "⭐", weight: 14 },
-        { symbol: "🍆", weight: 10 },
-        { symbol: "🧡", weight: 6 },
-        { symbol: "🔴", weight: 4 }
-      ];
-
-      const totalWeight = weights.reduce((acc, item) => acc + item.weight, 0);
-      let rand = Math.random() * totalWeight;
-
-      for (const item of weights) {
-        if (rand < item.weight) {
-          return item.symbol;
-        }
-        rand -= item.weight;
-      }
-
-      return "🟠";
-    }
-
-    function getClusterPayout(symbol, count, currentBet) {
-      const rates = PAYTABLE[symbol];
-      if (!rates) return 0;
-      const index = Math.min(10, Math.max(0, count - 5));
-      return currentBet * rates[index];
-    }
-
-    function updateUI() {
-      const bDisp = document.getElementById("balanceDisplay");
-      const betDisp = document.getElementById("betDisplay");
-      const buyPrice = document.getElementById("buyBonusPrice");
-      const fsBox = document.getElementById("freeSpinsCounterBox");
-      const fsDisp = document.getElementById("freeSpinsDisplay");
-
-      if (bDisp) bDisp.textContent = balance.toLocaleString("ru-RU") + " ₽";
-      if (betDisp) betDisp.textContent = bet.toLocaleString("ru-RU") + " ₽";
-      if (buyPrice) buyPrice.textContent = (bet * 100).toLocaleString("ru-RU") + " ₽";
-
-      if (fsBox && fsDisp) {
-        if (isFreeSpinsRound) {
-          fsBox.style.display = "flex";
-          fsDisp.textContent = freeSpinsLeft;
-        } else {
-          fsBox.style.display = "none";
-        }
-      }
-    }
-
-    function changeBet(delta) {
-      if (isProcessing || isFreeSpinsRound) return;
-      bet = Math.max(20, bet + delta);
-      updateUI();
-    }
-
-    function openSlotModal() {
-      const overlay = document.getElementById("slotOverlay");
-      if (overlay) {
-        overlay.style.display = "flex";
-        if (grid.length === 0) initSlotEngine();
-      }
-    }
-
-    function closeSlotModal() {
-      if (isFreeSpinsRound) return;
-      const overlay = document.getElementById("slotOverlay");
-      if (overlay) overlay.style.display = "none";
-    }
-
-    function closeSlotOnBackdrop(e) {
-      if (e.target.id === "slotOverlay" && !isFreeSpinsRound) closeSlotModal();
-    }
-
-    function toggleRulesModal() {
-      const modal = document.getElementById("srRulesModal");
-      if (modal) {
-        modal.style.display = modal.style.display === "flex" ? "none" : "flex";
-      }
-    }
-
-    function playBeep(freq = 440, type = "sine", duration = 0.1) {
       try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = type;
-        osc.frequency.value = freq;
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
-        osc.stop(audioCtx.currentTime + duration);
-      } catch (e) {}
-    }
-
-    function shakeMachine() {
-      const machine = document.getElementById("srMachine");
-      if (!machine) return;
-      machine.classList.remove("shake");
-      void machine.offsetWidth;
-      machine.classList.add("shake");
-    }
-
-    async function triggerSpin() {
-      if (isProcessing) return;
-      if (balance < bet) {
-        document.getElementById("winNotification").textContent = "Дядя Миша подкинул 5 000 ₽ на ход ноги!";
-        balance += 5000;
-        updateUI();
-        return;
-      }
-
-      balance -= bet;
-      updateUI();
-
-      resetSpotMultipliers();
-      await runCascadeGame();
-    }
-
-    async function buyBonus() {
-      if (isProcessing || isFreeSpinsRound) return;
-      const bonusCost = bet * 100;
-      if (balance < bonusCost) {
-        document.getElementById("winNotification").textContent = "Не хватает кредитов на покупку бонуски!";
-        shakeMachine();
-        playBeep(200, "sawtooth", 0.2);
-        return;
-      }
-
-      balance -= bonusCost;
-      updateUI();
-      document.getElementById("winNotification").textContent = "🔥 КУПЛЕНА БОНУСКА SUGAR RUSH! 🔥";
-      shakeMachine();
-      playBeep(880, "square", 0.4);
-
-      resetSpotMultipliers();
-      startFreeSpinsSession(10);
-    }
-
-    async function startFreeSpinsSession(count) {
-      isFreeSpinsRound = true;
-      freeSpinsLeft = count;
-      updateUI();
-
-      let totalBonusWin = 0;
-
-      while (freeSpinsLeft > 0) {
-        freeSpinsLeft--;
-        updateUI();
-
-        document.getElementById("winNotification").textContent = "Фриспин! Осталось спинов: " + freeSpinsLeft;
-        const roundWin = await runCascadeGame();
-        totalBonusWin += roundWin;
-
-        if (totalBonusWin >= bet * MAX_WIN_MULT) {
-          totalBonusWin = bet * MAX_WIN_MULT;
-          document.getElementById("winNotification").innerHTML = "🚨 MAX WIN 5 000X ДОСТИГНУТ! 🚨";
-          shakeMachine();
-          break;
-        }
-
-        await sleep(500);
-      }
-
-      isFreeSpinsRound = false;
-      updateUI();
-      document.getElementById("winNotification").innerHTML = "🎉 БОНУСНЫЙ РАУНД ЗАВЕРШЕН! Занос: +" + totalBonusWin.toLocaleString("ru-RU") + " ₽!";
-      shakeMachine();
-    }
-
-    function resetSpotMultipliers() {
-      for (let r = 0; r < ROWS; r++) {
-        for (let c = 0; c < COLS; c++) {
-          spotState[r][c] = { marked: false, mult: 0 };
-        }
+        await pushToCloudQueue(reqItem);
+        alert("Заявка на удаление отправлена модераторам!");
+      } catch (e) {
+        alert("Сбой отправки заявки.");
       }
     }
 
-    function applyGravityAndRefill() {
-      const dropMap = [];
-
-      for (let c = 0; c < COLS; c++) {
-        let emptyRow = ROWS - 1;
-        for (let r = ROWS - 1; r >= 0; r--) {
-          if (grid[r][c] !== null) {
-            if (emptyRow !== r) {
-              const distance = emptyRow - r;
-              grid[emptyRow][c] = grid[r][c];
-              grid[r][c] = null;
-              dropMap.push({ fromR: r, toR: emptyRow, col: c, distance: distance, isNew: false });
-            }
-            emptyRow--;
-          }
-        }
-
-        let newIndex = 1;
-        for (let r = emptyRow; r >= 0; r--) {
-          grid[r][c] = getRandomCandy();
-          dropMap.push({ fromR: -newIndex, toR: r, col: c, distance: emptyRow + 1, isNew: true });
-          newIndex++;
-        }
-      }
-
-      return dropMap;
+    function escapeHtml(str) {
+      return (str || "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
-    function renderGrid(animateDrop = false) {
-      for (let r = 0; r < ROWS; r++) {
-        for (let c = 0; c < COLS; c++) {
-          const cellEl = document.getElementById("cell-" + r + "-" + c);
-          if (!cellEl) continue;
-
-          let sym = cellEl.querySelector(".sr-symbol");
-          if (!sym) {
-            sym = document.createElement("span");
-            sym.className = "sr-symbol";
-            cellEl.appendChild(sym);
-          }
-
-          sym.textContent = grid[r][c] || "";
-          sym.className = "sr-symbol";
-          sym.style.removeProperty("--drop-offset");
-          sym.style.removeProperty("--slide-rows");
-
-          if (animateDrop) {
-            sym.style.setProperty("--drop-offset", (ROWS - r + 1));
-            void sym.offsetWidth;
-            sym.classList.add("dropping");
-            sym.style.animationDelay = ((c * 0.03) + (r * 0.015)) + "s";
-          }
-
-          updateSpotUI(cellEl, r, c);
-        }
-      }
-    }
-
-    function renderTumbleAnimation(dropMap) {
-      for (let r = 0; r < ROWS; r++) {
-        for (let c = 0; c < COLS; c++) {
-          const cellEl = document.getElementById("cell-" + r + "-" + c);
-          if (!cellEl) continue;
-
-          let sym = cellEl.querySelector(".sr-symbol");
-          if (!sym) {
-            sym = document.createElement("span");
-            sym.className = "sr-symbol";
-            cellEl.appendChild(sym);
-          }
-
-          sym.textContent = grid[r][c] || "";
-          sym.className = "sr-symbol";
-
-          const move = dropMap.find(m => m.toR === r && m.col === c);
-          if (move) {
-            if (move.isNew) {
-              sym.style.setProperty("--drop-offset", move.distance + 1);
-              void sym.offsetWidth;
-              sym.classList.add("dropping");
-              sym.style.animationDelay = (c * 0.025) + "s";
-            } else {
-              sym.style.setProperty("--slide-rows", move.distance);
-              void sym.offsetWidth;
-              sym.classList.add("sliding");
-            }
-          }
-
-          updateSpotUI(cellEl, r, c);
-        }
-      }
-    }
-
-    function updateSpotUI(cellEl, r, c) {
-      const spot = spotState[r][c];
-      let badge = cellEl.querySelector(".sr-multiplier-badge");
-      if (badge) badge.remove();
-
-      cellEl.classList.remove("marked-spot");
-      if (spot.mult > 1) {
-        cellEl.style.backgroundColor = spot.mult >= 8 ? "rgba(255, 46, 147, 0.55)" : "rgba(255, 215, 0, 0.45)";
-        badge = document.createElement("span");
-        badge.className = "sr-multiplier-badge";
-        badge.textContent = "x" + spot.mult;
-        cellEl.appendChild(badge);
-      } else if (spot.marked) {
-        cellEl.classList.add("marked-spot");
-      } else {
-        cellEl.style.backgroundColor = "rgba(255, 255, 255, 0.45)";
-      }
-    }
-
-    async function runCascadeGame() {
-      isProcessing = true;
-      const spinBtn = document.getElementById("srSpinBtn");
-      if (spinBtn) spinBtn.disabled = true;
-      const winNotify = document.getElementById("winNotification");
-      if (winNotify) winNotify.classList.remove("bigwin");
-
-      for (let r = 0; r < ROWS; r++) {
-        for (let c = 0; c < COLS; c++) {
-          grid[r][c] = getRandomCandy();
-        }
-      }
-      renderGrid(true);
-      playBeep(340, "triangle", 0.15);
-
-      await sleep(400);
-
-      let scatterCount = 0;
-      for (let r = 0; r < ROWS; r++) {
-        for (let c = 0; c < COLS; c++) {
-          if (grid[r][c] === "🎰") scatterCount++;
-        }
-      }
-      if (scatterCount >= 3) {
-        let awardedSpins = 10;
-        if (scatterCount === 4) awardedSpins = 12;
-        else if (scatterCount === 5) awardedSpins = 15;
-        else if (scatterCount === 6) awardedSpins = 20;
-        else if (scatterCount >= 7) awardedSpins = 30;
-
-        if (winNotify) winNotify.innerHTML = "🎰 ВЫПАЛО " + scatterCount + " СКАТТЕРА! +" + awardedSpins + " СПИНОВ!";
-        shakeMachine();
-        playBeep(980, "square", 0.5);
-        await sleep(700);
-
-        if (!isFreeSpinsRound) {
-          isProcessing = false;
-          startFreeSpinsSession(awardedSpins);
-          return 0;
-        } else {
-          freeSpinsLeft += awardedSpins;
-          updateUI();
-        }
-      }
-
-      let totalRoundWin = 0;
-      let cascadeCount = 0;
-
-      while (true) {
-        const clusters = findClusters();
-        if (clusters.length === 0) break;
-
-        cascadeCount++;
-        let stepWin = 0;
-
-        for (const cluster of clusters) {
-          const candyType = cluster.type;
-          const count = cluster.cells.length;
-          const basePay = getClusterPayout(candyType, count, bet);
-
-          let clusterMultiplierSum = 0;
-          for (const cell of cluster.cells) {
-            clusterMultiplierSum += (spotState[cell.r][cell.c].mult || 1);
-          }
-
-          stepWin += basePay * (clusterMultiplierSum / count);
-
-          for (const cell of cluster.cells) {
-            const spot = spotState[cell.r][cell.c];
-            if (!spot.marked) {
-              spot.marked = true;
-            } else if (spot.mult === 0) {
-              spot.mult = 2;
-            } else {
-              spot.mult = Math.min(128, spot.mult * 2);
-            }
-
-            const cellEl = document.getElementById("cell-" + cell.r + "-" + cell.c);
-            if (cellEl) {
-              const sym = cellEl.querySelector(".sr-symbol");
-              if (sym) {
-                sym.className = "sr-symbol exploding";
-              }
-            }
-          }
-        }
-
-        playBeep(520 + (cascadeCount * 70), "sine", 0.22);
-        stepWin = Math.round(stepWin);
-        totalRoundWin += stepWin;
-
-        if (winNotify) winNotify.innerHTML = "💥 Каскад #" + cascadeCount + "! Занос: +" + stepWin.toLocaleString("ru-RU") + " ₽";
-        if (stepWin > bet * 5) shakeMachine();
-
-        await sleep(380);
-
-        for (const cluster of clusters) {
-          for (const cell of cluster.cells) {
-            grid[cell.r][cell.c] = null;
-          }
-        }
-
-        const dropMap = applyGravityAndRefill();
-        renderTumbleAnimation(dropMap);
-
-        await sleep(420);
-      }
-
-      if (totalRoundWin > 0) {
-        balance += totalRoundWin;
-        if (winNotify) {
-          winNotify.classList.add("bigwin");
-          winNotify.innerHTML = "🎉 ЗАНОС СПИНА: +" + totalRoundWin.toLocaleString("ru-RU") + " ₽!";
-        }
-        shakeMachine();
-        playBeep(920, "square", 0.4);
-      } else if (!isFreeSpinsRound && winNotify) {
-        winNotify.textContent = "Пусто. 99% лудоманов выходят перед заносом!";
-      }
-
-      updateUI();
-      isProcessing = false;
-      if (spinBtn) spinBtn.disabled = false;
-      return totalRoundWin;
-    }
-
-    function findClusters() {
-      const visited = Array.from({ length: ROWS }, () => Array(COLS).fill(false));
-      const winningClusters = [];
-
-      for (let r = 0; r < ROWS; r++) {
-        for (let c = 0; c < COLS; c++) {
-          if (!visited[r][c] && grid[r][c] !== null && grid[r][c] !== "🎰") {
-            const candy = grid[r][c];
-            const clusterCells = [];
-            const queue = [{ r, c }];
-            visited[r][c] = true;
-
-            while (queue.length > 0) {
-              const current = queue.shift();
-              clusterCells.push(current);
-
-              const neighbors = [
-                { r: current.r - 1, c: current.c },
-                { r: current.r + 1, c: current.c },
-                { r: current.r, c: current.c - 1 },
-                { r: current.r, c: current.c + 1 }
-              ];
-
-              for (const n of neighbors) {
-                if (n.r >= 0 && n.r < ROWS && n.c >= 0 && n.c < COLS) {
-                  if (!visited[n.r][n.c] && grid[n.r][n.c] === candy) {
-                    visited[n.r][n.c] = true;
-                    queue.push(n);
-                  }
-                }
-              }
-            }
-
-            if (clusterCells.length >= 5) {
-              winningClusters.push({ type: candy, cells: clusterCells });
-            }
-          }
-        }
-      }
-      return winningClusters;
-    }
-
-    function sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    window.addEventListener("keydown", (e) => {
-      const overlay = document.getElementById("slotOverlay");
-      if (overlay && overlay.style.display === "flex") {
-        if (e.code === "Space" || e.code === "Enter") {
-          e.preventDefault();
-          triggerSpin();
-        }
-      }
-    });
-
-    document.addEventListener("DOMContentLoaded", () => {
-      loadSquad();
-      initSlotEngine();
-    });
+    loadSquad();
   </script>
 </body>
 </html>

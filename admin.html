@@ -32,23 +32,26 @@
       z-index: 50;
       backdrop-filter: blur(8px);
     }
-    .brand { font-size: 1.2rem; font-weight: 900; text-transform: uppercase; color: var(--accent); letter-spacing: 1px; }
-    .counter-badge { background: var(--primary); padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: 800; font-size: 0.9rem; }
+    .brand { font-size: 1.2rem; font-weight: 900; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; gap: 8px; }
+    .live-dot { width: 10px; height: 10px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 8px #22c55e; }
 
-    main {
-      flex: 1;
-      padding: 2rem;
-      max-width: 1400px;
-      margin: 0 auto;
-      width: 100%;
+    .nav-tabs { display: flex; gap: 0.8rem; }
+    .tab-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 800;
+      cursor: pointer;
+      text-transform: uppercase;
+      font-size: 0.85rem;
     }
+    .tab-btn.active { background: var(--primary); border-color: var(--accent); color: #fff; }
 
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1.5rem;
-    }
+    main { flex: 1; padding: 2rem; max-width: 1400px; margin: 0 auto; width: 100%; }
 
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
     .gallery-item {
       background: var(--card-bg);
       border: 1px solid var(--border);
@@ -57,280 +60,119 @@
       display: flex;
       flex-direction: column;
       position: relative;
-      transition: transform 0.15s, border-color 0.15s;
     }
+    .gallery-item:hover { border-color: var(--accent); }
 
-    .gallery-item:hover {
-      transform: translateY(-3px);
-      border-color: var(--accent);
-    }
-
-    .thumb-wrap {
-      width: 100%;
-      height: 230px;
-      background: #000;
-      position: relative;
-      cursor: pointer;
-    }
-
-    .thumb-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
+    .thumb-wrap { width: 100%; height: 230px; background: #000; position: relative; cursor: pointer; }
+    .thumb-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
     .item-score {
-      position: absolute;
-      top: 8px;
-      left: 8px;
-      background: rgba(0, 0, 0, 0.85);
-      border: 1px solid var(--accent);
-      color: var(--accent);
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      font-weight: 800;
-      font-size: 0.75rem;
+      position: absolute; top: 8px; left: 8px; background: rgba(0, 0, 0, 0.85);
+      border: 1px solid var(--accent); color: var(--accent); padding: 0.2rem 0.5rem;
+      border-radius: 4px; font-weight: 800; font-size: 0.75rem;
     }
-
     .item-tag {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background: rgba(0, 0, 0, 0.8);
-      border: 1px solid #38bdf8;
-      color: #38bdf8;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      font-weight: 800;
-      font-size: 0.75rem;
-      text-transform: uppercase;
+      position: absolute; top: 8px; right: 8px; background: rgba(0, 0, 0, 0.8);
+      border: 1px solid #38bdf8; color: #38bdf8; padding: 0.2rem 0.5rem;
+      border-radius: 4px; font-weight: 800; font-size: 0.75rem; text-transform: uppercase;
     }
 
-    .item-info {
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      flex: 1;
-      min-height: 125px;
-      cursor: pointer;
-    }
+    .item-info { padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem; flex: 1; min-height: 125px; cursor: pointer; }
+    .item-title { font-size: 0.95rem; font-weight: 800; color: #fff; line-height: 1.3; }
+    .item-caption { font-size: 0.85rem; color: var(--muted); line-height: 1.45; }
 
-    .item-title {
-      font-size: 0.95rem;
-      font-weight: 800;
-      color: #fff;
-      white-space: normal;
-      line-height: 1.3;
-    }
-
-    .item-caption {
-      font-size: 0.85rem;
-      color: var(--muted);
-      display: block;
-      overflow: visible;
-      line-height: 1.45;
-    }
-
-    .item-actions {
-      display: flex;
-      border-top: 1px solid var(--border);
-    }
-
+    .item-actions { display: flex; border-top: 1px solid var(--border); }
     .item-btn {
-      flex: 1;
-      padding: 0.75rem;
-      border: none;
-      font-size: 0.85rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.15s, opacity 0.15s;
+      flex: 1; padding: 0.75rem; border: none; font-size: 0.85rem; font-weight: 800;
+      text-transform: uppercase; cursor: pointer;
     }
-
-    .item-btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-
     .item-btn.btn-approve { background: rgba(35, 134, 54, 0.25); color: #4ade80; border-left: 1px solid var(--border); }
-    .item-btn.btn-approve:hover:not(:disabled) { background: var(--green); color: #fff; }
-
+    .item-btn.btn-approve:hover { background: var(--green); color: #fff; }
     .item-btn.btn-reject { background: rgba(218, 54, 51, 0.25); color: #f87171; }
-    .item-btn.btn-reject:hover:not(:disabled) { background: var(--red); color: #fff; }
+    .item-btn.btn-reject:hover { background: var(--red); color: #fff; }
 
-    /* Модальное окно */
+    /* Таблица заявок */
+    .requests-list { display: flex; flex-direction: column; gap: 1rem; }
+    .req-card {
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
+      padding: 1.2rem; display: grid; grid-template-columns: 140px 1fr 180px; gap: 1.5rem; align-items: center;
+    }
+    .req-thumb { width: 140px; height: 100px; background: #000; border-radius: 6px; overflow: hidden; }
+    .req-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .req-badge { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; }
+    .req-badge.delete { background: rgba(218, 54, 51, 0.3); color: #f87171; border: 1px solid var(--red); }
+    .req-badge.edit { background: rgba(255, 215, 0, 0.2); color: var(--accent); border: 1px solid var(--accent); }
+    .req-actions { display: flex; flex-direction: column; gap: 0.5rem; }
+    .req-btn { padding: 0.6rem; border: none; border-radius: 6px; font-weight: 800; text-transform: uppercase; font-size: 0.8rem; cursor: pointer; }
+
+    /* Модалка */
     .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.88);
-      backdrop-filter: blur(10px);
-      z-index: 100;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
+      display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(10px); z-index: 100; align-items: center; justify-content: center; padding: 1rem;
     }
-
-    .modal-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      width: 100%;
-      max-width: 1050px;
-    }
-
+    .modal-wrapper { display: flex; align-items: center; gap: 1rem; width: 100%; max-width: 1050px; }
     .nav-arrow {
-      background: rgba(22, 27, 34, 0.9);
-      border: 2px solid var(--border);
-      color: var(--accent);
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.6rem;
-      font-weight: 900;
-      cursor: pointer;
-      flex-shrink: 0;
-      transition: transform 0.15s, border-color 0.15s;
+      background: rgba(22, 27, 34, 0.9); border: 2px solid var(--border); color: var(--accent);
+      width: 50px; height: 50px; border-radius: 50%; font-size: 1.6rem; font-weight: 900; cursor: pointer; flex-shrink: 0;
     }
-
-    .nav-arrow:hover { border-color: var(--accent); transform: scale(1.1); }
-    .nav-arrow:disabled { opacity: 0.25; cursor: not-allowed; transform: none; }
-
     .moderation-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      width: 100%;
-      display: grid;
-      grid-template-columns: 1.1fr 1fr;
-      gap: 1.5rem;
-      overflow: hidden;
-      position: relative;
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px;
+      width: 100%; display: grid; grid-template-columns: 1.1fr 1fr; gap: 1.5rem; overflow: hidden; position: relative;
     }
-
-    .close-modal-btn {
-      position: absolute;
-      top: 10px;
-      right: 12px;
-      background: transparent;
-      border: none;
-      color: var(--muted);
-      font-size: 1.5rem;
-      cursor: pointer;
-      z-index: 10;
-      font-weight: bold;
-    }
-
-    .image-preview {
-      background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      min-height: 420px;
-    }
-
-    .image-preview img {
-      width: 100%;
-      height: 100%;
-      max-height: 480px;
-      object-fit: contain;
-    }
-
-    .score-badge-modal {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      background: rgba(0, 0, 0, 0.85);
-      border: 1px solid var(--accent);
-      color: var(--accent);
-      padding: 0.3rem 0.65rem;
-      border-radius: 6px;
-      font-weight: 900;
-      font-size: 0.85rem;
-    }
-
-    .form-pane {
-      padding: 1.5rem 1.5rem 1.5rem 0;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
+    .close-modal-btn { position: absolute; top: 10px; right: 12px; background: transparent; border: none; color: var(--muted); font-size: 1.5rem; cursor: pointer; z-index: 10; }
+    .image-preview { background: #000; display: flex; align-items: center; justify-content: center; position: relative; min-height: 420px; }
+    .image-preview img { width: 100%; height: 100%; max-height: 480px; object-fit: contain; }
+    .form-pane { padding: 1.5rem 1.5rem 1.5rem 0; display: flex; flex-direction: column; gap: 1rem; }
     .field-group { display: flex; flex-direction: column; gap: 0.35rem; }
     .field-group label { font-size: 0.75rem; text-transform: uppercase; color: var(--muted); font-weight: 700; }
     .field-group input, .field-group textarea {
-      background: #0d1117;
-      border: 1px solid var(--border);
-      color: #fff;
-      padding: 0.65rem;
-      border-radius: 6px;
-      font-size: 0.95rem;
+      background: #0d1117; border: 1px solid var(--border); color: #fff; padding: 0.65rem; border-radius: 6px; font-size: 0.95rem;
     }
-    .field-group textarea { resize: vertical; min-height: 90px; }
-    .field-group input:focus, .field-group textarea:focus { border-color: var(--accent); outline: none; }
-
-    .modal-actions {
-      display: flex;
-      gap: 1rem;
-      margin-top: auto;
-      padding-top: 1rem;
-    }
-
-    .btn {
-      flex: 1;
-      padding: 0.8rem;
-      border: none;
-      border-radius: 6px;
-      font-size: 0.95rem;
-      font-weight: 800;
-      cursor: pointer;
-      text-transform: uppercase;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 2px;
-    }
-
-    .btn-approve-lg { background: var(--green); color: #fff; }
-    .btn-reject-lg { background: var(--red); color: #fff; }
-
+    .field-group textarea { min-height: 90px; resize: vertical; }
+    .modal-actions { display: flex; gap: 1rem; margin-top: auto; padding-top: 1rem; }
+    .btn-approve-lg { background: var(--green); color: #fff; padding: 0.8rem; border: none; border-radius: 6px; font-weight: 800; cursor: pointer; flex: 1; text-transform: uppercase; }
+    .btn-reject-lg { background: var(--red); color: #fff; padding: 0.8rem; border: none; border-radius: 6px; font-weight: 800; cursor: pointer; flex: 1; text-transform: uppercase; }
     .empty-state { text-align: center; padding: 4rem 1rem; color: var(--muted); }
   </style>
 </head>
 <body>
 
   <header>
-    <div class="brand">ФК ГазМяс — Штаб модерации</div>
-    <div class="counter-badge" id="queueCount">Кандидатов: 0</div>
+    <div class="brand">
+      <span class="live-dot" title="Автосинхронизация активна"></span>
+      ФК ГазМяс — Админка
+    </div>
+    <div class="nav-tabs">
+      <button class="tab-btn active" id="tabCandidatesBtn" onclick="switchTab('candidates')">Очередь (0)</button>
+      <button class="tab-btn" id="tabRequestsBtn" onclick="switchTab('requests')">Заявки посетителей (0)</button>
+    </div>
   </header>
 
   <main>
-    <div id="galleryContainer" class="gallery-grid"></div>
-    <div class="empty-state" id="emptyState" style="display: none;">
-      <h2>Очередь чиста!</h2>
-      <p style="margin-top: 0.5rem;">Все кандидаты обработаны (одобренные внесены в data.json, брак ушел в deleted/).</p>
+    <div id="candidatesView">
+      <div id="galleryContainer" class="gallery-grid"></div>
+      <div class="empty-state" id="emptyCandidates" style="display: none;">
+        <h2>Очередь чиста!</h2>
+        <p style="margin-top: 0.5rem;">Кандидаты от Gemini и идеи людей подтянутся автоматически.</p>
+      </div>
+    </div>
+
+    <div id="requestsView" style="display: none;">
+      <div id="requestsContainer" class="requests-list"></div>
+      <div class="empty-state" id="emptyRequests" style="display: none;">
+        <h2>Заявок нет!</h2>
+        <p style="margin-top: 0.5rem;">Посетители пока не присылали правок.</p>
+      </div>
     </div>
   </main>
 
   <div class="modal-overlay" id="modalOverlay" onclick="handleBackdropClick(event)">
     <div class="modal-wrapper">
       <button class="nav-arrow" id="prevBtn" onclick="navigateModal(-1)">←</button>
-
       <div class="moderation-card">
         <button class="close-modal-btn" onclick="closeModal()">✕</button>
         <div class="image-preview">
           <img id="modalImg" src="" alt="Preview">
-          <div class="score-badge-modal" id="modalScore">Оценка AI: 7/10</div>
         </div>
         <div class="form-pane">
           <div class="field-group">
@@ -342,41 +184,65 @@
             <input type="text" id="modalTag">
           </div>
           <div class="field-group">
-            <label>Панчлайн / Описание (Caption)</label>
+            <label>Панчлайн (Caption)</label>
             <textarea id="modalCaption"></textarea>
           </div>
-
           <div class="modal-actions">
-            <button class="btn btn-reject-lg" id="modalRejectBtn" onclick="moderateCurrent('reject')">В корзину [D]</button>
-            <button class="btn btn-approve-lg" id="modalApproveBtn" onclick="moderateCurrent('approve')">Одобрить [A]</button>
+            <button class="btn-reject-lg" onclick="moderateCurrent('reject')">В корзину [D]</button>
+            <button class="btn-approve-lg" onclick="moderateCurrent('approve')">Одобрить [A]</button>
           </div>
         </div>
       </div>
-
       <button class="nav-arrow" id="nextBtn" onclick="navigateModal(1)">→</button>
     </div>
   </div>
 
   <script>
     let queue = [];
+    let userRequests = [];
     let currentModalIndex = -1;
-    let isRequesting = false;
+    let isBusy = false;
+
+    async function loadData() {
+      if (isBusy) return;
+      await Promise.all([fetchQueue(), fetchRequests()]);
+    }
 
     async function fetchQueue() {
       try {
         const res = await fetch("/api/pending?t=" + Date.now());
-        queue = await res.json();
-        renderGallery();
-      } catch (e) {
-        document.getElementById("emptyState").style.display = "block";
-        document.getElementById("emptyState").innerHTML = "<h2>Ошибка подключения</h2><p>Убедитесь, что запущен admin_server.py</p>";
-      }
+        const data = await res.json();
+        // Рендерим только если данные реально изменились
+        if (JSON.stringify(data) !== JSON.stringify(queue)) {
+          queue = data;
+          document.getElementById("tabCandidatesBtn").textContent = `Очередь (${queue.length})`;
+          renderGallery();
+        }
+      } catch (e) {}
+    }
+
+    async function fetchRequests() {
+      try {
+        const res = await fetch("/api/requests?t=" + Date.now());
+        const data = await res.json();
+        if (JSON.stringify(data) !== JSON.stringify(userRequests)) {
+          userRequests = data;
+          document.getElementById("tabRequestsBtn").textContent = `Заявки посетителей (${userRequests.length})`;
+          renderRequests();
+        }
+      } catch (e) {}
+    }
+
+    function switchTab(tab) {
+      document.getElementById("tabCandidatesBtn").classList.toggle("active", tab === 'candidates');
+      document.getElementById("tabRequestsBtn").classList.toggle("active", tab === 'requests');
+      document.getElementById("candidatesView").style.display = tab === 'candidates' ? 'block' : 'none';
+      document.getElementById("requestsView").style.display = tab === 'requests' ? 'block' : 'none';
     }
 
     function renderGallery() {
       const container = document.getElementById("galleryContainer");
-      const emptyState = document.getElementById("emptyState");
-      document.getElementById("queueCount").textContent = "Кандидатов: " + queue.length;
+      const emptyState = document.getElementById("emptyCandidates");
 
       if (!queue || queue.length === 0) {
         container.innerHTML = "";
@@ -391,11 +257,10 @@
       queue.forEach((item, index) => {
         const card = document.createElement("div");
         card.className = "gallery-item";
-        card.id = "card-" + item.id;
         card.innerHTML = `
           <div class="thumb-wrap" onclick="openModal(${index})">
             <img src="${item.temp_file}" alt="thumb" loading="lazy">
-            <div class="item-score">${item.score}/10</div>
+            <div class="item-score">${item.score || 7}/10</div>
             <div class="item-tag">${escapeHtml(item.tag || 'Основа')}</div>
           </div>
           <div class="item-info" onclick="openModal(${index})">
@@ -411,20 +276,70 @@
       });
     }
 
+    function renderRequests() {
+      const container = document.getElementById("requestsContainer");
+      const emptyState = document.getElementById("emptyRequests");
+
+      if (!userRequests || userRequests.length === 0) {
+        container.innerHTML = "";
+        emptyState.style.display = "block";
+        return;
+      }
+
+      emptyState.style.display = "none";
+      container.innerHTML = "";
+
+      userRequests.forEach((req) => {
+        const row = document.createElement("div");
+        row.className = "req-card";
+        const isDelete = req.type === 'delete';
+        const badge = isDelete ? '<span class="req-badge delete">Удаление</span>' : '<span class="req-badge edit">Правка</span>';
+
+        row.innerHTML = `
+          <div class="req-thumb"><img src="${req.file}" alt="Thumb"></div>
+          <div>
+            ${badge}
+            <div style="color: var(--muted); font-size: 0.75rem; margin: 4px 0;">Дата: ${req.time}</div>
+            <div><strong>Было:</strong> ${escapeHtml(req.current_title)} - ${escapeHtml(req.current_caption)}</div>
+            ${!isDelete ? `<div style="color: var(--accent); margin-top:4px;"><strong>Предлагают:</strong> ${escapeHtml(req.new_title)} /${escapeHtml(req.new_caption)}</div>` : ''}
+          </div>
+          <div class="req-actions">
+            <button class="req-btn" style="background: var(--green); color:#fff;" onclick="resolveRequest('${req.id}', 'apply')">Применить</button>
+            <button class="req-btn" style="background: rgba(255,255,255,0.1); color: var(--muted);" onclick="resolveRequest('${req.id}', 'dismiss')">Отклонить</button>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    async function resolveRequest(reqId, action) {
+      isBusy = true;
+      try {
+        await fetch("/api/handle_request", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: reqId, action: action })
+        });
+        userRequests = userRequests.filter(x => x.id !== reqId);
+        document.getElementById("tabRequestsBtn").textContent = `Заявки посетителей (${userRequests.length})`;
+        renderRequests();
+      } finally {
+        isBusy = false;
+      }
+    }
+
     function openModal(index) {
       if (index < 0 || index >= queue.length) return;
       currentModalIndex = index;
       const item = queue[index];
 
       document.getElementById("modalImg").src = item.temp_file;
-      document.getElementById("modalScore").textContent = `Оценка AI: ${item.score}/10`;
       document.getElementById("modalTitle").value = item.title || "";
       document.getElementById("modalTag").value = item.tag || "Основа";
       document.getElementById("modalCaption").value = item.caption || "";
 
       document.getElementById("prevBtn").disabled = (index === 0);
       document.getElementById("nextBtn").disabled = (index === queue.length - 1);
-
       document.getElementById("modalOverlay").style.display = "flex";
     }
 
@@ -439,96 +354,56 @@
 
     function navigateModal(direction) {
       const newIndex = currentModalIndex + direction;
-      if (newIndex >= 0 && newIndex < queue.length) {
-        openModal(newIndex);
-      }
+      if (newIndex >= 0 && newIndex < queue.length) openModal(newIndex);
     }
 
     async function moderateCurrent(action) {
-      if (isRequesting || currentModalIndex < 0 || currentModalIndex >= queue.length) return;
-      isRequesting = true;
+      if (isBusy || currentModalIndex < 0 || currentModalIndex >= queue.length) return;
+      isBusy = true;
       const current = queue[currentModalIndex];
 
-      const btnApprove = document.getElementById("modalApproveBtn");
-      const btnReject = document.getElementById("modalRejectBtn");
-      btnApprove.disabled = true;
-      btnReject.disabled = true;
-
-      const payload = {
-        action: action,
-        id: current.id,
-        title: document.getElementById("modalTitle").value.trim(),
-        tag: document.getElementById("modalTag").value.trim(),
-        caption: document.getElementById("modalCaption").value.trim()
-      };
-
       try {
-        await sendDecision(payload);
+        await fetch("/api/moderate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: action,
+            id: current.id,
+            title: document.getElementById("modalTitle").value.trim(),
+            tag: document.getElementById("modalTag").value.trim(),
+            caption: document.getElementById("modalCaption").value.trim()
+          })
+        });
+
         queue.splice(currentModalIndex, 1);
+        document.getElementById("tabCandidatesBtn").textContent = `Очередь (${queue.length})`;
         renderGallery();
 
-        if (queue.length === 0) {
-          closeModal();
-        } else {
-          if (currentModalIndex >= queue.length) currentModalIndex = queue.length - 1;
-          openModal(currentModalIndex);
-        }
-      } catch (e) {
-        alert("Сбой сохранения решения на сервере.");
+        if (queue.length === 0) closeModal();
+        else openModal(Math.min(currentModalIndex, queue.length - 1));
       } finally {
-        isRequesting = false;
-        btnApprove.disabled = false;
-        btnReject.disabled = false;
+        isBusy = false;
       }
     }
 
     async function quickModerate(index, action) {
-      if (isRequesting || index < 0 || index >= queue.length) return;
-      isRequesting = true;
+      if (isBusy || index < 0 || index >= queue.length) return;
+      isBusy = true;
       const item = queue[index];
 
-      const cardEl = document.getElementById("card-" + item.id);
-      if (cardEl) {
-        cardEl.style.opacity = "0.3";
-        cardEl.querySelectorAll("button").forEach(b => b.disabled = true);
-      }
-
-      const payload = {
-        action: action,
-        id: item.id,
-        title: item.title,
-        tag: item.tag,
-        caption: item.caption
-      };
-
       try {
-        await sendDecision(payload);
+        await fetch("/api/moderate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: action, id: item.id, title: item.title, tag: item.tag, caption: item.caption })
+        });
+
         queue.splice(index, 1);
+        document.getElementById("tabCandidatesBtn").textContent = `Очередь (${queue.length})`;
         renderGallery();
-
-        if (currentModalIndex === index) {
-          closeModal();
-        } else if (currentModalIndex > index) {
-          currentModalIndex--;
-        }
-      } catch (e) {
-        alert("Сбой связи с сервером.");
-        if (cardEl) {
-          cardEl.style.opacity = "1";
-          cardEl.querySelectorAll("button").forEach(b => b.disabled = false);
-        }
       } finally {
-        isRequesting = false;
+        isBusy = false;
       }
-    }
-
-    async function sendDecision(payload) {
-      const res = await fetch("/api/moderate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      if (!res.ok) throw new Error("HTTP " + res.status);
     }
 
     function escapeHtml(str) {
@@ -537,19 +412,18 @@
 
     window.addEventListener("keydown", (e) => {
       const isModalOpen = document.getElementById("modalOverlay").style.display === "flex";
-      if (e.key === "Escape" && isModalOpen) {
-        closeModal();
-        return;
-      }
+      if (e.key === "Escape" && isModalOpen) closeModal();
       if (isModalOpen && !["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) {
         if (e.key === "ArrowLeft") navigateModal(-1);
         else if (e.key === "ArrowRight") navigateModal(1);
-        else if (e.key === "a" || e.key === "A" || e.key === "ф" || e.key === "Ф" || e.key === "Enter") moderateCurrent("approve");
-        else if (e.key === "d" || e.key === "D" || e.key === "в" || e.key === "В" || e.key === "Delete") moderateCurrent("reject");
+        else if (e.key === "a" || e.key === "A" || e.key === "Enter") moderateCurrent("approve");
+        else if (e.key === "d" || e.key === "D" || e.key === "Delete") moderateCurrent("reject");
       }
     });
 
-    fetchQueue();
+    loadData();
+    // Фоновое автообновление без перезагрузки страницы
+    setInterval(loadData, 3000);
   </script>
 </body>
 </html>
