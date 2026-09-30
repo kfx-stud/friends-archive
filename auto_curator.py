@@ -27,8 +27,8 @@ ENV_FILE = BASE_DIR / ".env"
 # Порог вайба для попадания в очередь (1-10)
 SCORE_THRESHOLD = 5
 
-# Задержка между проверками: 5 секунд
-REQUEST_PACE_DELAY = 5.0
+# Задержка под лимит 5 RPM (1 запрос в 12 секунд)
+REQUEST_PACE_DELAY = 12.0
 
 # ==========================================
 # 2. ПЕРЕМЕННЫЕ ОКРУЖЕНИЯ И ПРОКСИ
@@ -56,17 +56,14 @@ if HTTPS_PROXY or HTTP_PROXY:
     session.proxies = {"http": proxy_url, "https": proxy_url}
 
 # ==========================================
-# 3. МЕНЕДЖЕР КЛЮЧЕЙ С КУЛДАУНАМИ И СЧЁТЧИКОМ
+# 3. МЕНЕДЖЕР КЛЮЧЕЙ С КУЛДАУНАМИ
 # ==========================================
 class GeminiKeyManager:
-    def __init__(self, raw_keys_str: str, max_uses_per_key: int = 10, timeout_duration: float = 300.0):
+    def __init__(self, raw_keys_str: str):
         self.keys: List[str] = [k.strip() for k in raw_keys_str.split(",") if k.strip()]
         self.cooldowns: Dict[str, float] = {k: 0.0 for k in self.keys}
-        self.usage_counts: Dict[str, int] = {k: 0 for k in self.keys}
         self.dead_keys: set = set()
         self.current_idx = 0
-        self.max_uses = max_uses_per_key
-        self.timeout_duration = timeout_duration
 
     @property
     def total_count(self) -> int:
@@ -77,62 +74,40 @@ class GeminiKeyManager:
         in_service = sum(1 for k in self.keys if k not in self.dead_keys and self.cooldowns[k] <= now)
         on_pause = sum(1 for k in self.keys if k not in self.dead_keys and self.cooldowns[k] > now)
         dead = len(self.dead_keys)
-        print(f"[Ключи] В строю: {in_service} | На паузе: {on_pause} (мертвых/заблокированных: {dead})")
+        print(f"[Ключи] В строю: {in_service} | На паузе: {on_pause} (мертвых: {dead})")
 
     def get_key(self) -> str:
-        """Берёт текущий активный ключ или переключает на следующий при паузе."""
         if not self.keys or len(self.dead_keys) == len(self.keys):
-            raise RuntimeError("Все API-ключи исчерпаны, заблокированы или недействительны.")
+            raise RuntimeError("Все API-ключи исчерпаны или недействительны.")
 
         while True:
             now = time.time()
-            for offset in range(len(self.keys)):
-                idx = (self.current_idx + offset) % len(self.keys)
-                k = self.keys[idx]
-                if k not in self.dead_keys and self.cooldowns[k] <= now:
-                    self.current_idx = idx
-                    return k
+            available_keys = [k for k in self.keys if k not in self.dead_keys and self.cooldowns[k] <= now]
+            
+            if available_keys:
+                self.current_idx = (self.current_idx + 1) % len(available_keys)
+                return available_keys[self.current_idx]
 
             active_keys = [k for k in self.keys if k not in self.dead_keys]
             earliest_time = min(self.cooldowns[k] for k in active_keys)
             wait_seconds = max(1.0, earliest_time - now)
-            print(f"[Ключи] Все ключи на таймауте. Ожидание {int(wait_seconds) + 1} сек...")
+            
+            print(f"[Ключи] Все ключи на кулдауне. Ожидание {int(wait_seconds) + 1} сек...")
             time.sleep(wait_seconds + 0.5)
 
-    def record_success(self, key: str):
-        """Считает успешные запросы. При достижении 10 раз отправляет ключ на таймаут 300 сек."""
-        self.usage_counts[key] = self.usage_counts.get(key, 0) + 1
-        count = self.usage_counts[key]
-        print(f"[Ключи] Ключ ...{key[-6:]} отработал {count}/{self.max_uses} раз.")
-
-        if count >= self.max_uses:
-            self.usage_counts[key] = 0
-            self.cooldowns[key] = time.time() + self.timeout_duration
-            print(f"[Ключи] Ключ ...{key[-6:]} завершил серию из {self.max_uses} проверок. Таймаут на {int(self.timeout_duration)} сек.")
-            self.current_idx = (self.current_idx + 1) % len(self.keys)
-            self.print_status()
-
-    def mark_rate_limited(self, key: str, duration: float = 300.0):
-        """Обработка превышения лимитов (429) — уход в таймаут на 300 сек и смена ключа."""
-        self.usage_counts[key] = 0
+    def mark_rate_limited(self, key: str, duration: float = 4000.0):
         self.cooldowns[key] = time.time() + duration
-        print(f"[Ключи] Превышен лимит (429) для ключа ...{key[-6:]}. Таймаут {int(duration)} сек.")
-        self.current_idx = (self.current_idx + 1) % len(self.keys)
+        print(f"Превышен лимит (429) для ключа ...{key[-6:]}. Пауза {int(duration)} сек.")
         self.print_status()
 
-    def mark_server_busy(self, key: str, duration: float = 30.0):
-        """Временный сбой сервера Gemini (503)."""
+    def mark_server_busy(self, key: str, duration: float = 300.0):
         self.cooldowns[key] = time.time() + duration
-        self.current_idx = (self.current_idx + 1) % len(self.keys)
         print(f"Модель перегружена (503). Смена ключа на {int(duration)} сек.")
         self.print_status()
 
     def mark_dead(self, key: str):
-        """Полная блокировка недействительного ключа (400/403) и переход к следующему."""
         self.dead_keys.add(key)
-        self.usage_counts[key] = 0
-        print(f"[Ключи] Ключ ...{key[-6:]} заблокирован насовсем (400/403 Invalid).")
-        self.current_idx = (self.current_idx + 1) % len(self.keys)
+        print(f"[Ключи] Ключ ...{key[-6:]} аннулирован (400/403 Invalid).")
         self.print_status()
 
 # ==========================================
@@ -183,7 +158,7 @@ def save_json(filepath: Path, data: list):
     temp_file.replace(filepath)
 
 def prepare_image_for_gemini(filepath: Path) -> str:
-    """Легковесное превью (до 750px, quality=70), чтобы не рвать сокеты."""
+    """Легковесное превью (до 750px, quality=70), чтобы не рвать прокси-сокеты."""
     with Image.open(filepath) as img:
         img = ImageOps.exif_transpose(img)
         img.thumbnail((750, 750), Image.Resampling.LANCZOS)
@@ -206,15 +181,33 @@ def optimize_pending_image(src_path: Path, dest_path: Path):
 # 5. ВЫЗОВ GEMINI API
 # ==========================================
 PROMPT = (
-    "Ты — остроумный куратор и хроникёр медиа-архива тусовки 'ГазМяс'. "
-    "Проанализируй фото и оцени его по 10-балльной шкале вайба, угара, душевности или абсурда (score от 1 до 10). "
-    "Придумай короткий ироничный заголовок (title), мемную подпись (caption) и один емкий тег (tag: Основа, Дибуны, Sugar Rush, Карл Фридрих, Гараж, Архив и т.д.). "
-    "Ответ выдай СТРОГО в формате JSON:\n"
+    "Ты — остроумный куратор и хроникёр медиа-архива тусовки 'ГазМяс'[cite: 1, 2]. "
+    "Проанализируй фото и оцени его по 10-балльной шкале вайба, угара, душевности или абсурда (score от 1 до 10).\n\n"
+    "КЛЮЧЕВЫЕ ТЕМАТИЧЕСКИЕ КОРЗИНЫ (СТРОГО ЧЕРЕДУЙ ИХ, НЕЛЬЗЯ ПОВТОРЯТЬ ОДНО И ТО ЖЕ!):\n"
+    "Категорически запрещено вставлять Базанова, Свит Бонанзу или цитату про солнышко в каждый кадр[cite: 1, 2]. "
+    "Выбирай только ОДНУ наиболее подходящую тему под конкретный визуал:\n\n"
+    "1. КОРЗИНА 'ЛУДКА И ШУГАР РАШ' (ГЛАВНЫЙ ПРИОРИТЕТ В АЗАРТЕ):\n"
+    "- Шугар Раш (Sugar Rush), покупка бонуски, розовая бурмалда, мармеладные мишки, концы (кони) бурмалдцы[cite: 1].\n"
+    "- Теорема лудки: 99% лудоманов останавливаются ровно за шаг до мега-заноса[cite: 1].\n"
+    "- 'Прикормить собачек для повышения шансов на бонуску'[cite: 1].\n"
+    "- 'Гоша, мы не пойдем в 666' (отказ от гиблой суеты, выбор надежного слота или пути домой)[cite: 1].\n\n"
+    "2. КОРЗИНА 'БЫТ, ПРИРОДА И ВИТАМИНЫ':\n"
+    "- Дибуны ('нихуя Дибуны отстроили', дачные хроники, станция, лес)[cite: 5].\n"
+    "- 'Яблоки зеленые сорвал да поел', виноград, витаминный заряд перед вторым таймом[cite: 2, 4].\n\n"
+    "3. КОРЗИНА 'РЕАЛЬНЫЕ ПАЦАНЫ':\n"
+    "- Районный вайб, цитаты и повадки: Базанов, Колян, Вован, Эдик[cite: 1, 2].\n"
+    "- Использовать ТОЛЬКО если на фото видна конкретная районная нелепость или характерная поза[cite: 2].\n\n"
+    "4. КОРЗИНА 'ЛОКАЦИИ И РУКОВОДСТВО':\n"
+    "- Гараж на Гороховой, Франк на Сенной, Кресты (Карл Фридрих), Студос[cite: 2, 4, 5].\n"
+    "- Директор Платон Нодь (Первый и Единственный), Менеджер Артем Визиров, Тренер Иван Плыгун, Базанов Саня, Базанов Серега[cite: 1, 2, 4, 5].\n\n"
+    "5. КОРЗИНА 'АРМЕЙСКАЯ СТРОЕВАЯ':\n"
+    "- Дисциплина, строевой шаг, клубный гимн ('Солнышко светит, курочка клюет...')[cite: 5]. Использовать редко, только для строгих групповых фото.\n\n"
+    "Ответ выдай СТРОГО в формате валидного JSON без разметки Markdown:\n"
     "{\n"
     '  "score": 8,\n'
-    '  "title": "Заголовок",\n'
-    '  "caption": "Подпись к фото",\n'
-    '  "tag": "Вайб"\n'
+    '  "title": "Заголовок (3-5 слов)",\n'
+    '  "caption": "Едкий панчлайн (1-2 предложения)",\n'
+    '  "tag": "Тег (Шугар Раш, Лудка, Дибуны, Витамины, Собачки, Основа, Тренер, Дирекция, Легенда)"\n'
     "}"
 )
 
@@ -251,8 +244,155 @@ def query_gemini(image_b64: str, key_manager: GeminiKeyManager, max_retries: int
             resp = session.post(url, json=payload, timeout=30)
             
             if resp.status_code == 200:
-                key_manager.record_success(api_key)
                 data = resp.json()
                 text_response = data["candidates"][0]["content"]["parts"][0]["text"]
                 clean_json = re.sub(r"^```(?:json)?\s*|\s*```$", "", text_response.strip(), flags=re.MULTILINE)
                 return json.loads(clean_json)
+
+            if resp.status_code == 429:
+                key_manager.mark_rate_limited(api_key, duration=70.0)
+                time.sleep(3.0)
+                continue
+
+            if resp.status_code == 503:
+                print(f"Сервер занят (503). Пауза {int(backoff)} сек... (попытка {attempt}/{max_retries})")
+                time.sleep(backoff)
+                backoff = min(backoff * 1.5, 30.0)
+                if attempt >= 2:
+                    key_manager.mark_server_busy(api_key, duration=35.0)
+                continue
+
+            if resp.status_code in (400, 403):
+                key_manager.mark_dead(api_key)
+                continue
+
+            resp.raise_for_status()
+
+        except (requests.exceptions.SSLError, requests.exceptions.ConnectionError):
+            print(f"Сетевой сбой. Повтор через 5 сек... (попытка {attempt}/{max_retries})")
+            time.sleep(5)
+            continue
+        except requests.exceptions.Timeout:
+            print("Таймаут сокета к Gemini. Ожидание 5 сек...")
+            time.sleep(5)
+            continue
+        except Exception as e:
+            print(f"Непредвиденная ошибка: {e}. Пауза 4 сек...")
+            time.sleep(4)
+            continue
+
+    return None
+
+# ==========================================
+# 6. ГЛАВНЫЙ ЦИКЛ
+# ==========================================
+def main():
+    print("========================================================")
+    print("  [3/3] Запуск авто-куратора Gemini...")
+    print("========================================================")
+    
+    raw_keys = (
+        env.get("GEMINI_API_KEYS") 
+        or env.get("GEMINI_API_KEY") 
+        or os.getenv("GEMINI_API_KEYS") 
+        or os.getenv("GEMINI_API_KEY") 
+        or ""
+    )
+    if not raw_keys:
+        print("Ошибка: в .env не найдены GEMINI_API_KEYS!")
+        sys.exit(1)
+
+    key_manager = GeminiKeyManager(raw_keys)
+    print(f"Используемая модель: {GEMINI_MODEL}")
+    print(f"Загружено ключей: {key_manager.total_count}")
+    key_manager.print_status()
+
+    for d in (INCOMING_DIR, PENDING_DIR, IMAGES_DIR, DELETED_DIR):
+        d.mkdir(parents=True, exist_ok=True)
+
+    data_items = load_json(DATA_FILE)
+    pending_items = load_json(PENDING_FILE)
+
+    known_hashes = {item.get("sha256") for item in data_items if "sha256" in item}
+    known_hashes.update({item.get("sha256") for item in pending_items if "sha256" in item})
+
+    all_incoming = sorted(
+        [f for f in INCOMING_DIR.iterdir() if f.is_file() and f.suffix.lower() in (".jpg", ".jpeg", ".png", ".webp")],
+        key=lambda x: x.name
+    )
+
+    print(f"Кадров на просмотр: {len(all_incoming)}")
+    print(f"Уже на сайте (data.json): {len(data_items)} | В очереди админки (pending.json): {len(pending_items)}\n")
+
+    for idx, filepath in enumerate(all_incoming, start=1):
+        filename = filepath.name
+        print(f"[{idx}/{len(all_incoming)}] Проверка кадра: {filename}")
+
+        if is_telegram_thumb(filepath):
+            print("-> Превью Telegram. Удаление...")
+            filepath.unlink(missing_ok=True)
+            continue
+
+        file_hash = calculate_sha256(filepath)
+        if file_hash in known_hashes:
+            print("-> Дубликат (уже есть в базе/очереди). Удаление из incoming...")
+            filepath.unlink(missing_ok=True)
+            continue
+
+        try:
+            image_b64 = prepare_image_for_gemini(filepath)
+        except Exception as e:
+            print(f"-> Ошибка чтения фото: {e}. Перенос в deleted...")
+            filepath.rename(DELETED_DIR / filename)
+            continue
+
+        ai_result = query_gemini(image_b64, key_manager)
+        
+        if not ai_result:
+            print("-> Не удалось получить ответ Gemini. Кадр оставлен в incoming.")
+            continue
+
+        score = ai_result.get("score", 0)
+        title = ai_result.get("title", "Без названия")
+        caption = ai_result.get("caption", "")
+        tag = ai_result.get("tag", "Архив")
+
+        if score < SCORE_THRESHOLD:
+            print(f"✗ Отклонено AI (Score: {score}/{10}) -> перенос в deleted/")
+            dest_del = DELETED_DIR / filename
+            if dest_del.exists():
+                dest_del.unlink()
+            filepath.rename(dest_del)
+        else:
+            print(f"✓ Одобрено AI (Score: {score}/{10}): «{title}» [{tag}] -> отправка в pending/")
+            
+            dest_pending = PENDING_DIR / filename
+            optimize_pending_image(filepath, dest_pending)
+            filepath.unlink(missing_ok=True)
+
+            # Формируем карточку, полностью совместимую и с admin.html, и с index.html
+            card = {
+                "id": file_hash[:12],
+                "filename": filename,
+                "image": f"pending/{filename}",
+                "file": f"pending/{filename}",
+                "title": title,
+                "caption": caption,
+                "tag": tag,
+                "tag_class": "alt" if len(pending_items) % 2 == 0 else "",
+                "score": score,
+                "date": parse_date_from_filename(filename),
+                "sha256": file_hash,
+                "timestamp": int(time.time())
+            }
+
+            pending_items.append(card)
+            save_json(PENDING_FILE, pending_items)
+            known_hashes.add(file_hash)
+
+        time.sleep(REQUEST_PACE_DELAY)
+
+    print("\nОбработка входящих файлов завершена.")
+
+if __name__ == "__main__":
+    main()
