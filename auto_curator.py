@@ -20,8 +20,8 @@ INCOMING_DIR = BASE_DIR / "incoming"
 PENDING_DIR = BASE_DIR / "pending"       # Промежуточный буфер модерации
 IMAGES_DIR = BASE_DIR / "images"         # Финальные фото сайта
 DELETED_DIR = BASE_DIR / "deleted"       # Корзина отсеянных фото
-DATA_FILE = BASE_DIR / "data.json"
-PENDING_FILE = BASE_DIR / "pending.json"
+DATA_FILE = BASE_DIR / "data/data.json"
+PENDING_FILE = BASE_DIR / "data/pending.json"
 ENV_FILE = BASE_DIR / ".env"
 
 # Порог вайба для попадания в очередь (1-10)
@@ -322,7 +322,7 @@ def main():
     )
 
     print(f"Кадров на просмотр: {len(all_incoming)}")
-    print(f"Уже на сайте (data.json): {len(data_items)} | В очереди админки (pending.json): {len(pending_items)}\n")
+    print(f"Уже на сайте (data/data.json): {len(data_items)} | В очереди админки (data/pending.json): {len(pending_items)}\n")
 
     for idx, filepath in enumerate(all_incoming, start=1):
         filename = filepath.name

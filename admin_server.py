@@ -14,9 +14,9 @@ PORT = 8080
 BASE_DIR = Path(__file__).resolve().parent
 os.chdir(BASE_DIR)
 
-DATA_FILE = BASE_DIR / "data.json"
-PENDING_FILE = BASE_DIR / "pending.json"
-REQUESTS_FILE = BASE_DIR / "requests.json"
+DATA_FILE = BASE_DIR / "data/data.json"
+PENDING_FILE = BASE_DIR / "data/pending.json"
+REQUESTS_FILE = BASE_DIR / "data/requests.json"
 
 PENDING_DIR = BASE_DIR / "pending"
 IMAGES_DIR = BASE_DIR / "images"
@@ -92,7 +92,7 @@ def sync_cloud_buffer():
                     write_json_file(REQUESTS_FILE, reqs)
 
                     requests.put(url, headers={**headers, "Content-Type": "application/json"}, json={"queue": []}, timeout=10)
-                    print("[✓] Облачный буфер перенесён в requests.json / pending.json")
+                    print("[✓] Облачный буфер перенесён в data/requests.json / data/pending.json")
         except Exception:
             pass
 
@@ -128,7 +128,7 @@ class AdminAPIHandler(SimpleHTTPRequestHandler):
         parsed = urlparse(self.path)
         path = parsed.path.rstrip("/")
 
-        if path in ("/api/pending", "/pending.json"):
+        if path in ("/api/pending", "data/pending.json"):
             items = read_json_file(PENDING_FILE)
             for item in items:
                 fn = item.get("filename") or ""
@@ -141,7 +141,7 @@ class AdminAPIHandler(SimpleHTTPRequestHandler):
                     item["file"] = f"pending/{clean_name}"
             return self.send_json(200, items)
 
-        if path in ("/api/requests", "/requests.json"):
+        if path in ("/api/requests", "data/requests.json"):
             return self.send_json(200, read_json_file(REQUESTS_FILE))
 
         if path in ("", "/", "/admin"):

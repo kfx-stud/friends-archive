@@ -748,7 +748,7 @@
 
     async function loadSquad() {
       try {
-        const res = await fetch("data.json?t=" + Date.now());
+        const res = await fetch("data/data.json?t=" + Date.now());
         if (!res.ok) throw new Error("HTTP " + res.status);
         squadData = await res.json();
         document.getElementById("squadCount").textContent = squadData.length;
