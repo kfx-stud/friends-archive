@@ -18,7 +18,7 @@ from PIL import Image, ImageOps
 BASE_DIR = Path(__file__).resolve().parent
 INCOMING_DIR = BASE_DIR / "incoming"
 PENDING_DIR = BASE_DIR / "pending"       # Промежуточный буфер модерации
-IMAGES_DIR = BASE_DIR / "images"         # Финальные одобренные фото сайта
+IMAGES_DIR = BASE_DIR / "images"         # Финальные фото сайта
 DELETED_DIR = BASE_DIR / "deleted"       # Корзина отсеянных фото
 DATA_FILE = BASE_DIR / "data.json"
 PENDING_FILE = BASE_DIR / "pending.json"
@@ -27,8 +27,8 @@ ENV_FILE = BASE_DIR / ".env"
 # Порог вайба для попадания в очередь (1-10)
 SCORE_THRESHOLD = 5
 
-# Задержка между успешными кадрами для защиты пула ключей
-REQUEST_PACE_DELAY = 4.0
+# Задержка под лимит 5 RPM (1 запрос в 12 секунд)
+REQUEST_PACE_DELAY = 12.0
 
 # ==========================================
 # 2. ПЕРЕМЕННЫЕ ОКРУЖЕНИЯ И ПРОКСИ
@@ -47,7 +47,6 @@ def load_env() -> Dict[str, str]:
 env = load_env()
 GEMINI_MODEL = env.get("GEMINI_MODEL", os.getenv("GEMINI_MODEL", "gemini-3.8-flash"))
 
-# Настройка прокси (для работы через Happ)
 HTTP_PROXY = env.get("HTTP_PROXY") or os.getenv("HTTP_PROXY")
 HTTPS_PROXY = env.get("HTTPS_PROXY") or os.getenv("HTTPS_PROXY")
 
@@ -75,7 +74,7 @@ class GeminiKeyManager:
         in_service = sum(1 for k in self.keys if k not in self.dead_keys and self.cooldowns[k] <= now)
         on_pause = sum(1 for k in self.keys if k not in self.dead_keys and self.cooldowns[k] > now)
         dead = len(self.dead_keys)
-        print(f"[Ключи] В строю: {in_service} | На паузе/отключено: {on_pause} (мертвых: {dead})")
+        print(f"[Ключи] В строю: {in_service} | На паузе: {on_pause} (мертвых: {dead})")
 
     def get_key(self) -> str:
         if not self.keys or len(self.dead_keys) == len(self.keys):
@@ -93,7 +92,7 @@ class GeminiKeyManager:
             earliest_time = min(self.cooldowns[k] for k in active_keys)
             wait_seconds = max(1.0, earliest_time - now)
             
-            print(f"[Ключи] Все ключи исчерпали квоту. Ожидание {int(wait_seconds) + 1} сек...")
+            print(f"[Ключи] Все ключи на кулдауне. Ожидание {int(wait_seconds) + 1} сек...")
             time.sleep(wait_seconds + 0.5)
 
     def mark_rate_limited(self, key: str, duration: float = 70.0):
@@ -146,7 +145,8 @@ def load_json(filepath: Path) -> list:
     if filepath.exists():
         try:
             with open(filepath, "r", encoding="utf-8") as f:
-                return json.load(f)
+                content = f.read().strip()
+                return json.loads(content) if content else []
         except Exception:
             return []
     return []
@@ -158,14 +158,14 @@ def save_json(filepath: Path, data: list):
     temp_file.replace(filepath)
 
 def prepare_image_for_gemini(filepath: Path) -> str:
-    """Легковесное превью (до 1000px), чтобы запрос проходил мгновенно."""
+    """Легковесное превью (до 750px, quality=70), чтобы не рвать прокси-сокеты."""
     with Image.open(filepath) as img:
         img = ImageOps.exif_transpose(img)
-        img.thumbnail((1000, 1000), Image.Resampling.LANCZOS)
+        img.thumbnail((750, 750), Image.Resampling.LANCZOS)
         if img.mode in ("RGBA", "P"):
             img = img.convert("RGB")
         buffer = BytesIO()
-        img.save(buffer, format="JPEG", quality=80)
+        img.save(buffer, format="JPEG", quality=70)
         return base64.b64encode(buffer.getvalue()).decode("utf-8")
 
 def optimize_pending_image(src_path: Path, dest_path: Path):
@@ -183,7 +183,7 @@ def optimize_pending_image(src_path: Path, dest_path: Path):
 PROMPT = (
     "Ты — остроумный куратор и хроникёр медиа-архива тусовки 'ГазМяс'. "
     "Проанализируй фото и оцени его по 10-балльной шкале вайба, угара, душевности или абсурда (score от 1 до 10). "
-    "Придумай короткий ироничный заголовок (title), мемную подпись (caption) и один емкий тег (tag). "
+    "Придумай короткий ироничный заголовок (title), мемную подпись (caption) и один емкий тег (tag: Основа, Дибуны, Sugar Rush, Карл Фридрих, Гараж, Архив и т.д.). "
     "Ответ выдай СТРОГО в формате JSON:\n"
     "{\n"
     '  "score": 8,\n'
@@ -195,7 +195,7 @@ PROMPT = (
 
 def query_gemini(image_b64: str, key_manager: GeminiKeyManager, max_retries: int = 8) -> Optional[Dict[str, Any]]:
     attempt = 0
-    backoff = 4.0
+    backoff = 5.0
 
     while attempt < max_retries:
         attempt += 1
@@ -270,7 +270,7 @@ def query_gemini(image_b64: str, key_manager: GeminiKeyManager, max_retries: int
 # ==========================================
 def main():
     print("========================================================")
-    print("  [3/3] Запуск авто-куратора Gemini Flash...")
+    print("  [3/3] Запуск авто-куратора Gemini...")
     print("========================================================")
     
     raw_keys = (
@@ -289,7 +289,6 @@ def main():
     print(f"Загружено ключей: {key_manager.total_count}")
     key_manager.print_status()
 
-    # Создание необходимых рабочих директорий
     for d in (INCOMING_DIR, PENDING_DIR, IMAGES_DIR, DELETED_DIR):
         d.mkdir(parents=True, exist_ok=True)
 
@@ -349,18 +348,20 @@ def main():
         else:
             print(f"✓ Одобрено AI (Score: {score}/{10}): «{title}» [{tag}] -> отправка в pending/")
             
-            # Сохранение оптимизированной копии в pending/
             dest_pending = PENDING_DIR / filename
             optimize_pending_image(filepath, dest_pending)
             filepath.unlink(missing_ok=True)
 
+            # Формируем карточку, полностью совместимую и с admin.html, и с index.html
             card = {
                 "id": file_hash[:12],
                 "filename": filename,
-                "image": f"pending/{filename}",  # Путь для админки
+                "image": f"pending/{filename}",
+                "file": f"pending/{filename}",
                 "title": title,
                 "caption": caption,
                 "tag": tag,
+                "tag_class": "alt" if len(pending_items) % 2 == 0 else "",
                 "score": score,
                 "date": parse_date_from_filename(filename),
                 "sha256": file_hash,
