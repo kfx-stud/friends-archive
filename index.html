@@ -127,12 +127,8 @@
 
     .news-grid {
       display: grid;
-      grid-template-columns: 1.4fr 1fr 1fr;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 1.2rem;
-    }
-
-    @media (max-width: 900px) {
-      .news-grid { grid-template-columns: 1fr; }
     }
 
     .news-card {
@@ -321,7 +317,7 @@
     .btn-card-action.del:hover { color: #f87171; background: rgba(218, 54, 51, 0.15); }
     .btn-card-action.edit:hover { color: var(--gm-gold); background: rgba(255, 215, 0, 0.1); }
 
-    /* Модалки */
+    /* Модалки предложки и правок */
     .user-modal-overlay {
       display: none;
       position: fixed;
@@ -382,6 +378,114 @@
     .btn-modal-cancel { background: #21262d; color: #c9d1d9; }
     .btn-modal-submit { background: var(--gm-red); color: #fff; border: 1px solid var(--gm-gold); }
     .empty-state { text-align: center; padding: 4rem 1rem; color: var(--gm-muted); }
+
+    /* СТИЛИ МОДАЛКИ SUGAR RUSH КАЗИНО */
+    .casino-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(10px);
+      z-index: 120;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .casino-card {
+      background: radial-gradient(circle at 50% 20%, #2a0820 0%, #120410 100%);
+      border: 2px solid #f472b6;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 520px;
+      padding: 1.5rem;
+      box-shadow: 0 0 35px rgba(236, 72, 153, 0.45);
+      position: relative;
+      text-align: center;
+    }
+
+    .casino-header {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #f472b6;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 0 0 10px rgba(244, 114, 182, 0.7);
+    }
+
+    .casino-balance-bar {
+      margin: 0.8rem 0;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #ffd700;
+    }
+
+    .slot-machine {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 1.2rem 0;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 1.2rem;
+      border-radius: 12px;
+      border: 1px solid rgba(244, 114, 182, 0.3);
+    }
+
+    .slot-reel {
+      width: 90px;
+      height: 90px;
+      background: #1c0517;
+      border: 2px solid #ec4899;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8);
+      transition: transform 0.1s ease;
+    }
+
+    .slot-reel.spinning {
+      animation: slotShake 0.15s infinite;
+    }
+
+    @keyframes slotShake {
+      0% { transform: translateY(-4px); }
+      50% { transform: translateY(4px); }
+      100% { transform: translateY(0); }
+    }
+
+    .casino-status {
+      min-height: 24px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      color: #fff;
+    }
+
+    .btn-spin {
+      background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+      color: #fff;
+      border: 2px solid #ffd700;
+      padding: 0.8rem 2rem;
+      font-size: 1.1rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(236, 72, 153, 0.5);
+      transition: all 0.15s;
+    }
+
+    .btn-spin:hover:not(:disabled) {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
+    }
+
+    .btn-spin:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 <body>
@@ -403,11 +507,10 @@
     </div>
   </header>
 
-  <!-- БЛОК ГЛАВНЫХ НОВОСТЕЙ И СТАТЕЙ -->
   <!-- БЛОК ГЛАВНЫХ НОВОСТЕЙ И СТАТЕЙ КЛУБА -->
   <section class="news-section">
     <div class="section-title">📰 Вестник ГазМяса / Главные события</div>
-    <div class="news-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.2rem;">
+    <div class="news-grid">
       
       <!-- 1. ГЛАВНАЯ СТАТЬЯ: ЦИТАТА ДИРЕКТОРА ПЛАТОНА -->
       <div class="news-card featured" style="grid-column: 1 / -1; border-left: 6px solid var(--gm-gold); background: linear-gradient(90deg, rgba(201, 0, 0, 0.25) 0%, var(--gm-panel) 100%);">
@@ -428,8 +531,8 @@
       <!-- 3 -->
       <div class="news-card sugar-news">
         <span class="news-badge badge-pink">Теория лудки</span>
-        <div class="news-heading">Концы бурмалдцы: путь к заносу</div>
-        <div class="news-desc">99% нападающих останавливаются ровно за шаг до супер скатера. После ночной сессии покупка бонусок взята под строгий клубный контроль.</div>
+        <div class="news-heading">Споты х128 и розовая бурмалда: путь к заносу</div>
+        <div class="news-desc">99% нападающих останавливаются ровно за шаг до мега-кластера 7х7. После ночной сессии покупка бонусок взята под строгий клубный контроль.</div>
       </div>
 
       <!-- 4 -->
@@ -492,7 +595,7 @@
         <span class="stat-value" id="squadCount">27</span>
       </div>
       <input type="text" id="searchInput" class="search-input" placeholder="Поиск по имени, панчлайну или событию..." oninput="handleSearch()">
-      <input type="text" id="tagFilterInput" class="search-input" style="max-width: 260px;" placeholder="Стратегический калибр на Крестах..." oninput="handleSearch()">
+      <input type="text" id="tagFilterInput" class="search-input" style="max-width: 260px;" placeholder="Фильтр по тегу (Основа, Дибуны...)" oninput="handleSearch()">
     </div>
   </div>
 
@@ -501,6 +604,29 @@
     <div id="squadGrid" class="squad-grid"></div>
     <div id="emptySquad" class="empty-state" style="display: none;">Кадры не найдены</div>
   </main>
+
+  <!-- Модальное окно Казино Sugar Rush -->
+  <div class="casino-modal-overlay" id="casinoModal" onclick="handleCasinoBackdrop(event)">
+    <div class="casino-card">
+      <button class="btn-card-action" style="position: absolute; top: 12px; right: 12px; font-size: 1.2rem; width: auto; color: #fff;" onclick="closeCasinoModal()">✕</button>
+      <div class="casino-header">🍭 Sugar Rush GazMyas 🍭</div>
+      <div style="font-size: 0.8rem; color: #f9a8d4; margin-top: 4px;">99% лудоманов останавливаются за шаг до заноса</div>
+      
+      <div class="casino-balance-bar">
+        Баланс: <span id="casinoBalance">3000</span> ₽ | Ставка: 250 ₽
+      </div>
+
+      <div class="slot-machine">
+        <div class="slot-reel" id="reel1">🍭</div>
+        <div class="slot-reel" id="reel2">🍬</div>
+        <div class="slot-reel" id="reel3">🍇</div>
+      </div>
+
+      <div class="casino-status" id="casinoStatus">Крути барабан, заноси бурмалду!</div>
+
+      <button class="btn-spin" id="btnSpin" onclick="spinSugarRush()">Крутить Спин (250 ₽)</button>
+    </div>
+  </div>
 
   <!-- Модалка: Предложить идею -->
   <div class="user-modal-overlay" id="ideaModal">
@@ -550,8 +676,8 @@
 
   <script>
     // ТВОИ КЛЮЧИ ОТ JSONBIN.IO
-    const JSONBIN_BIN_ID = "6abbe438ffd5d160533c11f1"; // ВСТАВЬ СВОЙ BIN_ID
-    const JSONBIN_MASTER_KEY = "$2a$10$VRoPiN8zdepg2AgC69BLZudokIxDgyL3LmDVPcv5HlHKRAalpZ5Vq"; // ВСТАВЬ СВОЙ MASTER_KEY
+    const JSONBIN_BIN_ID = "6abbe438ffd5d160533c11f1"; 
+    const JSONBIN_MASTER_KEY = "$2a$10$VRoPiN8zdepg2AgC69BLZudokIxDgyL3LmDVPcv5HlHKRAalpZ5Vq"; 
 
     let squadData = [];
     let currentEditIndex = -1;
@@ -585,9 +711,11 @@
       items.forEach((item, index) => {
         const card = document.createElement("div");
         card.className = "player-card";
+        const photoPath = item.file || item.image || "";
+
         card.innerHTML = `
           <div class="card-photo-wrap">
-            <img src="${item.file}" alt="${escapeHtml(item.title)}" loading="lazy">
+            <img src="${photoPath}" alt="${escapeHtml(item.title)}" loading="lazy">
             <div class="position-badge">ГазМяс</div>
             <div class="tag-badge ${item.tag_class || ''}">${escapeHtml(item.tag || 'Основа')}</div>
           </div>
@@ -617,11 +745,97 @@
       renderSquad(filtered);
     }
 
+    // ==========================================
+    // ЛОГИКА КАЗИНО SUGAR RUSH
+    // ==========================================
+    let balance = 3000;
+    const symbols = ["🍭", "🍬", "🍇", "🐻", "⭐", "💣"];
+    let isSpinning = false;
+
     function filterSugarRush() {
-      document.getElementById("searchInput").value = "Sugar Rush";
-      handleSearch();
+      document.getElementById("casinoModal").style.display = "flex";
     }
 
+    function closeCasinoModal() {
+      document.getElementById("casinoModal").style.display = "none";
+    }
+
+    function handleCasinoBackdrop(e) {
+      if (e.target.id === "casinoModal") closeCasinoModal();
+    }
+
+    function spinSugarRush() {
+      if (isSpinning) return;
+      if (balance < 250) {
+        document.getElementById("casinoStatus").textContent = "Баланс исчерпан! Пополни счет у Директора Платона.";
+        document.getElementById("casinoStatus").style.color = "#f87171";
+        return;
+      }
+
+      balance -= 250;
+      updateBalance();
+      isSpinning = true;
+      document.getElementById("btnSpin").disabled = true;
+
+      const r1 = document.getElementById("reel1");
+      const r2 = document.getElementById("reel2");
+      const r3 = document.getElementById("reel3");
+      const status = document.getElementById("casinoStatus");
+
+      r1.classList.add("spinning");
+      r2.classList.add("spinning");
+      r3.classList.add("spinning");
+      status.textContent = "Бу-бу-бурмалда крутится...";
+      status.style.color = "#ffd700";
+
+      const interval = setInterval(() => {
+        r1.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        r2.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        r3.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+      }, 70);
+
+      setTimeout(() => {
+        clearInterval(interval);
+        r1.classList.remove("spinning");
+        r2.classList.remove("spinning");
+        r3.classList.remove("spinning");
+
+        const res1 = symbols[Math.floor(Math.random() * symbols.length)];
+        const res2 = symbols[Math.floor(Math.random() * symbols.length)];
+        const res3 = symbols[Math.floor(Math.random() * symbols.length)];
+
+        r1.textContent = res1;
+        r2.textContent = res2;
+        r3.textContent = res3;
+
+        if (res1 === res2 && res2 === res3) {
+          const win = 2500;
+          balance += win;
+          status.textContent = `💥 МЕГА КЛАСТЕР 7x7! ЗАНОС +${win} ₽! Спот х128 активирован!`;
+          status.style.color = "#4ade80";
+        } else if (res1 === res2 || res2 === res3 || res1 === res3) {
+          const win = 500;
+          balance += win;
+          status.textContent = `🍬 Две конфеты! Занос +${win} ₽!`;
+          status.style.color = "#38bdf8";
+        } else {
+          status.textContent = "Мимо! 99% лудоманов сдаются именно сейчас.";
+          status.style.color = "#f472b6";
+        }
+
+        updateBalance();
+        isSpinning = false;
+        document.getElementById("btnSpin").disabled = false;
+      }, 1200);
+    }
+
+    function updateBalance() {
+      document.getElementById("casinoBalance").textContent = balance;
+    }
+
+    // ==========================================
+    // СИНХРОНИЗАЦИЯ С ОБЛАКОМ JSONBIN
+    // ==========================================
     async function pushToCloudQueue(newItem) {
       let currentItems = [];
       try {
@@ -718,7 +932,7 @@
       const reqItem = {
         id: "req_" + Date.now(),
         time: new Date().toLocaleString("ru-RU"),
-        file: item.file,
+        file: item.file || item.image,
         type: "edit",
         current_title: item.title,
         current_caption: item.caption,
@@ -742,7 +956,7 @@
       const reqItem = {
         id: "req_" + Date.now(),
         time: new Date().toLocaleString("ru-RU"),
-        file: item.file,
+        file: item.file || item.image,
         type: "delete",
         current_title: item.title,
         current_caption: item.caption
