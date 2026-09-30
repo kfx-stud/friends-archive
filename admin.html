@@ -53,7 +53,6 @@
 
     main { flex: 1; padding: 2rem; max-width: 1400px; margin: 0 auto; width: 100%; }
 
-    /* Очередь кандидатов */
     .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
     .gallery-item {
       background: var(--card-bg);
@@ -94,7 +93,6 @@
     .item-btn.btn-reject { background: rgba(218, 54, 51, 0.25); color: #f87171; }
     .item-btn.btn-reject:hover { background: var(--red); color: #fff; }
 
-    /* Таблица заявок с возможностью редактирования */
     .requests-list { display: flex; flex-direction: column; gap: 1rem; }
     .req-card {
       background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
@@ -109,33 +107,18 @@
     .req-actions { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 4px; }
     .req-btn { padding: 0.65rem; border: none; border-radius: 6px; font-weight: 800; text-transform: uppercase; font-size: 0.8rem; cursor: pointer; }
 
-    /* Поля редактирования внутри карточки заявки */
     .req-input-title {
-      background: #0d1117;
-      border: 1px solid var(--accent);
-      color: #fff;
-      padding: 8px 10px;
-      border-radius: 4px;
-      font-weight: 700;
-      width: 100%;
-      font-size: 0.95rem;
-      margin-bottom: 6px;
+      background: #0d1117; border: 1px solid var(--accent); color: #fff;
+      padding: 8px 10px; border-radius: 4px; font-weight: 700; width: 100%;
+      font-size: 0.95rem; margin-bottom: 6px;
     }
     .req-input-caption {
-      background: #0d1117;
-      border: 1px solid var(--border);
-      color: #fff;
-      padding: 8px 10px;
-      border-radius: 4px;
-      font-size: 0.85rem;
-      width: 100%;
-      min-height: 60px;
-      resize: vertical;
-      font-family: inherit;
+      background: #0d1117; border: 1px solid var(--border); color: #fff;
+      padding: 8px 10px; border-radius: 4px; font-size: 0.85rem; width: 100%;
+      min-height: 60px; resize: vertical; font-family: inherit;
     }
     .req-input-title:focus, .req-input-caption:focus { outline: none; border-color: var(--accent); }
 
-    /* Модальное окно модерации */
     .modal-overlay {
       display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.88);
       backdrop-filter: blur(10px); z-index: 100; align-items: center; justify-content: center; padding: 1rem;
@@ -183,7 +166,7 @@
       <div id="galleryContainer" class="gallery-grid"></div>
       <div class="empty-state" id="emptyCandidates" style="display: none;">
         <h2>Очередь чиста!</h2>
-        <p style="margin-top: 0.5rem;">Кандидаты от Gemini и идеи болельщиков появятся автоматически.</p>
+        <p style="margin-top: 0.5rem;">Кандидаты от Gemini и предложка появятся здесь.</p>
       </div>
     </div>
 
@@ -286,9 +269,11 @@
       queue.forEach((item, index) => {
         const card = document.createElement("div");
         card.className = "gallery-item";
+        const imgSrc = item.image || item.file || item.temp_file || "";
+
         card.innerHTML = `
           <div class="thumb-wrap" onclick="openModal(${index})">
-            <img src="${item.temp_file}" alt="thumb" loading="lazy">
+            <img src="${imgSrc}" alt="thumb" loading="lazy">
             <div class="item-score">${item.score || 7}/10</div>
             <div class="item-tag">${escapeHtml(item.tag || 'Основа')}</div>
           </div>
@@ -395,7 +380,7 @@
       currentModalIndex = index;
       const item = queue[index];
 
-      document.getElementById("modalImg").src = item.temp_file;
+      document.getElementById("modalImg").src = item.image || item.file || item.temp_file || "";
       document.getElementById("modalTitle").value = item.title || "";
       document.getElementById("modalTag").value = item.tag || "Основа";
       document.getElementById("modalCaption").value = item.caption || "";

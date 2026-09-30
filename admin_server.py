@@ -2,17 +2,19 @@ import os
 import sys
 import json
 import shutil
+import time
+import threading
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
+from urllib.parse import urlparse
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+import requests
 
 # ==========================================
 # КОНФИГУРАЦИЯ И ПУТИ
 # ==========================================
 PORT = 8080
 BASE_DIR = Path(__file__).resolve().parent
-
-# Принудительно устанавливаем рабочую директорию в корень скрипта
 os.chdir(BASE_DIR)
 
 DATA_FILE = BASE_DIR / "data.json"
@@ -23,9 +25,10 @@ PENDING_DIR = BASE_DIR / "pending"
 IMAGES_DIR = BASE_DIR / "images"
 DELETED_DIR = BASE_DIR / "deleted"
 
-# ==========================================
-# ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ДЛЯ JSON
-# ==========================================
+# Ключи JSONBin (как в index.html)
+JSONBIN_BIN_ID = "6abbe438ffd5d160533c11f1"
+JSONBIN_MASTER_KEY = "$2a$10$VRoPiN8zdepg2AgC69BLZudokIxDgyL3LmDVPcv5HlHKRAalpZ5Vq"
+
 def read_json_file(path: Path) -> List[Dict[str, Any]]:
     if path.exists():
         try:
@@ -44,17 +47,83 @@ def write_json_file(path: Path, data: List[Dict[str, Any]]):
     temp.replace(path)
 
 # ==========================================
-# ОБРАБОТЧИК ЗАПРОСОВ API И СТАТИКИ
+# ФОНОВЫЙ ОПРОС ОБЛАКА JSONBIN (раз в 25 сек)
+# ==========================================
+def sync_cloud_buffer():
+    if not JSONBIN_BIN_ID:
+        return
+
+    url = f"https://api.jsonbin.io/v3/b/{JSONBIN_BIN_ID}"
+    headers = {"X-Master-Key": JSONBIN_MASTER_KEY}
+
+    while True:
+        try:
+            res = requests.get(f"{url}/latest", headers=headers, timeout=10)
+            if res.status_code == 200:
+                record = res.json().get("record", {})
+                if isinstance(record, dict):
+                    data = record.get("queue", [])
+                elif isinstance(record, list):
+                    data = record
+                else:
+                    data = []
+
+                data = [x for x in data if not x.get("init")]
+
+                if len(data) > 0:
+                    print(f"[*] Получено новых заявок из облака: {len(data)}")
+                    pending = read_json_file(PENDING_FILE)
+                    reqs = read_json_file(REQUESTS_FILE)
+
+                    for item in data:
+                        if item.get("type") == "idea":
+                            pending_item = {
+                                "id": item.get("id"),
+                                "filename": "",
+                                "image": item.get("image_url") or "images/placeholder.jpg",
+                                "title": item.get("title"),
+                                "caption": item.get("caption"),
+                                "tag": item.get("tag", "Предложка"),
+                                "score": 10,
+                                "date": time.strftime("%Y-%m-%d"),
+                                "is_user_idea": True
+                            }
+                            if not any(x.get("id") == pending_item["id"] for x in pending):
+                                pending.insert(0, pending_item)
+                        else:
+                            if not any(x.get("id") == item.get("id") for x in reqs):
+                                reqs.insert(0, item)
+
+                    write_json_file(PENDING_FILE, pending)
+                    write_json_file(REQUESTS_FILE, reqs)
+
+                    requests.put(url, headers={**headers, "Content-Type": "application/json"}, json={"queue": []}, timeout=10)
+                    print("[✓] Облачный буфер перенесён в requests.json / pending.json")
+        except Exception:
+            pass
+
+        time.sleep(25)
+
+cloud_thread = threading.Thread(target=sync_cloud_buffer, daemon=True)
+cloud_thread.start()
+
+# ==========================================
+# ОБРАБОТЧИК ЗАПРОСОВ
 # ==========================================
 class AdminAPIHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(BASE_DIR), **kwargs)
 
     def end_headers(self):
-        # Запрет кэширования для обновления очереди в реальном времени
         self.send_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
-        self.send_header("Pragma", "no-cache")
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
         super().end_headers()
+
+    def do_OPTIONS(self):
+        self.send_response(200, "OK")
+        self.end_headers()
 
     def send_json(self, status_code: int, data: Any):
         self.send_response(status_code)
@@ -63,25 +132,23 @@ class AdminAPIHandler(SimpleHTTPRequestHandler):
         self.wfile.write(json.dumps(data, ensure_ascii=False).encode("utf-8"))
 
     def do_GET(self):
-        # Роут очереди на модерацию
-        if self.path in ("/api/pending", "/pending.json"):
+        parsed = urlparse(self.path)
+        path = parsed.path.rstrip("/")
+
+        if path in ("/api/pending", "/pending.json"):
             return self.send_json(200, read_json_file(PENDING_FILE))
 
-        # Роут опубликованных карточек сайта
-        if self.path in ("/api/data", "/data.json"):
-            return self.send_json(200, read_json_file(DATA_FILE))
-
-        # Роут пользовательских заявок
-        if self.path in ("/api/requests", "/requests.json"):
+        if path in ("/api/requests", "/requests.json"):
             return self.send_json(200, read_json_file(REQUESTS_FILE))
 
-        # Перенаправление с корня на страницу панели модератора
-        if self.path in ("/", "/admin", "/admin/"):
+        if path in ("", "/", "/admin"):
             self.path = "/admin.html"
 
         return super().do_GET()
 
     def do_POST(self):
+        parsed = urlparse(self.path)
+        path = parsed.path.rstrip("/")
         content_length = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(content_length).decode("utf-8") if content_length > 0 else "{}"
         
@@ -90,94 +157,96 @@ class AdminAPIHandler(SimpleHTTPRequestHandler):
         except Exception:
             return self.send_json(400, {"error": "Невалидный JSON"})
 
-        # ------------------------------------------------------
-        # 1. ОДОБРЕНИЕ КАДРА ИЗ ОЧЕРЕДИ МОДЕРАЦИИ
-        # ------------------------------------------------------
-        if self.path == "/api/approve":
+        # Одобрение / Отклонение кандидатов
+        if path == "/api/moderate":
+            action = payload.get("action")
             item_id = str(payload.get("id"))
             pending_items = read_json_file(PENDING_FILE)
             data_items = read_json_file(DATA_FILE)
 
-            target_idx = next((i for i, x in enumerate(pending_items) if str(x.get("id")) == item_id), None)
-            if target_idx is None:
-                return self.send_json(404, {"error": "Кадр не найден в pending.json"})
+            target = next((x for x in pending_items if str(x.get("id")) == item_id), None)
+            if not target:
+                return self.send_json(200, {"status": "already_handled"})
 
-            item = pending_items.pop(target_idx)
-            filename = item.get("filename")
+            filename = target.get("filename")
+            is_idea = target.get("is_user_idea", False)
 
-            # Применение ручных правок из формы админки
-            for field in ("title", "caption", "tag", "date"):
-                if field in payload and payload[field] is not None:
-                    item[field] = payload[field]
+            if action == "approve":
+                if not is_idea and filename:
+                    src_file = PENDING_DIR / filename
+                    dest_file = IMAGES_DIR / filename
+                    if src_file.exists():
+                        shutil.move(str(src_file), str(dest_file))
+                    image_path = f"images/{filename}"
+                else:
+                    image_path = target.get("image") or target.get("file")
 
-            # Перемещение файла из pending/ в images/
-            src_file = PENDING_DIR / filename
-            dest_file = IMAGES_DIR / filename
-
-            if src_file.exists():
-                shutil.move(str(src_file), str(dest_file))
-            elif not dest_file.exists():
-                return self.send_json(404, {"error": f"Файл {filename} не найден на диске"})
-
-            # Обновление пути внутри объекта для сайта
-            item["image"] = f"images/{filename}"
-
-            # Добавляем в начало ленты сайта
-            data_items.insert(0, item)
-
-            write_json_file(DATA_FILE, data_items)
-            write_json_file(PENDING_FILE, pending_items)
-
-            print(f"[Админка] Одобрено: {filename} -> сохранено в data.json")
-            return self.send_json(200, {"success": True, "item": item})
-
-        # ------------------------------------------------------
-        # 2. ОТКЛОНЕНИЕ / УДАЛЕНИЕ КАДРА
-        # ------------------------------------------------------
-        if self.path in ("/api/reject", "/api/delete"):
-            item_id = str(payload.get("id"))
-            pending_items = read_json_file(PENDING_FILE)
-            data_items = read_json_file(DATA_FILE)
-
-            # Проверяем очередь pending.json
-            p_idx = next((i for i, x in enumerate(pending_items) if str(x.get("id")) == item_id), None)
-            if p_idx is not None:
-                item = pending_items.pop(p_idx)
-                filename = item.get("filename")
-                src = PENDING_DIR / filename
-                dst = DELETED_DIR / filename
-                if src.exists():
-                    if dst.exists():
-                        dst.unlink()
-                    shutil.move(str(src), str(dst))
-                write_json_file(PENDING_FILE, pending_items)
-                print(f"[Админка] Отклонен из очереди: {filename} -> перенесен в deleted/")
-                return self.send_json(200, {"success": True})
-
-            # Проверяем уже опубликованные карточки data.json
-            d_idx = next((i for i, x in enumerate(data_items) if str(x.get("id")) == item_id), None)
-            if d_idx is not None:
-                item = data_items.pop(d_idx)
-                filename = item.get("filename")
-                src = IMAGES_DIR / filename
-                dst = DELETED_DIR / filename
-                if src.exists():
-                    if dst.exists():
-                        dst.unlink()
-                    shutil.move(str(src), str(dst))
+                # Формируем структуру карточки строго под index.html
+                card = {
+                    "id": target.get("id"),
+                    "file": image_path,
+                    "title": payload.get("title") or target.get("title", "ФК ГазМяс"),
+                    "caption": payload.get("caption") or target.get("caption", ""),
+                    "tag": payload.get("tag") or target.get("tag", "Основа"),
+                    "tag_class": "alt" if len(data_items) % 2 == 0 else "",
+                    "score": target.get("score", 7),
+                    "date": target.get("date", time.strftime("%Y-%m-%d")),
+                    "sha256": target.get("sha256", "")
+                }
+                data_items.insert(0, card)
                 write_json_file(DATA_FILE, data_items)
-                print(f"[Админка] Удален с сайта: {filename} -> перенесен в deleted/")
-                return self.send_json(200, {"success": True})
 
-            return self.send_json(404, {"error": "Кадр с таким ID не найден"})
+            elif action == "reject":
+                if not is_idea and filename:
+                    src_file = PENDING_DIR / filename
+                    dest_file = DELETED_DIR / filename
+                    if src_file.exists():
+                        shutil.move(str(src_file), str(dest_file))
 
-        return self.send_json(404, {"error": "Маршрут API не найден"})
+            pending_items = [x for x in pending_items if str(x.get("id")) != item_id]
+            write_json_file(PENDING_FILE, pending_items)
+            return self.send_json(200, {"status": "ok"})
 
-# ==========================================
-# ТОЧКА ВХОДА
-# ==========================================
+        # Обработка пользовательских правок и удалений
+        if path == "/api/handle_request":
+            action = payload.get("action")
+            req_id = payload.get("id")
+            custom_title = payload.get("custom_title")
+            custom_caption = payload.get("custom_caption")
+
+            reqs = read_json_file(REQUESTS_FILE)
+            target = next((x for x in reqs if x.get("id") == req_id), None)
+
+            if not target:
+                return self.send_json(404, {"error": "Заявка не найдена"})
+
+            if action == "apply":
+                db = read_json_file(DATA_FILE)
+                file_target = target.get("file")
+
+                if target.get("type") == "delete":
+                    db = [item for item in db if item.get("file") != file_target]
+                    write_json_file(DATA_FILE, db)
+                    if file_target:
+                        disk_path = BASE_DIR / file_target.replace("/", os.sep)
+                        if disk_path.exists():
+                            shutil.move(str(disk_path), str(DELETED_DIR / disk_path.name))
+
+                elif target.get("type") == "edit":
+                    for item in db:
+                        if item.get("file") == file_target:
+                            item["title"] = custom_title if custom_title is not None else target.get("new_title", item.get("title"))
+                            item["caption"] = custom_caption if custom_caption is not None else target.get("new_caption", item.get("caption"))
+                            break
+                    write_json_file(DATA_FILE, db)
+
+            reqs = [x for x in reqs if x.get("id") != req_id]
+            write_json_file(REQUESTS_FILE, reqs)
+            return self.send_json(200, {"status": "ok"})
+
+        return self.send_json(404, {"error": "Неизвестный роут"})
+
 def run_server():
-    # Создание необходимых папок при старте
     for folder in (PENDING_DIR, IMAGES_DIR, DELETED_DIR):
         folder.mkdir(parents=True, exist_ok=True)
 
@@ -188,17 +257,11 @@ def run_server():
         httpd = ThreadingHTTPServer(server_address, AdminAPIHandler)
     except OSError as e:
         if "10048" in str(e) or "Address already in use" in str(e):
-            print(f"[Ошибка] Порт {PORT} уже занят другим процессом.")
-            print("Выполните в консоли: taskkill /F /IM python.exe")
+            print(f"[Ошибка] Порт {PORT} занят. Выполните: taskkill /F /IM python.exe")
             sys.exit(1)
         raise e
 
-    print("========================================================")
-    print(f" Локальный сервер админ-панели запущен!")
-    print(f" URL: http://localhost:{PORT}/admin.html")
-    print(" Для остановки нажмите Ctrl + C")
-    print("========================================================")
-
+    print(f"Админка доступна: http://localhost:{PORT}/admin.html")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
