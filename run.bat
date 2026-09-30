@@ -7,10 +7,6 @@ echo   [1/3] Запуск локального сервера админ-пан�
 echo ========================================================
 start "ГазМяс Админ-Сервер" py admin_server.py
 
-echo.
-echo   [2/3] Открытие панели модератора в браузере...
-start http://localhost:8080/admin.html
-
 timeout /t 2 /nobreak > nul
 
 echo.
