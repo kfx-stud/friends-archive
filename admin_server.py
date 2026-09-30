@@ -78,7 +78,7 @@ def sync_cloud_buffer():
                     for item in data:
                         if item.get("type") == "idea":
                             pending_item = {
-                                "id": item.get("id"),
+                                "id": str(item.get("id")),
                                 "filename": "",
                                 "image": item.get("image_url") or "images/placeholder.jpg",
                                 "title": item.get("title"),
@@ -88,10 +88,10 @@ def sync_cloud_buffer():
                                 "date": time.strftime("%Y-%m-%d"),
                                 "is_user_idea": True
                             }
-                            if not any(x.get("id") == pending_item["id"] for x in pending):
+                            if not any(str(x.get("id")) == pending_item["id"] for x in pending):
                                 pending.insert(0, pending_item)
                         else:
-                            if not any(x.get("id") == item.get("id") for x in reqs):
+                            if not any(str(x.get("id")) == str(item.get("id")) for x in reqs):
                                 reqs.insert(0, item)
 
                     write_json_file(PENDING_FILE, pending)
@@ -136,7 +136,29 @@ class AdminAPIHandler(SimpleHTTPRequestHandler):
         path = parsed.path.rstrip("/")
 
         if path in ("/api/pending", "/pending.json"):
-            return self.send_json(200, read_json_file(PENDING_FILE))
+            items = read_json_file(PENDING_FILE)
+            # Автоочистка очереди от кадров, файлы которых были стерты или уже перемещены
+            cleaned_items = []
+            changed = False
+            for item in items:
+                if item.get("is_user_idea"):
+                    cleaned_items.append(item)
+                    continue
+
+                fn = item.get("filename")
+                if not fn:
+                    raw_img = item.get("image") or item.get("file") or ""
+                    fn = Path(raw_img).name
+
+                if fn and (PENDING_DIR / fn).exists():
+                    cleaned_items.append(item)
+                else:
+                    changed = True
+
+            if changed:
+                write_json_file(PENDING_FILE, cleaned_items)
+
+            return self.send_json(200, cleaned_items)
 
         if path in ("/api/requests", "/requests.json"):
             return self.send_json(200, read_json_file(REQUESTS_FILE))
@@ -160,15 +182,36 @@ class AdminAPIHandler(SimpleHTTPRequestHandler):
         # Одобрение / Отклонение кандидатов
         if path == "/api/moderate":
             action = payload.get("action")
-            item_id = str(payload.get("id"))
+            raw_id = payload.get("id")
+            item_id = str(raw_id).strip() if raw_id is not None else ""
+
             pending_items = read_json_file(PENDING_FILE)
             data_items = read_json_file(DATA_FILE)
 
-            target = next((x for x in pending_items if str(x.get("id")) == item_id), None)
-            if not target:
+            # Поиск цели: сначала по строгому совпадению ID, затем по имени файла
+            target_idx = -1
+            for idx, item in enumerate(pending_items):
+                cur_id = str(item.get("id", "")).strip()
+                if cur_id and cur_id == item_id:
+                    target_idx = idx
+                    break
+
+            if target_idx == -1 and item_id:
+                for idx, item in enumerate(pending_items):
+                    fn = item.get("filename") or Path(item.get("image") or item.get("file") or "").name
+                    if fn and fn == item_id:
+                        target_idx = idx
+                        break
+
+            if target_idx == -1:
                 return self.send_json(200, {"status": "already_handled"})
 
+            target = pending_items.pop(target_idx)
             filename = target.get("filename")
+            if not filename:
+                raw_path = target.get("image") or target.get("file") or ""
+                filename = Path(raw_path).name
+
             is_idea = target.get("is_user_idea", False)
 
             if action == "approve":
@@ -181,9 +224,8 @@ class AdminAPIHandler(SimpleHTTPRequestHandler):
                 else:
                     image_path = target.get("image") or target.get("file")
 
-                # Формируем структуру карточки строго под index.html
                 card = {
-                    "id": target.get("id"),
+                    "id": str(target.get("id", "")),
                     "file": image_path,
                     "title": payload.get("title") or target.get("title", "ФК ГазМяс"),
                     "caption": payload.get("caption") or target.get("caption", ""),
@@ -201,21 +243,25 @@ class AdminAPIHandler(SimpleHTTPRequestHandler):
                     src_file = PENDING_DIR / filename
                     dest_file = DELETED_DIR / filename
                     if src_file.exists():
+                        if dest_file.exists():
+                            dest_file.unlink()
                         shutil.move(str(src_file), str(dest_file))
 
-            pending_items = [x for x in pending_items if str(x.get("id")) != item_id]
+            # Гарантированное сохранение списка без удаленного элемента
             write_json_file(PENDING_FILE, pending_items)
             return self.send_json(200, {"status": "ok"})
 
         # Обработка пользовательских правок и удалений
         if path == "/api/handle_request":
             action = payload.get("action")
-            req_id = payload.get("id")
+            raw_id = payload.get("id")
+            req_id = str(raw_id).strip() if raw_id is not None else ""
+
             custom_title = payload.get("custom_title")
             custom_caption = payload.get("custom_caption")
 
             reqs = read_json_file(REQUESTS_FILE)
-            target = next((x for x in reqs if x.get("id") == req_id), None)
+            target = next((x for x in reqs if str(x.get("id", "")).strip() == req_id), None)
 
             if not target:
                 return self.send_json(404, {"error": "Заявка не найдена"})
@@ -230,7 +276,10 @@ class AdminAPIHandler(SimpleHTTPRequestHandler):
                     if file_target:
                         disk_path = BASE_DIR / file_target.replace("/", os.sep)
                         if disk_path.exists():
-                            shutil.move(str(disk_path), str(DELETED_DIR / disk_path.name))
+                            dest_del = DELETED_DIR / disk_path.name
+                            if dest_del.exists():
+                                dest_del.unlink()
+                            shutil.move(str(disk_path), str(dest_del))
 
                 elif target.get("type") == "edit":
                     for item in db:
@@ -240,7 +289,7 @@ class AdminAPIHandler(SimpleHTTPRequestHandler):
                             break
                     write_json_file(DATA_FILE, db)
 
-            reqs = [x for x in reqs if x.get("id") != req_id]
+            reqs = [x for x in reqs if str(x.get("id", "")).strip() != req_id]
             write_json_file(REQUESTS_FILE, reqs)
             return self.send_json(200, {"status": "ok"})
 

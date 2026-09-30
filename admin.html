@@ -65,18 +65,18 @@
     }
     .gallery-item:hover { border-color: var(--accent); }
 
-    .thumb-wrap { width: 100%; height: 230px; background: #000; position: relative; cursor: pointer; }
+    .thumb-wrap { width: 100%; height: 230px; background: #000; position: relative; cursor: pointer; overflow: hidden; }
     .thumb-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
     .item-score {
       position: absolute; top: 8px; left: 8px; background: rgba(0, 0, 0, 0.85);
       border: 1px solid var(--accent); color: var(--accent); padding: 0.2rem 0.5rem;
-      border-radius: 4px; font-weight: 800; font-size: 0.75rem;
+      border-radius: 4px; font-weight: 800; font-size: 0.75rem; z-index: 2;
     }
     .item-tag {
       position: absolute; top: 8px; right: 8px; background: rgba(0, 0, 0, 0.8);
       border: 1px solid #38bdf8; color: #38bdf8; padding: 0.2rem 0.5rem;
-      border-radius: 4px; font-weight: 800; font-size: 0.75rem; text-transform: uppercase;
+      border-radius: 4px; font-weight: 800; font-size: 0.75rem; text-transform: uppercase; z-index: 2;
     }
 
     .item-info { padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem; flex: 1; min-height: 125px; cursor: pointer; }
@@ -123,18 +123,72 @@
       display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.88);
       backdrop-filter: blur(10px); z-index: 100; align-items: center; justify-content: center; padding: 1rem;
     }
-    .modal-wrapper { display: flex; align-items: center; gap: 1rem; width: 100%; max-width: 1050px; }
+    .modal-wrapper { display: flex; align-items: center; gap: 1rem; width: 100%; max-width: 1100px; }
     .nav-arrow {
       background: rgba(22, 27, 34, 0.9); border: 2px solid var(--border); color: var(--accent);
       width: 50px; height: 50px; border-radius: 50%; font-size: 1.6rem; font-weight: 900; cursor: pointer; flex-shrink: 0;
     }
     .moderation-card {
       background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px;
-      width: 100%; display: grid; grid-template-columns: 1.1fr 1fr; gap: 1.5rem; overflow: hidden; position: relative;
+      width: 100%; display: grid; grid-template-columns: 1.25fr 1fr; gap: 1.5rem; overflow: hidden; position: relative;
     }
     .close-modal-btn { position: absolute; top: 10px; right: 12px; background: transparent; border: none; color: var(--muted); font-size: 1.5rem; cursor: pointer; z-index: 10; }
-    .image-preview { background: #000; display: flex; align-items: center; justify-content: center; position: relative; min-height: 420px; }
-    .image-preview img { width: 100%; height: 100%; max-height: 480px; object-fit: contain; }
+
+    /* КОНТЕЙНЕР КАДРИРОВАНИЯ */
+    .image-preview {
+      background: #05070a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      min-height: 440px;
+      user-select: none;
+      overflow: hidden;
+    }
+
+    .crop-viewport {
+      position: relative;
+      display: inline-block;
+      max-width: 100%;
+      max-height: 480px;
+      line-height: 0;
+    }
+
+    .crop-viewport img {
+      max-width: 100%;
+      max-height: 480px;
+      object-fit: contain;
+      display: block;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    /* ЗАТЕМНЕНИЕ И ПЕРЕМЕЩАЕМАЯ РАМКА */
+    .crop-box {
+      position: absolute;
+      box-sizing: border-box;
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.65);
+      cursor: grab;
+      touch-action: none;
+    }
+    .crop-box:active { cursor: grabbing; border-color: #fff; }
+
+    .crop-box::after {
+      content: "ВИД В ГАЛЕРЕЕ";
+      position: absolute;
+      bottom: 4px;
+      right: 6px;
+      background: rgba(0, 0, 0, 0.75);
+      color: var(--accent);
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 2px 5px;
+      border-radius: 3px;
+      pointer-events: none;
+      letter-spacing: 0.5px;
+    }
+
     .form-pane { padding: 1.5rem 1.5rem 1.5rem 0; display: flex; flex-direction: column; gap: 1rem; }
     .field-group { display: flex; flex-direction: column; gap: 0.35rem; }
     .field-group label { font-size: 0.75rem; text-transform: uppercase; color: var(--muted); font-weight: 700; }
@@ -185,7 +239,10 @@
       <div class="moderation-card">
         <button class="close-modal-btn" onclick="closeModal()">✕</button>
         <div class="image-preview">
-          <img id="modalImg" src="" alt="Preview">
+          <div class="crop-viewport" id="cropViewport">
+            <img id="modalImg" src="" alt="Preview">
+            <div class="crop-box" id="cropBox"></div>
+          </div>
         </div>
         <div class="form-pane">
           <div class="field-group">
@@ -215,6 +272,18 @@
     let userRequests = [];
     let currentModalIndex = -1;
     let isBusy = false;
+
+    // Параметры кадрирования (аспектное соотношение карточки 280 / 230)
+    const TARGET_ASPECT = 280 / 230;
+    let cropPercentX = 50;
+    let cropPercentY = 50;
+    let isDraggingCrop = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let cropBoxLeft = 0;
+    let cropBoxTop = 0;
+    let maxCropBoxLeft = 0;
+    let maxCropBoxTop = 0;
 
     async function loadData() {
       if (isBusy) return;
@@ -270,10 +339,11 @@
         const card = document.createElement("div");
         card.className = "gallery-item";
         const imgSrc = item.image || item.file || item.temp_file || "";
+        const objPos = `${item.crop_x ?? 50}% ${item.crop_y ?? 50}%`;
 
         card.innerHTML = `
           <div class="thumb-wrap" onclick="openModal(${index})">
-            <img src="${imgSrc}" alt="thumb" loading="lazy">
+            <img src="${imgSrc}" alt="thumb" loading="lazy" style="object-position: ${objPos};">
             <div class="item-score">${item.score || 7}/10</div>
             <div class="item-tag">${escapeHtml(item.tag || 'Основа')}</div>
           </div>
@@ -380,7 +450,13 @@
       currentModalIndex = index;
       const item = queue[index];
 
-      document.getElementById("modalImg").src = item.image || item.file || item.temp_file || "";
+      cropPercentX = item.crop_x !== undefined ? item.crop_x : 50;
+      cropPercentY = item.crop_y !== undefined ? item.crop_y : 50;
+
+      const img = document.getElementById("modalImg");
+      img.onload = () => setupCropBox();
+      img.src = item.image || item.file || item.temp_file || "";
+
       document.getElementById("modalTitle").value = item.title || "";
       document.getElementById("modalTag").value = item.tag || "Основа";
       document.getElementById("modalCaption").value = item.caption || "";
@@ -388,7 +464,76 @@
       document.getElementById("prevBtn").disabled = (index === 0);
       document.getElementById("nextBtn").disabled = (index === queue.length - 1);
       document.getElementById("modalOverlay").style.display = "flex";
+
+      if (img.complete && img.naturalWidth) {
+        setupCropBox();
+      }
     }
+
+    function setupCropBox() {
+      const img = document.getElementById("modalImg");
+      const box = document.getElementById("cropBox");
+      const w = img.clientWidth;
+      const h = img.clientHeight;
+
+      if (!w || !h) return;
+
+      const imgAspect = w / h;
+      let bw, bh;
+
+      if (imgAspect > TARGET_ASPECT) {
+        bh = h;
+        bw = Math.round(bh * TARGET_ASPECT);
+      } else {
+        bw = w;
+        bh = Math.round(bw / TARGET_ASPECT);
+      }
+
+      box.style.width = bw + "px";
+      box.style.height = bh + "px";
+
+      maxCropBoxLeft = Math.max(0, w - bw);
+      maxCropBoxTop = Math.max(0, h - bh);
+
+      cropBoxLeft = Math.round((cropPercentX / 100) * maxCropBoxLeft);
+      cropBoxTop = Math.round((cropPercentY / 100) * maxCropBoxTop);
+
+      box.style.left = cropBoxLeft + "px";
+      box.style.top = cropBoxTop + "px";
+    }
+
+    // Обработка перетаскивания рамки
+    const cropBox = document.getElementById("cropBox");
+
+    cropBox.addEventListener("pointerdown", (e) => {
+      isDraggingCrop = true;
+      dragStartX = e.clientX - cropBoxLeft;
+      dragStartY = e.clientY - cropBoxTop;
+      cropBox.setPointerCapture(e.pointerId);
+    });
+
+    cropBox.addEventListener("pointermove", (e) => {
+      if (!isDraggingCrop) return;
+      let newLeft = e.clientX - dragStartX;
+      let newTop = e.clientY - dragStartY;
+
+      newLeft = Math.max(0, Math.min(newLeft, maxCropBoxLeft));
+      newTop = Math.max(0, Math.min(newTop, maxCropBoxTop));
+
+      cropBoxLeft = newLeft;
+      cropBoxTop = newTop;
+
+      cropBox.style.left = cropBoxLeft + "px";
+      cropBox.style.top = cropBoxTop + "px";
+
+      cropPercentX = maxCropBoxLeft > 0 ? Math.round((cropBoxLeft / maxCropBoxLeft) * 100) : 50;
+      cropPercentY = maxCropBoxTop > 0 ? Math.round((cropBoxTop / maxCropBoxTop) * 100) : 50;
+    });
+
+    cropBox.addEventListener("pointerup", (e) => {
+      isDraggingCrop = false;
+      try { cropBox.releasePointerCapture(e.pointerId); } catch(err) {}
+    });
 
     function closeModal() {
       document.getElementById("modalOverlay").style.display = "none";
@@ -418,7 +563,9 @@
             id: current.id,
             title: document.getElementById("modalTitle").value.trim(),
             tag: document.getElementById("modalTag").value.trim(),
-            caption: document.getElementById("modalCaption").value.trim()
+            caption: document.getElementById("modalCaption").value.trim(),
+            crop_x: cropPercentX,
+            crop_y: cropPercentY
           })
         });
 
@@ -442,7 +589,15 @@
         await fetch("/api/moderate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: action, id: item.id, title: item.title, tag: item.tag, caption: item.caption })
+          body: JSON.stringify({
+            action: action,
+            id: item.id,
+            title: item.title,
+            tag: item.tag,
+            caption: item.caption,
+            crop_x: item.crop_x ?? 50,
+            crop_y: item.crop_y ?? 50
+          })
         });
 
         queue.splice(index, 1);
