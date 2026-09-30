@@ -95,12 +95,12 @@ class GeminiKeyManager:
             print(f"[Ключи] Все ключи на кулдауне. Ожидание {int(wait_seconds) + 1} сек...")
             time.sleep(wait_seconds + 0.5)
 
-    def mark_rate_limited(self, key: str, duration: float = 70.0):
+    def mark_rate_limited(self, key: str, duration: float = 4000.0):
         self.cooldowns[key] = time.time() + duration
         print(f"Превышен лимит (429) для ключа ...{key[-6:]}. Пауза {int(duration)} сек.")
         self.print_status()
 
-    def mark_server_busy(self, key: str, duration: float = 35.0):
+    def mark_server_busy(self, key: str, duration: float = 300.0):
         self.cooldowns[key] = time.time() + duration
         print(f"Модель перегружена (503). Смена ключа на {int(duration)} сек.")
         self.print_status()
