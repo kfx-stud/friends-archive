@@ -148,13 +148,8 @@
       background: linear-gradient(90deg, rgba(201, 0, 0, 0.1) 0%, var(--gm-panel) 100%);
     }
 
-    .news-card.sugar-news {
-      border-left: 4px solid #ec4899;
-    }
-
-    .news-card.dibuny-news {
-      border-left: 4px solid #0284c7;
-    }
+    .news-card.sugar-news { border-left: 4px solid #ec4899; }
+    .news-card.dibuny-news { border-left: 4px solid #0284c7; }
 
     .news-badge {
       align-self: flex-start;
@@ -169,18 +164,8 @@
     .badge-pink { background: #db2777; }
     .badge-blue { background: #0284c7; }
 
-    .news-heading {
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: #fff;
-      line-height: 1.3;
-    }
-
-    .news-desc {
-      font-size: 0.85rem;
-      color: var(--gm-muted);
-      line-height: 1.4;
-    }
+    .news-heading { font-size: 1.05rem; font-weight: 800; color: #fff; line-height: 1.3; }
+    .news-desc { font-size: 0.85rem; color: var(--gm-muted); line-height: 1.4; }
 
     /* Табло / фильтры */
     .club-board {
@@ -254,6 +239,7 @@
       height: 230px;
       background: #000;
       position: relative;
+      overflow: hidden;
     }
     .card-photo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
@@ -379,33 +365,38 @@
     .btn-modal-submit { background: var(--gm-red); color: #fff; border: 1px solid var(--gm-gold); }
     .empty-state { text-align: center; padding: 4rem 1rem; color: var(--gm-muted); }
 
-    /* СТИЛИ МОДАЛКИ SUGAR RUSH КАЗИНО */
+    /* ==========================================
+       SUGAR RUSH (7x7 CLUSTER SLOTS & MULTIPLIERS)
+       ========================================== */
     .casino-modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.88);
+      background: rgba(0, 0, 0, 0.92);
       backdrop-filter: blur(10px);
       z-index: 120;
       align-items: center;
       justify-content: center;
-      padding: 1rem;
+      padding: 0.8rem;
     }
 
     .casino-card {
-      background: radial-gradient(circle at 50% 20%, #2a0820 0%, #120410 100%);
+      background: radial-gradient(circle at 50% 10%, #340c29 0%, #120311 100%);
       border: 2px solid #f472b6;
       border-radius: 16px;
       width: 100%;
-      max-width: 520px;
-      padding: 1.5rem;
-      box-shadow: 0 0 35px rgba(236, 72, 153, 0.45);
+      max-width: 640px;
+      padding: 1.2rem;
+      box-shadow: 0 0 35px rgba(236, 72, 153, 0.5);
       position: relative;
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
     }
 
     .casino-header {
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       font-weight: 900;
       color: #f472b6;
       text-transform: uppercase;
@@ -414,77 +405,150 @@
     }
 
     .casino-balance-bar {
-      margin: 0.8rem 0;
-      font-size: 1rem;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      font-size: 0.9rem;
       font-weight: 800;
       color: #ffd700;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      border: 1px solid rgba(244, 114, 182, 0.2);
     }
 
-    .slot-machine {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin: 1.2rem 0;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 1.2rem;
-      border-radius: 12px;
-      border: 1px solid rgba(244, 114, 182, 0.3);
+    .bet-ctrl-btn {
+      background: #be185d;
+      color: #fff;
+      border: 1px solid #f472b6;
+      border-radius: 4px;
+      width: 26px;
+      height: 26px;
+      font-weight: 900;
+      cursor: pointer;
     }
+    .bet-ctrl-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    .slot-reel {
-      width: 90px;
-      height: 90px;
-      background: #1c0517;
-      border: 2px solid #ec4899;
+    /* СЕТКА 7х7 */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-template-rows: repeat(7, 1fr);
+      gap: 4px;
+      background: #1a0416;
+      padding: 6px;
       border-radius: 10px;
+      border: 2px solid rgba(236, 72, 153, 0.4);
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+      aspect-ratio: 1 / 1;
+      width: 100%;
+      max-width: 440px;
+      margin: 0 auto;
+    }
+
+    .slot-cell {
+      position: relative;
+      background: #240720;
+      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 3rem;
-      box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8);
-      transition: transform 0.1s ease;
+      font-size: 1.8rem;
+      user-select: none;
+      transition: transform 0.15s ease, background-color 0.2s ease;
     }
 
-    .slot-reel.spinning {
-      animation: slotShake 0.15s infinite;
+    .slot-cell.marked {
+      background: #470e3d;
+      box-shadow: inset 0 0 6px #ec4899;
     }
 
-    @keyframes slotShake {
-      0% { transform: translateY(-4px); }
-      50% { transform: translateY(4px); }
-      100% { transform: translateY(0); }
+    .slot-cell .cell-multi {
+      position: absolute;
+      top: 1px;
+      left: 1px;
+      background: rgba(255, 215, 0, 0.9);
+      color: #000;
+      font-size: 0.65rem;
+      font-weight: 900;
+      padding: 1px 3px;
+      border-radius: 3px;
+      line-height: 1;
+      pointer-events: none;
+      box-shadow: 0 0 4px #ffd700;
+    }
+
+    .slot-cell.exploding {
+      animation: explodePop 0.35s ease forwards;
+    }
+
+    @keyframes explodePop {
+      0% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.3); filter: brightness(2) drop-shadow(0 0 8px #ffd700); }
+      100% { transform: scale(0); opacity: 0; }
     }
 
     .casino-status {
       min-height: 24px;
       font-weight: 800;
-      font-size: 0.95rem;
-      margin-bottom: 1rem;
-      color: #fff;
+      font-size: 0.85rem;
+      color: #f9a8d4;
     }
 
-    .btn-spin {
+    .casino-actions {
+      display: flex;
+      gap: 0.6rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-spin-sugar {
       background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
       color: #fff;
       border: 2px solid #ffd700;
-      padding: 0.8rem 2rem;
-      font-size: 1.1rem;
+      padding: 0.65rem 1.6rem;
+      font-size: 1rem;
       font-weight: 900;
       text-transform: uppercase;
       border-radius: 8px;
       cursor: pointer;
       box-shadow: 0 4px 15px rgba(236, 72, 153, 0.5);
-      transition: all 0.15s;
+      flex: 1;
+      min-width: 140px;
     }
 
-    .btn-spin:hover:not(:disabled) {
-      transform: scale(1.05);
+    .btn-spin-sugar:hover:not(:disabled) {
+      transform: scale(1.02);
       box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
     }
 
-    .btn-spin:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+    .btn-spin-sugar:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .btn-buy-bonus {
+      background: linear-gradient(135deg, #e11d48 0%, #9f1239 100%);
+      color: #ffd700;
+      border: 2px solid #f43f5e;
+      padding: 0.65rem 1.2rem;
+      font-size: 0.85rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(225, 29, 72, 0.5);
+    }
+    .btn-buy-bonus:hover:not(:disabled) { transform: scale(1.02); }
+    .btn-buy-bonus:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .free-spins-indicator {
+      display: none;
+      background: #be185d;
+      color: #ffd700;
+      padding: 0.3rem 0.8rem;
+      border-radius: 6px;
+      font-weight: 900;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      box-shadow: 0 0 10px #f472b6;
     }
   </style>
 </head>
@@ -502,7 +566,7 @@
       </div>
       <div class="nav-actions">
         <button class="btn-club" onclick="openIdeaModal()">💡 В предложку</button>
-        <button class="btn-club btn-sugar" onclick="filterSugarRush()">🍭 Sugar Rush</button>
+        <button class="btn-club btn-sugar" onclick="openSugarRush()">🍭 Sugar Rush 7x7</button>
       </div>
     </div>
   </header>
@@ -512,76 +576,66 @@
     <div class="section-title">📰 Вестник ГазМяса / Главные события</div>
     <div class="news-grid">
       
-      <!-- 1. ГЛАВНАЯ СТАТЬЯ: ЦИТАТА ДИРЕКТОРА ПЛАТОНА -->
       <div class="news-card featured" style="grid-column: 1 / -1; border-left: 6px solid var(--gm-gold); background: linear-gradient(90deg, rgba(201, 0, 0, 0.25) 0%, var(--gm-panel) 100%);">
         <span class="news-badge badge-red" style="background: var(--gm-gold); color: #000; font-weight: 900;">★ Главный приказ руководства</span>
-        <div class="news-heading" style="font-size: 1.25rem; color: var(--gm-gold); margin-top: 4px;">«Друг о друге не забывайте, газмяс не смейте развалить мне опездолы. Встречайтесь время от времени»</div>
+        <div class="news-heading" style="font-size: 1.25rem; color: var(--gm-gold); margin-top: 4px;">«Друг о друге не забывайте, газмяс не смейте развалить мне опездолы. Встречайтесь время от времени»[cite: 7]</div>
         <div class="news-desc" style="font-size: 0.95rem; color: #fff; margin-top: 6px;">
-          Перед отлётом из Пулково Директор клуба Платон Нодь оставил фундаментальный манифест всему личному составу. Менеджер Артём Визиров заверил совет директоров: «Это уж мы не проебем, товарищ начальник». Команда держит строй и готовится к зимнему камбэку.
+          Перед отлётом из Пулково Директор клуба Платон Нодь оставил фундаментальный манифест всему личному составу[cite: 7]. Менеджер Артём Визиров заверил совет директоров: «Это уж мы не проебем, товарищ начальник»[cite: 7]. Команда держит строй и готовится к зимнему камбэку[cite: 7].
         </div>
       </div>
 
-      <!-- 2 -->
       <div class="news-card featured">
         <span class="news-badge badge-red">Тактика матча</span>
-        <div class="news-heading">«Гоша, мы не пойдём в 666»: Запрет на сомнительные маршруты</div>
-        <div class="news-desc">Дирекция утвердила запрет на сомнительные вписки и маршруты. Команда сосредоточена на сборе средст для последующего их вложения в шугар рашик.</div>
+        <div class="news-heading">«Гоша, мы не пойдём в 666»: Запрет на сомнительные маршруты[cite: 1, 7]</div>
+        <div class="news-desc">Дирекция утвердила запрет на сомнительные вписки и маршруты[cite: 7]. Команда сосредоточена на сборе средств для последующего их вложения в шугар рашик[cite: 7].</div>
       </div>
 
-      <!-- 3 -->
       <div class="news-card sugar-news">
         <span class="news-badge badge-pink">Теория лудки</span>
-        <div class="news-heading">Концы бурмалдцы: путь к заносу</div>
-        <div class="news-desc">99% нападающих останавливаются ровно за шаг до супер скатера. После ночной сессии покупка бонусок взята под строгий клубный контроль.</div>
+        <div class="news-heading">Концы бурмалдцы: путь к заносу[cite: 1, 7]</div>
+        <div class="news-desc">99% нападающих останавливаются ровно за шаг до супер скаттера[cite: 1, 7]. После ночной сессии покупка бонусок взята под строгий клубный контроль[cite: 1, 7].</div>
       </div>
 
-      <!-- 4 -->
       <div class="news-card dibuny-news">
         <span class="news-badge badge-blue">Хроники Дибунов</span>
-        <div class="news-heading">«Нихуя Дибуны отстроили»: Отчёт со станции</div>
-        <div class="news-desc">Дачные сборы, ворованный кислый крыжовник и регулярный прикорм местных сторожевых собачек дали свои плоды перед дерби.</div>
+        <div class="news-heading">«Нихуя Дибуны отстроили»: Отчёт со станции[cite: 1, 7]</div>
+        <div class="news-desc">Дачные сборы, ворованный кислый крыжовник и регулярный прикорм местных сторожевых собачек дали свои плоды перед дерби[cite: 1, 7].</div>
       </div>
 
-      <!-- 5 -->
       <div class="news-card">
         <span class="news-badge badge-red">Районный вайб</span>
-        <div class="news-heading">«Привет, Базанов»: Перерождение в пермских пацанов</div>
-        <div class="news-desc">После ночного просмотра 40 серий подряд совет директоров выясняет: снится ли Серёге, что он участковый, или участковому снится Серёга.</div>
+        <div class="news-heading">«Привет, Базанов»: Перерождение в пермских пацанов[cite: 1, 7]</div>
+        <div class="news-desc">После ночного просмотра 40 серий подряд совет директоров выясняет: снится ли Серёге, что он участковый, или участковому снится Серёга[cite: 1, 7].</div>
       </div>
 
-      <!-- 6 -->
       <div class="news-card">
         <span class="news-badge badge-red">Локации</span>
-        <div class="news-heading">Карл Фридрих: Профессиональный литр за 850</div>
-        <div class="news-desc">Инспекция Крестовского острова доказала: на хорошую кружку пива косаря хватает с головой, даже если счета в банке заблокированы.</div>
+        <div class="news-heading">Карл Фридрих: Профессиональный литр за 850[cite: 1, 7]</div>
+        <div class="news-desc">Инспекция Крестовского острова доказала: на хорошую кружку пива косаря хватает с головой, даже если счета в банке заблокированы[cite: 7].</div>
       </div>
 
-      <!-- 7 -->
       <div class="news-card">
         <span class="news-badge badge-blue">Образование</span>
-        <div class="news-heading">«Per aspera ad astra fututio»: Лекции юрфака</div>
-        <div class="news-desc">Пока технари потеют над формулами стандартного отклонения, гуманитарное крыло доказывает, что за формулами нет души.</div>
+        <div class="news-heading">«Per aspera ad astra fututio»: Лекции юрфака[cite: 7]</div>
+        <div class="news-desc">Пока технари потеют над формулами стандартного отклонения, гуманитарное крыло доказывает, что за формулами нет души[cite: 7].</div>
       </div>
 
-      <!-- 8 -->
       <div class="news-card">
         <span class="news-badge badge-red">ЧП на Петроградке</span>
-        <div class="news-heading">«Я установила ебаный Линукс на Мак»</div>
-        <div class="news-desc">Ночные страдания с операционной системой и парами к восьми утра повергли клубную поддержку в состояние культурного шока.</div>
+        <div class="news-heading">«Я установила ебаный Линукс на Мак»[cite: 7]</div>
+        <div class="news-desc">Ночные страдания с операционной системой и парами к восьми утра повергли клубную поддержку в состояние культурного шока[cite: 7].</div>
       </div>
 
-      <!-- 9 -->
       <div class="news-card">
         <span class="news-badge badge-red">Штаб-квартира</span>
-        <div class="news-heading">Гараж на Гороховой: Оплот традиций</div>
-        <div class="news-desc">Культовая точка сбора после доты и пар. Сосиска в тесте и верность традициям — фундамент побед ФК ГазМяс.</div>
+        <div class="news-heading">Гараж на Гороховой: Оплот традиций[cite: 1, 7]</div>
+        <div class="news-desc">Культовая точка сбора после доты и пар[cite: 7]. Сосиска в тесте и верность традициям — фундамент побед ФК ГазМяс[cite: 7].</div>
       </div>
 
-      <!-- 10 -->
       <div class="news-card sugar-news">
         <span class="news-badge badge-pink">Прогрев века</span>
-        <div class="news-heading">Канье Уэст в Питере: Гои греются до октября</div>
-        <div class="news-desc">Редакция «Ценной бумаги» подтверждает: сериал не закончится, пока билеты на арену не обменяют на концерт Базанова.</div>
+        <div class="news-heading">Канье Уэст в Питере: Гои греются до октября[cite: 7]</div>
+        <div class="news-desc">Редакция «Ценной бумаги» подтверждает: сериал не закончится, пока билеты на арену не обменяют на концерт Базанова[cite: 7].</div>
       </div>
 
     </div>
@@ -592,7 +646,7 @@
     <div class="board-card">
       <div class="board-stat">
         <span class="stat-label">В заявке</span>
-        <span class="stat-value" id="squadCount">27</span>
+        <span class="stat-value" id="squadCount">0</span>
       </div>
       <input type="text" id="searchInput" class="search-input" placeholder="Поиск по имени, панчлайну или событию..." oninput="handleSearch()">
       <input type="text" id="tagFilterInput" class="search-input" style="max-width: 260px;" placeholder="Фильтр по тегу (Основа, Дибуны...)" oninput="handleSearch()">
@@ -605,26 +659,37 @@
     <div id="emptySquad" class="empty-state" style="display: none;">Кадры не найдены</div>
   </main>
 
-  <!-- Модальное окно Казино Sugar Rush -->
+  <!-- ==========================================
+       МОДАЛЬНОЕ ОКНО: SUGAR RUSH КАЗИНО (7x7)
+       ========================================== -->
   <div class="casino-modal-overlay" id="casinoModal" onclick="handleCasinoBackdrop(event)">
     <div class="casino-card">
-      <button class="btn-card-action" style="position: absolute; top: 12px; right: 12px; font-size: 1.2rem; width: auto; color: #fff;" onclick="closeCasinoModal()">✕</button>
-      <div class="casino-header">🍭 Sugar Rush GazMyas 🍭</div>
-      <div style="font-size: 0.8rem; color: #f9a8d4; margin-top: 4px;">99% лудоманов останавливаются за шаг до заноса</div>
+      <button class="btn-card-action" style="position: absolute; top: 10px; right: 10px; font-size: 1.2rem; width: auto; color: #fff;" onclick="closeCasinoModal()">✕</button>
+      
+      <div class="casino-header">🍭 Sugar Rush 7x7 🍭</div>
       
       <div class="casino-balance-bar">
-        Баланс: <span id="casinoBalance">3000</span> ₽ | Ставка: 250 ₽
+        <div>Баланс: <span id="casinoBalance" style="color: #4ade80;">10000</span> ₽</div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          Ставка:
+          <button class="bet-ctrl-btn" id="btnBetMinus" onclick="changeBet(-1)">-</button>
+          <span id="casinoBet">100</span> ₽
+          <button class="bet-ctrl-btn" id="btnBetPlus" onclick="changeBet(1)">+</button>
+        </div>
       </div>
 
-      <div class="slot-machine">
-        <div class="slot-reel" id="reel1">🍭</div>
-        <div class="slot-reel" id="reel2">🍬</div>
-        <div class="slot-reel" id="reel3">🍇</div>
+      <div class="free-spins-indicator" id="freeSpinsIndicator">
+        Фриспины: <span id="freeSpinsLeft">0</span>
       </div>
 
-      <div class="casino-status" id="casinoStatus">Крути барабан, заноси бурмалду!</div>
+      <div class="grid-container" id="slotGrid"></div>
 
-      <button class="btn-spin" id="btnSpin" onclick="spinSugarRush()">Крутить Спин (250 ₽)</button>
+      <div class="casino-status" id="casinoStatus">Кластеры от 5 символов. Повторные взрывы копят множители до x128!</div>
+
+      <div class="casino-actions">
+        <button class="btn-buy-bonus" id="btnBuyBonus" onclick="buyFreeSpins()">Купить бонуску (<span id="buyCost">10000</span> ₽)</button>
+        <button class="btn-spin-sugar" id="btnSpin" onclick="startSpin()">Крутить [Space]</button>
+      </div>
     </div>
   </div>
 
@@ -675,7 +740,6 @@
   </div>
 
   <script>
-    // ТВОИ КЛЮЧИ ОТ JSONBIN.IO
     const JSONBIN_BIN_ID = "6abbe438ffd5d160533c11f1"; 
     const JSONBIN_MASTER_KEY = "$2a$10$VRoPiN8zdepg2AgC69BLZudokIxDgyL3LmDVPcv5HlHKRAalpZ5Vq"; 
 
@@ -712,10 +776,11 @@
         const card = document.createElement("div");
         card.className = "player-card";
         const photoPath = item.file || item.image || "";
+        const objPos = `${item.crop_x ?? 50}% ${item.crop_y ?? 50}%`;
 
         card.innerHTML = `
           <div class="card-photo-wrap">
-            <img src="${photoPath}" alt="${escapeHtml(item.title)}" loading="lazy">
+            <img src="${photoPath}" alt="${escapeHtml(item.title)}" loading="lazy" style="object-position: ${objPos};">
             <div class="position-badge">ГазМяс</div>
             <div class="tag-badge ${item.tag_class || ''}">${escapeHtml(item.tag || 'Основа')}</div>
           </div>
@@ -746,91 +811,376 @@
     }
 
     // ==========================================
-    // ЛОГИКА КАЗИНО SUGAR RUSH
+    // ТОЧНАЯ МЕХАНИКА SUGAR RUSH (7x7 GRID)
     // ==========================================
-    let balance = 3000;
-    const symbols = ["🍭", "🍬", "🍇", "🐻", "⭐", "💣"];
-    let isSpinning = false;
+    const GRID_SIZE = 7;
+    const SYMBOLS = ["🍭", "🧡", "🍇", "⭐", "🔴", "🟣", "🟠"];
+    const SCATTER = "🚀"; // Scatter символ автомата с конфетами
 
-    function filterSugarRush() {
+    // Таблица базовых множителей ставки от размера кластера (5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15+)
+    const PAYTABLE = {
+      "🍭": [1.0, 1.5, 1.75, 2.0, 2.5, 5.0, 7.5, 15.0, 35.0, 70.0, 150.0],
+      "🧡": [0.75, 1.0, 1.25, 1.5, 2.0, 4.0, 6.0, 12.5, 30.0, 60.0, 100.0],
+      "🍇": [0.5, 0.75, 1.0, 1.25, 1.5, 3.0, 4.5, 10.0, 20.0, 40.0, 60.0],
+      "⭐": [0.4, 0.5, 0.75, 1.0, 1.25, 2.0, 3.0, 5.0, 10.0, 20.0, 40.0],
+      "🔴": [0.3, 0.4, 0.5, 0.75, 1.0, 1.5, 2.5, 3.5, 8.0, 15.0, 30.0],
+      "🟣": [0.25, 0.3, 0.4, 0.5, 0.75, 1.25, 2.0, 3.0, 6.0, 12.0, 25.0],
+      "🟠": [0.2, 0.25, 0.3, 0.4, 0.5, 1.0, 1.5, 2.5, 5.0, 10.0, 20.0]
+    };
+
+    let balance = 10000;
+    const betSteps = [20, 50, 100, 200, 500, 1000];
+    let currentBetIdx = 2; // По умолчанию 100 ₽
+    let isSpinning = false;
+    let freeSpinsLeft = 0;
+    let isFreeSpinsMode = false;
+    let totalRoundWin = 0;
+
+    // Сетка: элементы { symbol: "🍭" }
+    let gridData = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(null));
+    // Пятна: { marked: bool, multiplier: 0, 2, 4, 8... 128 }
+    let spotData = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(null).map(() => ({ marked: false, multiplier: 0 })));
+
+    function initSlotGrid() {
+      const container = document.getElementById("slotGrid");
+      container.innerHTML = "";
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          const cell = document.createElement("div");
+          cell.className = "slot-cell";
+          cell.id = `cell_${r}_${c}`;
+          container.appendChild(cell);
+        }
+      }
+      fillRandomGrid();
+      renderGrid();
+    }
+
+    function fillRandomGrid() {
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          // Шанс скаттера около 2.5%
+          if (Math.random() < 0.025) {
+            gridData[r][c] = SCATTER;
+          } else {
+            gridData[r][c] = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+          }
+        }
+      }
+    }
+
+    function renderGrid() {
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          const el = document.getElementById(`cell_${r}_${c}`);
+          el.className = "slot-cell";
+          el.textContent = gridData[r][c] || "";
+          
+          const spot = spotData[r][c];
+          if (spot.marked) el.classList.add("marked");
+          if (spot.multiplier >= 2) {
+            const multiBadge = document.createElement("span");
+            multiBadge.className = "cell-multi";
+            multiBadge.textContent = `x${spot.multiplier}`;
+            el.appendChild(multiBadge);
+          }
+        }
+      }
+    }
+
+    function openSugarRush() {
       document.getElementById("casinoModal").style.display = "flex";
+      updateUI();
     }
 
     function closeCasinoModal() {
+      if (isSpinning) return;
       document.getElementById("casinoModal").style.display = "none";
     }
 
     function handleCasinoBackdrop(e) {
-      if (e.target.id === "casinoModal") closeCasinoModal();
+      if (e.target.id === "casinoModal" && !isSpinning) closeCasinoModal();
     }
 
-    function spinSugarRush() {
+    function changeBet(dir) {
+      if (isSpinning || isFreeSpinsMode) return;
+      currentBetIdx = Math.max(0, Math.min(betSteps.length - 1, currentBetIdx + dir));
+      updateUI();
+    }
+
+    function updateUI() {
+      const bet = betSteps[currentBetIdx];
+      document.getElementById("casinoBalance").textContent = Math.round(balance);
+      document.getElementById("casinoBet").textContent = bet;
+      document.getElementById("buyCost").textContent = bet * 100;
+
+      document.getElementById("btnBetMinus").disabled = currentBetIdx === 0 || isSpinning || isFreeSpinsMode;
+      document.getElementById("btnBetPlus").disabled = currentBetIdx === betSteps.length - 1 || isSpinning || isFreeSpinsMode;
+      document.getElementById("btnBuyBonus").disabled = isSpinning || isFreeSpinsMode || balance < bet * 100;
+      document.getElementById("btnSpin").disabled = isSpinning;
+
+      const fsInd = document.getElementById("freeSpinsIndicator");
+      if (isFreeSpinsMode) {
+        fsInd.style.display = "block";
+        document.getElementById("freeSpinsLeft").textContent = freeSpinsLeft;
+      } else {
+        fsInd.style.display = "none";
+      }
+    }
+
+    async function startSpin() {
       if (isSpinning) return;
-      if (balance < 250) {
-        document.getElementById("casinoStatus").textContent = "Баланс исчерпан! Пополни счет у Директора Платона.";
-        document.getElementById("casinoStatus").style.color = "#f87171";
+      const bet = betSteps[currentBetIdx];
+
+      if (!isFreeSpinsMode) {
+        if (balance < bet) {
+          document.getElementById("casinoStatus").textContent = "Недостаточно средств на балансе клуба!";
+          document.getElementById("casinoStatus").style.color = "#f87171";
+          return;
+        }
+        balance -= bet;
+        // Очищаем пятна множителей в начале обычного спина
+        resetSpots();
+      }
+
+      isSpinning = true;
+      updateUI();
+      document.getElementById("casinoStatus").style.color = "#f9a8d4";
+      document.getElementById("casinoStatus").textContent = isFreeSpinsMode ? `Фриспин! Осталось: ${freeSpinsLeft}` : "Спин начался...";
+
+      await dropNewSymbolsAnimation();
+      await processTumbleSequence();
+
+      if (isFreeSpinsMode) {
+        freeSpinsLeft--;
+        if (freeSpinsLeft <= 0) {
+          isFreeSpinsMode = false;
+          document.getElementById("casinoStatus").textContent = `Бонусный раунд завершен! Общий выигрыш: +${Math.round(totalRoundWin)} ₽`;
+          document.getElementById("casinoStatus").style.color = "#4ade80";
+          resetSpots();
+        } else {
+          updateUI();
+          setTimeout(startSpin, 700);
+          return;
+        }
+      }
+
+      isSpinning = false;
+      updateUI();
+    }
+
+    async function buyFreeSpins() {
+      if (isSpinning || isFreeSpinsMode) return;
+      const bet = betSteps[currentBetIdx];
+      const cost = bet * 100;
+
+      if (balance < cost) {
+        alert("Недостаточно средств для покупки бонуски!");
         return;
       }
 
-      balance -= 250;
-      updateBalance();
-      isSpinning = true;
-      document.getElementById("btnSpin").disabled = true;
+      balance -= cost;
+      resetSpots();
+      totalRoundWin = 0;
+      isFreeSpinsMode = true;
 
-      const r1 = document.getElementById("reel1");
-      const r2 = document.getElementById("reel2");
-      const r3 = document.getElementById("reel3");
-      const status = document.getElementById("casinoStatus");
+      // Гарантируем 3-5 скаттеров при покупке
+      const scatters = [3, 3, 3, 4, 4, 5][Math.floor(Math.random() * 6)];
+      const spinsAwarded = { 3: 10, 4: 12, 5: 15, 6: 20, 7: 30 }[scatters];
+      freeSpinsLeft = spinsAwarded;
 
-      r1.classList.add("spinning");
-      r2.classList.add("spinning");
-      r3.classList.add("spinning");
-      status.textContent = "Бу-бу-бурмалда крутится...";
-      status.style.color = "#ffd700";
+      document.getElementById("casinoStatus").textContent = `ПОКУПКА БОНУСКИ! Выпало ${scatters} Скаттеров 🚀! Получено ${spinsAwarded} Фриспинов!`;
+      document.getElementById("casinoStatus").style.color = "#ffd700";
 
-      const interval = setInterval(() => {
-        r1.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-        r2.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-        r3.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-      }, 70);
-
-      setTimeout(() => {
-        clearInterval(interval);
-        r1.classList.remove("spinning");
-        r2.classList.remove("spinning");
-        r3.classList.remove("spinning");
-
-        const res1 = symbols[Math.floor(Math.random() * symbols.length)];
-        const res2 = symbols[Math.floor(Math.random() * symbols.length)];
-        const res3 = symbols[Math.floor(Math.random() * symbols.length)];
-
-        r1.textContent = res1;
-        r2.textContent = res2;
-        r3.textContent = res3;
-
-        if (res1 === res2 && res2 === res3) {
-          const win = 2500;
-          balance += win;
-          status.textContent = `💥 МЕГА КЛАСТЕР 7x7! ЗАНОС +${win} ₽! Спот х128 активирован!`;
-          status.style.color = "#4ade80";
-        } else if (res1 === res2 || res2 === res3 || res1 === res3) {
-          const win = 500;
-          balance += win;
-          status.textContent = `🍬 Две конфеты! Занос +${win} ₽!`;
-          status.style.color = "#38bdf8";
-        } else {
-          status.textContent = "Мимо! 99% лудоманов сдаются именно сейчас.";
-          status.style.color = "#f472b6";
-        }
-
-        updateBalance();
-        isSpinning = false;
-        document.getElementById("btnSpin").disabled = false;
-      }, 1200);
+      updateUI();
+      setTimeout(startSpin, 1200);
     }
 
-    function updateBalance() {
-      document.getElementById("casinoBalance").textContent = balance;
+    function resetSpots() {
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          spotData[r][c] = { marked: false, multiplier: 0 };
+        }
+      }
+      renderGrid();
+    }
+
+    async function dropNewSymbolsAnimation() {
+      fillRandomGrid();
+      renderGrid();
+      await sleep(250);
+    }
+
+    // Основной цикл каскадов Tumble
+    async function processTumbleSequence() {
+      const bet = betSteps[currentBetIdx];
+      let tumbleCount = 0;
+
+      while (true) {
+        const clusters = findWinningClusters();
+        const scattersCount = countScatters();
+
+        // Проверка активации или ретриггера фриспинов
+        if (scattersCount >= 3 && !isFreeSpinsMode) {
+          const awarded = { 3: 10, 4: 12, 5: 15, 6: 20, 7: 30 }[Math.min(7, scattersCount)] || 10;
+          freeSpinsLeft += awarded;
+          isFreeSpinsMode = true;
+          totalRoundWin = 0;
+          document.getElementById("casinoStatus").textContent = `🚀 БОНУСКА! Выпало ${scattersCount} Скаттеров! +${awarded} Фриспинов!`;
+          document.getElementById("casinoStatus").style.color = "#ffd700";
+          await sleep(1000);
+        }
+
+        if (clusters.length === 0) break;
+        tumbleCount++;
+
+        let tumbleWin = 0;
+
+        // Расчет выигрыша по кластерам и множителям
+        for (const cl of clusters) {
+          const sym = cl.symbol;
+          const size = cl.coords.length;
+          const payIdx = Math.min(size - 5, 10);
+          const baseMultiplier = PAYTABLE[sym][payIdx];
+          let clusterCash = baseMultiplier * bet;
+
+          // Суммируем спот-множители клеток
+          let spotMultiplierSum = 0;
+          cl.coords.forEach(([r, c]) => {
+            if (spotData[r][c].multiplier >= 2) {
+              spotMultiplierSum += spotData[r][c].multiplier;
+            }
+          });
+
+          if (spotMultiplierSum > 1) {
+            clusterCash *= spotMultiplierSum;
+          }
+
+          tumbleWin += clusterCash;
+
+          // Анимация взрыва и обновление пятен
+          cl.coords.forEach(([r, c]) => {
+            const el = document.getElementById(`cell_${r}_${c}`);
+            el.classList.add("exploding");
+
+            // Логика множителей клеток:
+            // 1-й взрыв: пятно (marked = true, multiplier = 0)
+            // 2-й взрыв: multiplier = 2
+            // далее удваивается: 4, 8, 16, 32, 64, 128
+            const spot = spotData[r][c];
+            if (!spot.marked) {
+              spot.marked = true;
+              spot.multiplier = 0;
+            } else if (spot.multiplier === 0) {
+              spot.multiplier = 2;
+            } else if (spot.multiplier < 128) {
+              spot.multiplier = Math.min(128, spot.multiplier * 2);
+            }
+          });
+        }
+
+        // Ограничение максимального выигрыша (5000x от ставки)
+        const maxWinCap = bet * 5000;
+        if (totalRoundWin + tumbleWin > maxWinCap) {
+          tumbleWin = maxWinCap - totalRoundWin;
+          document.getElementById("casinoStatus").textContent = "💥 ДОСТИГНУТ MAX WIN 5000X! Выплата произведена!";
+        }
+
+        totalRoundWin += tumbleWin;
+        balance += tumbleWin;
+        updateUI();
+
+        document.getElementById("casinoStatus").textContent = `Занос каскада: +${Math.round(tumbleWin)} ₽!`;
+        document.getElementById("casinoStatus").style.color = "#4ade80";
+
+        await sleep(400);
+
+        // Удаляем сыгравшие символы
+        clusters.forEach(cl => {
+          cl.coords.forEach(([r, c]) => {
+            gridData[r][c] = null;
+          });
+        });
+
+        // Падение существующих символов вниз и досыпка новых сверху
+        applyGravityAndRefill();
+        renderGrid();
+        await sleep(350);
+
+        if (totalRoundWin >= maxWinCap) break;
+      }
+    }
+
+    // Поиск кластеров (Flood Fill)
+    function findWinningClusters() {
+      const visited = Array(GRID_SIZE).fill(false).map(() => Array(GRID_SIZE).fill(false));
+      const clusters = [];
+
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          const sym = gridData[r][c];
+          if (!sym || sym === SCATTER || visited[r][c]) continue;
+
+          const group = [];
+          const queue = [[r, c]];
+          visited[r][c] = true;
+
+          while (queue.length > 0) {
+            const [cr, cc] = queue.pop();
+            group.push([cr, cc]);
+
+            const dirs = [[0, 1], [0, -1], [1, 0], [-1, 0]];
+            for (const [dr, dc] of dirs) {
+              const nr = cr + dr;
+              const nc = cc + dc;
+              if (nr >= 0 && nr < GRID_SIZE && nc >= 0 && nc < GRID_SIZE) {
+                if (!visited[nr][nc] && gridData[nr][nc] === sym) {
+                  visited[nr][nc] = true;
+                  queue.push([nr, nc]);
+                }
+              }
+            }
+          }
+
+          if (group.length >= 5) {
+            clusters.push({ symbol: sym, coords: group });
+          }
+        }
+      }
+      return clusters;
+    }
+
+    function countScatters() {
+      let cnt = 0;
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          if (gridData[r][c] === SCATTER) cnt++;
+        }
+      }
+      return cnt;
+    }
+
+    function applyGravityAndRefill() {
+      for (let c = 0; c < GRID_SIZE; c++) {
+        let emptyRow = GRID_SIZE - 1;
+        for (let r = GRID_SIZE - 1; r >= 0; r--) {
+          if (gridData[r][c] !== null) {
+            if (emptyRow !== r) {
+              gridData[emptyRow][c] = gridData[r][c];
+              gridData[r][c] = null;
+            }
+            emptyRow--;
+          }
+        }
+        // Заполняем пустоты сверху новыми символами
+        for (let r = emptyRow; r >= 0; r--) {
+          gridData[r][c] = Math.random() < 0.02 ? SCATTER : SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+        }
+      }
+    }
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     // ==========================================
@@ -913,6 +1263,7 @@
       document.getElementById("editCaption").value = item.caption;
       document.getElementById("editModal").style.display = "flex";
     }
+
     function closeEditModal() {
       document.getElementById("editModal").style.display = "none";
       currentEditIndex = -1;
@@ -974,6 +1325,16 @@
       return (str || "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
+    window.addEventListener("keydown", (e) => {
+      if (e.code === "Space" && document.getElementById("casinoModal").style.display === "flex") {
+        if (!["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) {
+          e.preventDefault();
+          startSpin();
+        }
+      }
+    });
+
+    initSlotGrid();
     loadSquad();
   </script>
 </body>
