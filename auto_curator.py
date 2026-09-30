@@ -254,4 +254,5 @@ def query_gemini(image_b64: str, key_manager: GeminiKeyManager, max_retries: int
                 key_manager.record_success(api_key)
                 data = resp.json()
                 text_response = data["candidates"][0]["content"]["parts"][0]["text"]
-                clean_json = re.sub(r"^```(?:json)?\s*|\s*
+                clean_json = re.sub(r"^```(?:json)?\s*|\s*```$", "", text_response.strip(), flags=re.MULTILINE)
+                return json.loads(clean_json)
