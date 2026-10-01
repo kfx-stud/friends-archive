@@ -47,7 +47,7 @@ def read_json_file(path: Path) -> List[Dict[str, Any]]:
                 if isinstance(content, list):
                     return content
                 if isinstance(content, dict):
-                    return content.get("items", [])
+                    return content.get("items", content.get("queue", []))
         except Exception as e:
             print(f"[ОШИБКА] Чтение {path.name}: {e}")
     return []
@@ -91,11 +91,11 @@ def sync_cloud_buffer():
 
                 if new_requests:
                     local_requests = read_json_file(REQUESTS_FILE)
-                    existing_ids = {r.get("id") for r in local_requests if "id" in r}
+                    existing_ids = {str(r.get("id")) for r in local_requests if "id" in r}
 
                     added_count = 0
                     for item in new_requests:
-                        if item.get("id") not in existing_ids:
+                        if str(item.get("id")) not in existing_ids:
                             local_requests.append(item)
                             added_count += 1
 
@@ -145,6 +145,9 @@ class AdminRequestHandler(SimpleHTTPRequestHandler):
         if parsed.path == "/api/articles":
             return self.send_json(read_json_file(ARTICLES_FILE))
 
+        if parsed.path in ("", "/", "/admin"):
+            self.path = "/admin.html"
+
         return super().do_GET()
 
     def do_POST(self):
@@ -157,20 +160,22 @@ class AdminRequestHandler(SimpleHTTPRequestHandler):
         except Exception:
             body = {}
 
+        # 1. Одобрение карточки из очереди
         if parsed.path == "/api/approve":
             filename = body.get("filename")
             crop_x = body.get("crop_x", 50)
             crop_y = body.get("crop_y", 50)
 
             pending_items = read_json_file(PENDING_FILE)
-            item = next((x for x in pending_items if x.get("filename") == filename), None)
+            item = next((x for x in pending_items if (x.get("filename") == filename or x.get("file") == filename or Path(x.get("file", "")).name == filename)), None)
 
             if item:
-                pending_items = [x for x in pending_items if x.get("filename") != filename]
+                pending_items = [x for x in pending_items if x != item]
                 write_json_file(PENDING_FILE, pending_items)
 
-                src = PENDING_DIR / filename
-                dst = IMAGES_DIR / filename
+                actual_fn = item.get("filename") or Path(item.get("file", "")).name
+                src = PENDING_DIR / actual_fn
+                dst = IMAGES_DIR / actual_fn
                 if src.exists():
                     shutil.move(src, dst)
 
@@ -178,6 +183,8 @@ class AdminRequestHandler(SimpleHTTPRequestHandler):
                     if key in body:
                         item[key] = body[key]
 
+                item["file"] = f"images/{actual_fn}"
+                item["filename"] = actual_fn
                 item["crop_x"] = crop_x
                 item["crop_y"] = crop_y
 
@@ -189,17 +196,19 @@ class AdminRequestHandler(SimpleHTTPRequestHandler):
 
             return self.send_json({"status": "error", "message": "Элемент не найден"}, 404)
 
+        # 2. Отклонение карточки в брак
         if parsed.path == "/api/reject":
             filename = body.get("filename")
             pending_items = read_json_file(PENDING_FILE)
-            item = next((x for x in pending_items if x.get("filename") == filename), None)
+            item = next((x for x in pending_items if (x.get("filename") == filename or x.get("file") == filename or Path(x.get("file", "")).name == filename)), None)
 
             if item:
-                pending_items = [x for x in pending_items if x.get("filename") != filename]
+                pending_items = [x for x in pending_items if x != item]
                 write_json_file(PENDING_FILE, pending_items)
 
-                src = PENDING_DIR / filename
-                dst = DELETED_DIR / filename
+                actual_fn = item.get("filename") or Path(item.get("file", "")).name
+                src = PENDING_DIR / actual_fn
+                dst = DELETED_DIR / actual_fn
                 if src.exists():
                     shutil.move(src, dst)
 
@@ -207,13 +216,15 @@ class AdminRequestHandler(SimpleHTTPRequestHandler):
 
             return self.send_json({"status": "error", "message": "Элемент не найден"}, 404)
 
+        # 3. Обновление карточки (текст и кадрирование)
         if parsed.path == "/api/update-card":
             filename = body.get("filename")
             data_items = read_json_file(DATA_FILE)
             updated = False
 
             for item in data_items:
-                if item.get("filename") == filename:
+                cur_fn = item.get("filename") or Path(item.get("file", "")).name
+                if cur_fn == filename or item.get("file") == filename:
                     if "title" in body:
                         item["title"] = body["title"]
                     if "tag" in body:
@@ -233,50 +244,55 @@ class AdminRequestHandler(SimpleHTTPRequestHandler):
                 req_id = body.get("request_id")
                 if req_id:
                     reqs = read_json_file(REQUESTS_FILE)
-                    reqs = [r for r in reqs if r.get("id") != req_id]
+                    reqs = [r for r in reqs if str(r.get("id")) != str(req_id)]
                     write_json_file(REQUESTS_FILE, reqs)
 
                 return self.send_json({"status": "success", "message": "Карточка обновлена"})
 
             return self.send_json({"status": "error", "message": "Карточка не найдена в data.json"}, 404)
 
+        # 4. Удаление карточки
         if parsed.path == "/api/delete-card":
             filename = body.get("filename")
             data_items = read_json_file(DATA_FILE)
-            item = next((x for x in data_items if x.get("filename") == filename), None)
+            item = next((x for x in data_items if (x.get("filename") == filename or x.get("file") == filename or Path(x.get("file", "")).name == filename)), None)
 
             if item:
-                data_items = [x for x in data_items if x.get("filename") != filename]
+                data_items = [x for x in data_items if x != item]
                 write_json_file(DATA_FILE, data_items)
 
-                src = IMAGES_DIR / filename
-                dst = DELETED_DIR / filename
+                actual_fn = item.get("filename") or Path(item.get("file", "")).name
+                src = IMAGES_DIR / actual_fn
+                dst = DELETED_DIR / actual_fn
                 if src.exists():
                     shutil.move(src, dst)
 
                 req_id = body.get("request_id")
                 if req_id:
                     reqs = read_json_file(REQUESTS_FILE)
-                    reqs = [r for r in reqs if r.get("id") != req_id]
+                    reqs = [r for r in reqs if str(r.get("id")) != str(req_id)]
                     write_json_file(REQUESTS_FILE, reqs)
 
                 return self.send_json({"status": "success", "message": "Карточка удалена с сайта"})
 
             return self.send_json({"status": "error", "message": "Карточка не найдена"}, 404)
 
+        # 5. Снятие заявки с очереди
         if parsed.path == "/api/resolve-request":
             req_id = body.get("id")
             requests_items = read_json_file(REQUESTS_FILE)
-            requests_items = [x for x in requests_items if x.get("id") != req_id]
+            requests_items = [x for x in requests_items if str(x.get("id")) != str(req_id)]
             write_json_file(REQUESTS_FILE, requests_items)
             return self.send_json({"status": "success"})
 
+        # 6. Сохранение и редактирование статей (включая флаг featured)
         if parsed.path == "/api/articles/save":
             art_id = body.get("id")
             title = body.get("title", "").strip()
             content = body.get("content", "").strip()
             tag = body.get("tag", "ВЕСТНИК").strip()
             author = body.get("author", "Редакция").strip()
+            featured = bool(body.get("featured", False))
             date_str = body.get("date", time.strftime("%d.%m.%Y"))
 
             if not title or not content:
@@ -286,12 +302,15 @@ class AdminRequestHandler(SimpleHTTPRequestHandler):
 
             if art_id:
                 for art in articles:
-                    if art.get("id") == art_id:
+                    if str(art.get("id")) == str(art_id):
                         art["title"] = title
                         art["content"] = content
-                        art["tag"] = tag
-                        art["author"] = author
-                        art["date"] = date_str
+                        if "tag" in body and body["tag"]:
+                            art["tag"] = tag
+                        if "author" in body and body["author"]:
+                            art["author"] = author
+                        if "featured" in body:
+                            art["featured"] = featured
                         break
             else:
                 new_art = {
@@ -300,17 +319,33 @@ class AdminRequestHandler(SimpleHTTPRequestHandler):
                     "date": date_str,
                     "tag": tag,
                     "content": content,
-                    "author": author
+                    "author": author,
+                    "featured": featured
                 }
                 articles.insert(0, new_art)
 
             write_json_file(ARTICLES_FILE, articles)
+
+            req_id = body.get("request_id")
+            if req_id:
+                reqs = read_json_file(REQUESTS_FILE)
+                reqs = [r for r in reqs if str(r.get("id")) != str(req_id)]
+                write_json_file(REQUESTS_FILE, reqs)
+
             return self.send_json({"status": "success", "message": "Статья сохранена"})
 
+        # 7. Изменение порядка статей (вверх/вниз)
+        if parsed.path == "/api/articles/reorder":
+            if isinstance(body, list):
+                write_json_file(ARTICLES_FILE, body)
+                return self.send_json({"status": "success", "message": "Порядок статей сохранен"})
+            return self.send_json({"status": "error", "message": "Ожидается список статей"}, 400)
+
+        # 8. Удаление статьи
         if parsed.path == "/api/articles/delete":
             art_id = body.get("id")
             articles = read_json_file(ARTICLES_FILE)
-            articles = [a for a in articles if a.get("id") != art_id]
+            articles = [a for a in articles if str(a.get("id")) != str(art_id)]
             write_json_file(ARTICLES_FILE, articles)
             return self.send_json({"status": "success", "message": "Статья удалена"})
 

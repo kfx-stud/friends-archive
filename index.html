@@ -98,6 +98,7 @@
       gap: 8px;
     }
 
+    /* Сетка статей */
     .articles-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -113,6 +114,17 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      transition: border-color 0.2s;
+    }
+
+    .article-card:hover {
+      border-color: var(--accent);
+    }
+
+    .article-card.featured {
+      grid-column: 1 / -1;
+      border-left: 5px solid var(--accent-gold);
+      background: linear-gradient(90deg, rgba(245, 158, 11, 0.12) 0%, var(--card-bg) 100%);
     }
 
     .article-header {
@@ -130,10 +142,21 @@
       font-weight: 700;
     }
 
+    .article-card.featured .article-tag {
+      background: var(--accent-gold);
+      color: #000;
+      font-weight: 900;
+    }
+
     .article-title {
       font-size: 18px;
       font-weight: 700;
       margin-bottom: 10px;
+    }
+
+    .article-card.featured .article-title {
+      color: var(--accent-gold);
+      font-size: 20px;
     }
 
     .article-content {
@@ -143,6 +166,16 @@
       white-space: pre-wrap;
     }
 
+    .article-footer {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Галерея карточек */
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -233,6 +266,7 @@
       overflow: hidden;
     }
 
+    /* Модальное окно просмотра */
     .modal-backdrop {
       display: none;
       position: fixed;
@@ -295,6 +329,7 @@
 
     .btn-action:hover { opacity: 0.9; }
 
+    /* Слот Sugar Rush */
     #slot-modal {
       display: none;
       position: fixed;
@@ -369,15 +404,18 @@
   </header>
 
   <main>
+    <!-- Вестник Клуба -->
     <div id="articles-section" style="display: none;">
-      <div class="section-title">📰 Вестник Клуба</div>
+      <div class="section-title">📰 Вестник Клуба / Главные события</div>
       <div id="articles-list" class="articles-grid"></div>
     </div>
 
+    <!-- Галерея Карточек -->
     <div class="section-title">📸 Основной состав</div>
     <div id="gallery" class="gallery-grid"></div>
   </main>
 
+  <!-- Модальное окно просмотра карточки -->
   <div id="card-modal" class="modal-backdrop">
     <div class="modal-box">
       <div class="modal-photo-col">
@@ -402,6 +440,7 @@
     </div>
   </div>
 
+  <!-- Модальное окно предложки -->
   <div id="suggest-modal" class="modal-backdrop">
     <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 24px; width: 100%; max-width: 480px;">
       <h3 style="margin-bottom: 16px;">Предложить фото или новость</h3>
@@ -414,6 +453,7 @@
     </div>
   </div>
 
+  <!-- Слот Sugar Rush -->
   <div id="slot-modal">
     <div class="slot-container">
       <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
@@ -440,6 +480,7 @@
 
     let activeCard = null;
     let cardsData = [];
+    let articlesData = [];
 
     function resolveImagePath(item) {
       if (!item) return '';
@@ -459,27 +500,32 @@
 
       try {
         const res = await fetch('data/articles.json');
-        const articles = await res.json();
-        if (articles && articles.length > 0) {
-          renderArticles(articles);
+        articlesData = await res.json();
+        if (articlesData && articlesData.length > 0) {
+          renderArticles(articlesData);
         }
-      } catch (e) {}
+      } catch (e) {
+        console.error("Ошибка загрузки articles.json", e);
+      }
     }
 
     function renderArticles(articles) {
       document.getElementById('articles-section').style.display = 'block';
       const container = document.getElementById('articles-list');
       container.innerHTML = articles.map(a => `
-        <div class="article-card">
+        <div class="article-card ${a.featured ? 'featured' : ''}">
           <div>
             <div class="article-header">
-              <span class="article-tag">${a.tag}</span>
+              <span class="article-tag">${a.featured ? '★ ' : ''}${a.tag}</span>
               <span style="color: var(--text-muted);">${a.date}</span>
             </div>
             <div class="article-title">${a.title}</div>
             <div class="article-content">${a.content}</div>
           </div>
-          <div style="margin-top: 12px; font-size: 12px; color: var(--text-muted);">Автор: ${a.author}</div>
+          <div class="article-footer">
+            <span style="font-size: 12px; color: var(--text-muted);">Автор: ${a.author || 'Редакция'}</span>
+            <button class="nav-btn" style="padding: 4px 10px; font-size: 12px;" onclick="requestArticleEdit('${a.id}')">✏️ Предложить правку</button>
+          </div>
         </div>
       `).join('');
     }
@@ -589,6 +635,29 @@
       closeModal();
     }
 
+    async function requestArticleEdit(articleId) {
+      const art = articlesData.find(a => a.id === articleId);
+      if (!art) return;
+
+      const newTitle = prompt('Новый заголовок статьи:', art.title);
+      if (newTitle === null) return;
+
+      const newContent = prompt('Новый текст статьи:', art.content);
+      if (newContent === null) return;
+
+      const ok = await sendToCloudBuffer({
+        type: 'article_edit',
+        article_id: art.id,
+        title: newTitle,
+        content: newContent,
+        old_title: art.title
+      });
+
+      if (ok) {
+        alert('Правка статьи передана в штаб модерации!');
+      }
+    }
+
     function openSuggestModal() {
       document.getElementById('suggest-modal').style.display = 'flex';
     }
@@ -616,6 +685,7 @@
       }
     }
 
+    /* --- СЛОТ SUGAR RUSH 7x7 --- */
     const ICONS = ['🍬', '🍭', '🍇', '🍉', '⭐', '🐻', '🚀'];
     let grid = Array(49).fill('');
     let spots = Array(49).fill(0);

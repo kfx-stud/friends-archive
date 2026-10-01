@@ -3,19 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Штаб Модерации – ФК ГазМяс</title>
+  <title>Штаб Модерации – ФК «ГазМяс»</title>
+  <link rel="icon" type="image/png" href="symbol.png">
   <style>
     :root {
-      --bg-dark: #0f1117;
-      --bg-card: #181b23;
-      --bg-input: #232733;
-      --border-color: #2c3242;
-      --accent-green: #10b981;
+      --bg: #090a0f;
+      --card-bg: #141721;
+      --card-inner: #191d2b;
+      --border: #232838;
+      --border-focus: #3b82f6;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent: #3b82f6;
       --accent-red: #ef4444;
-      --accent-blue: #3b82f6;
-      --accent-yellow: #f59e0b;
-      --text-main: #f3f4f6;
-      --text-muted: #9ca3af;
+      --accent-gold: #f59e0b;
+      --accent-green: #10b981;
+      --accent-purple: #a855f7;
     }
 
     * {
@@ -26,80 +29,155 @@
     }
 
     body {
-      background: var(--bg-dark);
-      color: var(--text-main);
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
-      padding: 24px;
-    }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .nav-tabs {
-      display: flex;
-      gap: 10px;
-    }
-
-    .tab-btn {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      color: var(--text-muted);
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 14px;
-      transition: all 0.2s;
-    }
-
-    .tab-btn:hover {
-      background: var(--bg-input);
-      color: var(--text-main);
-    }
-
-    .tab-btn.active {
-      background: var(--accent-blue);
-      border-color: var(--accent-blue);
-      color: #fff;
-    }
-
-    .grid-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
-    }
-
-    .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      overflow: hidden;
       display: flex;
       flex-direction: column;
     }
 
-    .card-img-container {
+    header {
+      background: #0f121d;
+      border-bottom: 1px solid var(--border);
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .brand img {
+      width: 32px;
+      height: 32px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 8px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tab-btn:hover {
+      background: var(--card-bg);
+      color: var(--text);
+      border-color: var(--border-focus);
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .counter-badge {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-size: 11px;
+    }
+
+    main {
+      flex: 1;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 28px 20px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .hotkey-hint {
+      font-size: 13px;
+      color: var(--text-muted);
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    kbd {
+      background: #2a3142;
+      color: #fff;
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-family: monospace;
+      font-size: 11px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.15s, border-color 0.2s;
+    }
+
+    .card:hover {
+      border-color: var(--border-focus);
+    }
+
+    .card-thumb {
       width: 100%;
       height: 220px;
-      position: relative;
       background: #000;
+      position: relative;
       overflow: hidden;
     }
 
-    .card-img-container img {
+    .card-thumb img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
     }
 
-    .card-badges {
+    .badges-overlay {
       position: absolute;
       top: 10px;
       left: 10px;
@@ -109,27 +187,27 @@
       pointer-events: none;
     }
 
-    .badge-score {
+    .score-badge {
       background: rgba(0, 0, 0, 0.85);
-      border: 1px solid var(--accent-yellow);
-      color: var(--accent-yellow);
-      font-weight: 700;
-      font-size: 12px;
-      padding: 3px 8px;
+      color: var(--accent-gold);
+      border: 1px solid var(--accent-gold);
+      padding: 2px 6px;
       border-radius: 4px;
+      font-size: 11px;
+      font-weight: 800;
     }
 
-    .badge-tag {
+    .tag-badge {
       background: rgba(0, 0, 0, 0.85);
-      border: 1px solid var(--accent-blue);
-      color: var(--accent-blue);
-      font-weight: 700;
-      font-size: 12px;
-      padding: 3px 8px;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 2px 6px;
       border-radius: 4px;
+      font-size: 11px;
+      font-weight: 800;
     }
 
-    .card-content {
+    .card-body {
       padding: 16px;
       flex: 1;
       display: flex;
@@ -140,15 +218,18 @@
     .card-title {
       font-size: 15px;
       font-weight: 700;
-      margin-bottom: 8px;
-      color: #fff;
+      margin-bottom: 6px;
     }
 
     .card-caption {
       font-size: 13px;
       color: var(--text-muted);
       line-height: 1.4;
-      margin-bottom: 16px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 14px;
     }
 
     .card-actions {
@@ -158,80 +239,156 @@
     }
 
     .btn {
-      padding: 8px 12px;
+      padding: 9px 12px;
       border-radius: 6px;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       border: none;
+      transition: opacity 0.2s, background-color 0.2s;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
+      gap: 6px;
     }
 
-    .btn-green {
-      background: var(--accent-green);
-      color: #fff;
+    .btn:hover { opacity: 0.9; }
+
+    .btn-green { background: var(--accent-green); color: #fff; }
+    .btn-red { background: var(--accent-red); color: #fff; }
+    .btn-blue { background: var(--accent); color: #fff; }
+    .btn-gray { background: #232838; color: var(--text); border: 1px solid var(--border); }
+    .btn-gray:hover { background: #2d3448; }
+
+    .article-editor-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 28px;
     }
 
-    .btn-green:hover { background: #059669; }
-
-    .btn-red {
-      background: var(--accent-red);
-      color: #fff;
+    .form-group {
+      margin-bottom: 14px;
     }
 
-    .btn-red:hover { background: #dc2626; }
-
-    .btn-blue {
-      background: var(--accent-blue);
-      color: #fff;
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    .btn-blue:hover { background: #2563eb; }
-
-    .btn-gray {
-      background: var(--bg-input);
-      color: var(--text-main);
-      border: 1px solid var(--border-color);
+    .form-control {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 14px;
     }
 
-    .btn-gray:hover { background: #2f3444; }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
 
-    /* Модальное окно кадрирования */
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 16px 0;
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px dashed var(--accent-gold);
+      padding: 10px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .checkbox-row input {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .articles-admin-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .article-admin-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .article-admin-item.featured {
+      border-left: 5px solid var(--accent-gold);
+      background: linear-gradient(90deg, rgba(245, 158, 11, 0.1) 0%, var(--card-bg) 100%);
+    }
+
+    .article-item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
     .modal-backdrop {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.85);
+      background: rgba(0, 0, 0, 0.88);
       z-index: 1000;
       align-items: center;
       justify-content: center;
       padding: 20px;
     }
 
-    .modal-window {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
+    .modal-dialog {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
       width: 100%;
-      max-width: 900px;
-      padding: 24px;
-      color: var(--text-main);
-    }
-
-    .crop-layout {
+      max-width: 960px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 26px;
       display: flex;
-      gap: 20px;
-      margin: 16px 0;
+      flex-direction: column;
+      gap: 16px;
     }
 
-    .crop-picker-wrapper {
-      position: relative;
+    .crop-workspace {
+      display: flex;
+      gap: 24px;
+      margin: 10px 0;
+      flex-wrap: wrap;
+    }
+
+    .crop-source-col {
       flex: 2;
+      min-width: 320px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .crop-picker-canvas {
+      position: relative;
+      width: 100%;
+      max-height: 420px;
       background: #000;
-      border-radius: 6px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
       overflow: hidden;
       cursor: crosshair;
       display: flex;
@@ -239,247 +396,305 @@
       justify-content: center;
     }
 
-    .crop-picker-wrapper img {
+    .crop-picker-canvas img {
       width: 100%;
       height: auto;
-      max-height: 400px;
+      max-height: 420px;
       object-fit: contain;
       user-select: none;
       display: block;
     }
 
-    .crop-point-target {
+    .crop-marker {
       position: absolute;
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
       border: 2px solid var(--accent-red);
-      background: rgba(239, 68, 68, 0.3);
+      background: rgba(239, 68, 68, 0.4);
       border-radius: 50%;
       transform: translate(-50%, -50%);
       pointer-events: none;
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.8);
     }
 
-    .crop-preview-box {
+    .crop-preview-col {
       flex: 1;
+      min-width: 240px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
     }
 
-    .preview-frame {
-      width: 200px;
-      height: 160px;
-      border-radius: 6px;
+    .site-preview-frame {
+      width: 240px;
+      height: 190px;
+      border-radius: 8px;
       overflow: hidden;
-      border: 2px solid var(--accent-blue);
+      border: 2px solid var(--accent);
       background: #000;
+      position: relative;
     }
 
-    .preview-frame img {
+    .site-preview-frame img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
 
-    .form-group {
-      margin-bottom: 12px;
+    .requests-container {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
     }
 
-    .form-group label {
-      display: block;
-      font-size: 12px;
-      font-weight: 600;
-      margin-bottom: 4px;
-      color: var(--text-muted);
-    }
-
-    .form-control {
-      width: 100%;
-      background: var(--bg-input);
-      border: 1px solid var(--border-color);
-      color: #fff;
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-size: 14px;
-    }
-
-    .form-control:focus {
-      outline: none;
-      border-color: var(--accent-blue);
+    .request-row {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
     }
   </style>
 </head>
 <body>
 
   <header>
-    <div>
-      <h1>Штаб Модерации ФК «ГазМяс»</h1>
-      <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">Управление очередью конвейера, предложкой и статьями</p>
+    <div class="brand">
+      <img src="symbol.png" alt="Герб">
+      <span>ФК «ГазМяс» — Штаб Модерации</span>
     </div>
-    <div class="nav-tabs">
-      <button class="tab-btn active" onclick="switchTab('pending')">Очередь (<span id="count-pending">0</span>)</button>
-      <button class="tab-btn" onclick="switchTab('requests')">Заявки и Правки (<span id="count-requests">0</span>)</button>
-      <button class="tab-btn" onclick="switchTab('articles')">📰 Статьи (<span id="count-articles">0</span>)</button>
-      <button class="tab-btn" onclick="switchTab('approved')">Опубликовано (<span id="count-approved">0</span>)</button>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('pending', this)">
+        📥 Очередь <span id="count-pending" class="counter-badge">0</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('requests', this)">
+        📬 Заявки и правки <span id="count-requests" class="counter-badge">0</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('articles', this)">
+        📰 Статьи <span id="count-articles" class="counter-badge">0</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('published', this)">
+        📸 Опубликовано <span id="count-published" class="counter-badge">0</span>
+      </button>
     </div>
   </header>
 
-  <!-- ВКЛАДКА 1: ОЧЕРЕДЬ КУРИРОВАНИЯ -->
-  <section id="tab-pending">
-    <div id="pending-list" class="grid-container"></div>
-  </section>
-
-  <!-- ВКЛАДКА 2: ЗАЯВКИ С САЙТА -->
-  <section id="tab-requests" style="display: none;">
-    <div id="requests-list" style="display: flex; flex-direction: column; gap: 12px;"></div>
-  </section>
-
-  <!-- ВКЛАДКА 3: СТАТЬИ ВЕСТНИКА -->
-  <section id="tab-articles" style="display: none;">
-    <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 20px; border-radius: 8px; margin-bottom: 24px; max-width: 800px;">
-      <h3 id="article-form-header" style="margin-bottom: 16px;">Добавить новую статью</h3>
-      <input type="hidden" id="art-id">
-      
-      <div class="form-group">
-        <label>Заголовок статьи:</label>
-        <input type="text" id="art-title" class="form-control" placeholder="Заголовок...">
-      </div>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;" class="form-group">
-        <div>
-          <label>Тег рубрики:</label>
-          <input type="text" id="art-tag" class="form-control" value="ВЕСТНИК">
-        </div>
-        <div>
-          <label>Автор:</label>
-          <input type="text" id="art-author" class="form-control" value="Редакция">
+  <main>
+    <section id="tab-pending">
+      <div class="section-header">
+        <div class="section-title">📥 Очередь на отбор в состав</div>
+        <div class="hotkey-hint">
+          Горячие клавиши для первой карточки: <kbd>A</kbd> — одобрить, <kbd>D</kbd> — в брак
         </div>
       </div>
+      <div id="pending-grid" class="grid"></div>
+    </section>
 
-      <div class="form-group">
-        <label>Текст статьи:</label>
-        <textarea id="art-content" rows="6" class="form-control" placeholder="Текст материала..."></textarea>
+    <section id="tab-requests" style="display: none;">
+      <div class="section-header">
+        <div class="section-title">📬 Входящие пользовательские заявки</div>
+        <button class="btn btn-gray" onclick="loadRequests()">🔄 Обновить</button>
+      </div>
+      <div id="requests-list" class="requests-container"></div>
+    </section>
+
+    <section id="tab-articles" style="display: none;">
+      <div class="section-header">
+        <div class="section-title">📰 Вестник Клуба: Создание и разметка статей</div>
       </div>
 
-      <div style="display: flex; gap: 10px;">
-        <button class="btn btn-green" onclick="saveArticle()">Сохранить статью</button>
-        <button class="btn btn-gray" onclick="resetArticleForm()">Сбросить форму</button>
-      </div>
-    </div>
+      <div class="article-editor-card">
+        <h3 id="art-form-title" style="margin-bottom: 16px;">Добавить публикацию в вестник</h3>
+        <input type="hidden" id="art-id">
 
-    <div id="articles-container" style="display: flex; flex-direction: column; gap: 12px; max-width: 800px;"></div>
-  </section>
-
-  <!-- ВКЛАДКА 4: ОПУБЛИКОВАННЫЕ КАРТОЧКИ -->
-  <section id="tab-approved" style="display: none;">
-    <div id="approved-list" class="grid-container"></div>
-  </section>
-
-  <!-- МОДАЛЬНОЕ ОКНО КАДРИРОВАНИЯ И ПРАВКИ -->
-  <div id="crop-modal" class="modal-backdrop">
-    <div class="modal-window">
-      <h3 style="margin-bottom: 6px;">Редактирование отображаемой части и метаданных</h3>
-      <p style="font-size: 13px; color: var(--text-muted);">Кликните по фотографии в поле фокуса для позиционирования витрины:</p>
-
-      <div class="crop-layout">
-        <div id="crop-picker" class="crop-picker-wrapper">
-          <img id="crop-src-img" src="" alt="Crop Source">
-          <div id="crop-marker" class="crop-point-target"></div>
-        </div>
-
-        <div class="crop-preview-box">
-          <span style="font-size: 12px; margin-bottom: 8px; color: var(--text-muted);">Превью витрины:</span>
-          <div class="preview-frame">
-            <img id="crop-preview-img" src="" alt="Preview">
-          </div>
-          <div style="margin-top: 12px; font-family: monospace; font-size: 12px; color: var(--text-muted);">
-            X: <span id="lbl-crop-x">50</span>% | Y: <span id="lbl-crop-y">50</span>%
-          </div>
-        </div>
-      </div>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
         <div class="form-group">
-          <label>Заголовок:</label>
-          <input type="text" id="modal-field-title" class="form-control">
+          <label>Заголовок материала:</label>
+          <input type="text" id="art-title" class="form-control" placeholder="Заголовок новости или манифеста...">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="form-group">
+            <label>Тег рубрики:</label>
+            <input type="text" id="art-tag" class="form-control" value="ВЕСТНИК">
+          </div>
+          <div class="form-group">
+            <label>Автор / Источник:</label>
+            <input type="text" id="art-author" class="form-control" value="Редакция">
+          </div>
+        </div>
+
+        <label class="checkbox-row">
+          <input type="checkbox" id="art-featured">
+          <span style="font-weight: 700; color: var(--accent-gold);">
+            ★ Главный материал (растянуть на всю ширину витрины с золотой каймой)
+          </span>
+        </label>
+
+        <div class="form-group">
+          <label>Текст статьи:</label>
+          <textarea id="art-content" rows="5" class="form-control" placeholder="Содержимое новости..."></textarea>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-green" onclick="saveArticle()">💾 Сохранить публикацию</button>
+          <button class="btn btn-gray" onclick="resetArticleForm()">Сбросить форму</button>
+        </div>
+      </div>
+
+      <div class="section-title" style="font-size: 18px; margin-bottom: 14px;">Порядок публикаций на сайте</div>
+      <div id="articles-admin-list" class="articles-admin-list"></div>
+    </section>
+
+    <section id="tab-published" style="display: none;">
+      <div class="section-header">
+        <div class="section-title">📸 Карточки в основном составе</div>
+      </div>
+      <div id="published-grid" class="grid"></div>
+    </section>
+  </main>
+
+  <div id="crop-modal" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 id="modal-heading">Настройка отображаемой области и описания</h3>
+        <button class="btn btn-gray" style="padding: 4px 10px;" onclick="closeCropModal()">✕</button>
+      </div>
+      <p style="font-size: 13px; color: var(--text-muted);">
+        Кликните по фотографии слева, чтобы спозиционировать центр внимания для карточки на сайте:
+      </p>
+
+      <div class="crop-workspace">
+        <div class="crop-source-col">
+          <div id="crop-picker" class="crop-picker-canvas">
+            <img id="crop-src-img" src="" alt="Source">
+            <div id="crop-marker" class="crop-marker"></div>
+          </div>
+        </div>
+
+        <div class="crop-preview-col">
+          <span style="font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">
+            Превью витрины клуба:
+          </span>
+          <div class="site-preview-frame">
+            <img id="crop-prev-img" src="" alt="Preview">
+          </div>
+          <div style="margin-top: 10px; font-family: monospace; font-size: 12px; color: var(--accent-gold);">
+            X: <span id="val-crop-x">50</span>% | Y: <span id="val-crop-y">50</span>%
+          </div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 14px;">
+        <div class="form-group">
+          <label>Заголовок карточки:</label>
+          <input type="text" id="modal-title" class="form-control">
         </div>
         <div class="form-group">
           <label>Тег:</label>
-          <input type="text" id="modal-field-tag" class="form-control">
+          <input type="text" id="modal-tag" class="form-control">
         </div>
       </div>
 
       <div class="form-group">
-        <label>Описание / Панчлайн:</label>
-        <textarea id="modal-field-caption" rows="3" class="form-control"></textarea>
+        <label>Панчлайн / Описание:</label>
+        <textarea id="modal-caption" rows="3" class="form-control"></textarea>
       </div>
 
-      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
         <button class="btn btn-gray" onclick="closeCropModal()">Отмена</button>
-        <button id="modal-btn-confirm" class="btn btn-green">Применить</button>
+        <button id="modal-btn-confirm" class="btn btn-green">Применить и опубликовать</button>
       </div>
     </div>
   </div>
 
   <script>
-    let pendingData = [];
-    let requestsData = [];
-    let articlesData = [];
-    let approvedData = [];
+    let pendingList = [];
+    let requestsList = [];
+    let articlesList = [];
+    let publishedList = [];
 
     let currentModalTarget = null;
-    let currentModalMode = 'approve';
-    let cropPoint = { x: 50, y: 50 };
+    let currentModalMode = 'approve'; // 'approve' | 'edit'
+    let currentCrop = { x: 50, y: 50 };
 
-    async function init() {
-      await Promise.all([loadPending(), loadRequests(), loadArticles(), loadApproved()]);
+    function resolveImagePath(item, fallbackFolder = 'images/') {
+      if (!item) return '';
+      const raw = item.file || item.filename || '';
+      if (!raw) return '';
+      if (raw.startsWith('images/') || raw.startsWith('pending/')) return raw;
+      return fallbackFolder + raw;
     }
 
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      event.target.classList.add('active');
+    function extractPureFilename(item) {
+      if (!item) return '';
+      const raw = item.filename || item.file || '';
+      return raw.split('/').pop();
+    }
 
-      ['pending', 'requests', 'articles', 'approved'].forEach(id => {
-        document.getElementById(`tab-${id}`).style.display = (id === tabId) ? 'block' : 'none';
+    async function init() {
+      await Promise.all([loadPending(), loadRequests(), loadArticles(), loadPublished()]);
+    }
+
+    function switchTab(tabName, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      ['pending', 'requests', 'articles', 'published'].forEach(name => {
+        document.getElementById(`tab-${name}`).style.display = (name === tabName) ? 'block' : 'none';
       });
     }
 
-    // --- ОЧЕРЕДЬ ---
     async function loadPending() {
-      const res = await fetch('/api/pending');
-      pendingData = await res.json();
-      document.getElementById('count-pending').innerText = pendingData.length;
-      renderPending();
+      try {
+        const res = await fetch('/api/pending');
+        pendingList = await res.json();
+        document.getElementById('count-pending').innerText = pendingList.length;
+        renderPending();
+      } catch (err) {
+        console.error('Ошибка загрузки очереди:', err);
+      }
     }
 
     function renderPending() {
-      const box = document.getElementById('pending-list');
-      if (!pendingData.length) {
-        box.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1;">Очередь чиста. Все кадры обработаны.</p>';
+      const container = document.getElementById('pending-grid');
+      if (!pendingList.length) {
+        container.innerHTML = '<p style="color: var(--text-muted); grid-column: 1 / -1;">Очередь пуста. Все кадры обработаны!</p>';
         return;
       }
 
-      box.innerHTML = pendingData.map(item => `
-        <div class="card">
-          <div class="card-img-container">
-            <img src="pending/${item.filename}" style="object-position: ${item.crop_x ?? 50}% ${item.crop_y ?? 50}%">
-            <div class="card-badges">
-              <span class="badge-score">${item.score ?? 5}/10</span>
-              <span class="badge-tag">${item.tag ?? 'КАДР'}</span>
+      container.innerHTML = pendingList.map(item => {
+        const fn = extractPureFilename(item);
+        const imgPath = resolveImagePath(item, 'pending/');
+
+        return `
+          <div class="card">
+            <div class="card-thumb">
+              <img src="${imgPath}" style="object-position: ${item.crop_x ?? 50}% ${item.crop_y ?? 50}%;">
+              <div class="badges-overlay">
+                <span class="score-badge">${item.score ?? 5}/10</span>
+                <span class="tag-badge">${item.tag ?? 'КАДР'}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div>
+                <div class="card-title">${item.title || 'Без названия'}</div>
+                <div class="card-caption">${item.caption || ''}</div>
+              </div>
+              <div class="card-actions">
+                <button class="btn btn-red" onclick="rejectItem('${fn}')">✖ Брак [D]</button>
+                <button class="btn btn-green" onclick="openApproveModal('${fn}')">✔ На сайт [A]</button>
+              </div>
             </div>
           </div>
-          <div class="card-content">
-            <div>
-              <div class="card-title">${item.title ?? 'Без названия'}</div>
-              <div class="card-caption">${item.caption ?? ''}</div>
-            </div>
-            <div class="card-actions">
-              <button class="btn btn-red" onclick="rejectItem('${item.filename}')">✖ Брак [D]</button>
-              <button class="btn btn-green" onclick="openApproveModal('${item.filename}')">✔ На сайт [A]</button>
-            </div>
-          </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     async function rejectItem(filename) {
@@ -488,54 +703,93 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ filename })
       });
-      if (res.ok) await loadPending();
+      if (res.ok) {
+        await loadPending();
+      }
     }
 
-    // --- ЗАЯВКИ И ПРАВКИ ---
     async function loadRequests() {
-      const res = await fetch('/api/requests');
-      requestsData = await res.json();
-      document.getElementById('count-requests').innerText = requestsData.length;
-      renderRequests();
+      try {
+        const res = await fetch('/api/requests');
+        requestsList = await res.json();
+        document.getElementById('count-requests').innerText = requestsList.length;
+        renderRequests();
+      } catch (err) {
+        console.error('Ошибка загрузки заявок:', err);
+      }
     }
 
     function renderRequests() {
-      const box = document.getElementById('requests-list');
-      if (!requestsData.length) {
-        box.innerHTML = '<p style="color: var(--text-muted);">Новых пользовательских заявок нет.</p>';
+      const container = document.getElementById('requests-list');
+      if (!requestsList.length) {
+        container.innerHTML = '<p style="color: var(--text-muted);">Новых заявок из предложки и правок нет.</p>';
         return;
       }
 
-      box.innerHTML = requestsData.map(r => `
-        <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 16px; border-radius: 8px; display: flex; gap: 16px; align-items: center;">
-          <img src="images/${r.filename}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 6px; background: #000;">
-          <div style="flex: 1;">
-            <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 4px;">
-              <span class="badge-tag">${r.type === 'delete' ? 'ЗАПРОС НА УДАЛЕНИЕ' : 'ЗАЯВКА НА ПРАВКУ'}</span>
-              <span style="font-size: 12px; color: var(--text-muted);">${r.filename}</span>
+      container.innerHTML = requestsList.map(r => {
+        if (r.type === 'article_edit') {
+          return `
+            <div class="request-row" style="border-left: 5px solid var(--accent);">
+              <div style="flex: 1;">
+                <div style="display: flex; gap: 8px; margin-bottom: 6px;">
+                  <span class="tag-badge" style="border-color: var(--accent); color: var(--accent);">ПРАВКА СТАТЬИ</span>
+                  <span style="font-size: 12px; color: var(--text-muted);">${r.id}</span>
+                </div>
+                <div style="font-weight: 700; margin-bottom: 4px;">«${r.title}»</div>
+                <div style="font-size: 13px; color: var(--text-muted); white-space: pre-wrap;">${r.content}</div>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-green" onclick="applyArticleRequest('${r.article_id}', '${r.id}')">Применить правку</button>
+                <button class="btn btn-gray" onclick="resolveRequest('${r.id}')">Отклонить</button>
+              </div>
             </div>
-            <div style="font-weight: 700; margin-bottom: 4px;">${r.title || ''}</div>
-            <div style="font-size: 13px; color: var(--text-muted);">${r.caption || ''}</div>
+          `;
+        }
+
+        const fn = extractPureFilename(r);
+        const imgPath = resolveImagePath(r, 'images/');
+
+        return `
+          <div class="request-row" style="border-left: 5px solid ${r.type === 'delete' ? 'var(--accent-red)' : 'var(--accent-gold)'};">
+            <img src="${imgPath}" onerror="this.src='symbol.png'" style="width: 70px; height: 70px; object-fit: cover; border-radius: 6px; background: #000;">
+            <div style="flex: 1;">
+              <div style="display: flex; gap: 8px; margin-bottom: 6px;">
+                <span class="tag-badge" style="border-color: ${r.type === 'delete' ? 'var(--accent-red)' : 'var(--accent-gold)'}; color: ${r.type === 'delete' ? 'var(--accent-red)' : 'var(--accent-gold)'};">
+                  ${r.type === 'delete' ? 'ЗАПРОС НА УДАЛЕНИЕ' : 'ПРЕДЛОЖКА / ПРАВКА'}
+                </span>
+                <span style="font-size: 12px; color: var(--text-muted);">${fn || 'Без файла'}</span>
+              </div>
+              <div style="font-weight: 700; margin-bottom: 4px;">${r.title || 'Без названия'}</div>
+              <div style="font-size: 13px; color: var(--text-muted);">${r.caption || ''}</div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              ${r.type === 'delete'
+                ? `<button class="btn btn-red" onclick="executeDeleteCard('${fn}', '${r.id}')">Удалить карточку</button>`
+                : `<button class="btn btn-blue" onclick="openEditModal('${fn}', '${r.id}')">Настроить и сохранить</button>`}
+              <button class="btn btn-gray" onclick="resolveRequest('${r.id}')">Отклонить</button>
+            </div>
           </div>
-          <div style="display: flex; gap: 8px;">
-            ${r.type === 'delete' 
-              ? `<button class="btn btn-red" onclick="executeDeleteCard('${r.filename}', '${r.id}')">Удалить с сайта</button>` 
-              : `<button class="btn btn-blue" onclick="openEditModal('${r.filename}', '${r.id}')">Принять и настроить</button>`}
-            <button class="btn btn-gray" onclick="resolveRequest('${r.id}')">Отклонить</button>
-          </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
-    async function executeDeleteCard(filename, requestId) {
-      if (!confirm(`Подтверждаете удаление карточки ${filename} из архива?`)) return;
-      const res = await fetch('/api/delete-card', {
+    async function applyArticleRequest(articleId, requestId) {
+      const req = requestsList.find(r => r.id === requestId);
+      if (!req) return;
+
+      const res = await fetch('/api/articles/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ filename, request_id: requestId })
+        body: JSON.stringify({
+          id: articleId,
+          title: req.title,
+          content: req.content,
+          request_id: requestId
+        })
       });
+
       if (res.ok) {
-        await Promise.all([loadRequests(), loadApproved()]);
+        await Promise.all([loadRequests(), loadArticles()]);
       }
     }
 
@@ -548,83 +802,73 @@
       if (res.ok) await loadRequests();
     }
 
-    // --- ОПУБЛИКОВАННОЕ ---
-    async function loadApproved() {
-      const res = await fetch('/api/data');
-      approvedData = await res.json();
-      document.getElementById('count-approved').innerText = approvedData.length;
-      renderApproved();
-    }
+    async function executeDeleteCard(filename, requestId) {
+      if (!confirm(`Точно удалить карточку ${filename} с сайта?`)) return;
 
-    function renderApproved() {
-      const box = document.getElementById('approved-list');
-      if (!approvedData.length) {
-        box.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1;">Опубликованных карточек пока нет.</p>';
-        return;
+      const res = await fetch('/api/delete-card', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename, request_id: requestId })
+      });
+
+      if (res.ok) {
+        await Promise.all([loadRequests(), loadPublished()]);
       }
-
-      box.innerHTML = approvedData.map(item => `
-        <div class="card">
-          <div class="card-img-container">
-            <img src="images/${item.filename}" style="object-position: ${item.crop_x ?? 50}% ${item.crop_y ?? 50}%">
-            <div class="card-badges">
-              <span class="badge-tag">${item.tag ?? 'КАДР'}</span>
-            </div>
-          </div>
-          <div class="card-content">
-            <div>
-              <div class="card-title">${item.title ?? ''}</div>
-              <div class="card-caption">${item.caption ?? ''}</div>
-            </div>
-            <div class="card-actions">
-              <button class="btn btn-red" onclick="executeDeleteCard('${item.filename}', null)">Удалить</button>
-              <button class="btn btn-blue" onclick="openEditModal('${item.filename}', null)">Править фокус</button>
-            </div>
-          </div>
-        </div>
-      `).join('');
     }
 
-    // --- СТАТЬИ ---
     async function loadArticles() {
-      const res = await fetch('/api/articles');
-      articlesData = await res.json();
-      document.getElementById('count-articles').innerText = articlesData.length;
-      renderArticles();
+      try {
+        const res = await fetch('/api/articles');
+        articlesList = await res.json();
+        document.getElementById('count-articles').innerText = articlesList.length;
+        renderArticles();
+      } catch (err) {
+        console.error('Ошибка загрузки статей:', err);
+      }
     }
 
     function renderArticles() {
-      const box = document.getElementById('articles-container');
-      if (!articlesData.length) {
-        box.innerHTML = '<p style="color: var(--text-muted);">Статей пока нет.</p>';
+      const container = document.getElementById('articles-admin-list');
+      if (!articlesList.length) {
+        container.innerHTML = '<p style="color: var(--text-muted);">Статей пока нет.</p>';
         return;
       }
 
-      box.innerHTML = articlesData.map(art => `
-        <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 16px; border-radius: 8px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <span class="badge-tag">${art.tag}</span>
-            <span style="font-size: 12px; color: var(--text-muted);">${art.date} | ${art.author}</span>
+      container.innerHTML = articlesList.map((art, idx) => `
+        <div class="article-admin-item ${art.featured ? 'featured' : ''}">
+          <div class="article-item-top">
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <span class="tag-badge" style="${art.featured ? 'background: var(--accent-gold); color: #000; font-weight: 900;' : ''}">
+                ${art.featured ? '★ ' : ''}${art.tag}
+              </span>
+              <span style="font-size: 12px; color: var(--text-muted);">${art.date} | ${art.author}</span>
+            </div>
+            <div style="display: flex; gap: 4px;">
+              <button class="btn btn-gray" style="padding: 4px 8px;" onclick="moveArticle(${idx}, -1)" ${idx === 0 ? 'disabled' : ''}>▲</button>
+              <button class="btn btn-gray" style="padding: 4px 8px;" onclick="moveArticle(${idx}, 1)" ${idx === articlesList.length - 1 ? 'disabled' : ''}>▼</button>
+            </div>
           </div>
-          <h4 style="margin-bottom: 8px;">${art.title}</h4>
-          <p style="color: var(--text-muted); font-size: 13px; line-height: 1.5; white-space: pre-wrap; margin-bottom: 12px;">${art.content}</p>
-          <div style="display: flex; gap: 8px;">
-            <button class="btn btn-blue" onclick="editArticle('${art.id}')">Редактировать</button>
-            <button class="btn btn-red" onclick="deleteArticle('${art.id}')">Удалить</button>
+          <div style="font-weight: 700; font-size: 16px; ${art.featured ? 'color: var(--accent-gold);' : ''}">${art.title}</div>
+          <div style="font-size: 13px; color: var(--text-muted); line-height: 1.4; white-space: pre-wrap;">${art.content}</div>
+          <div style="display: flex; gap: 8px; margin-top: 8px;">
+            <button class="btn btn-blue" style="padding: 6px 12px;" onclick="editArticle('${art.id}')">✏️ Редактировать</button>
+            <button class="btn btn-red" style="padding: 6px 12px;" onclick="deleteArticle('${art.id}')">🗑️ Удалить</button>
           </div>
         </div>
       `).join('');
     }
 
     function editArticle(id) {
-      const art = articlesData.find(a => a.id === id);
+      const art = articlesList.find(a => a.id === id);
       if (!art) return;
+
       document.getElementById('art-id').value = art.id;
       document.getElementById('art-title').value = art.title;
       document.getElementById('art-tag').value = art.tag;
       document.getElementById('art-author').value = art.author;
       document.getElementById('art-content').value = art.content;
-      document.getElementById('article-form-header').innerText = 'Редактировать статью';
+      document.getElementById('art-featured').checked = !!art.featured;
+      document.getElementById('art-form-title').innerText = 'Редактировать публикацию';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -634,7 +878,8 @@
       document.getElementById('art-tag').value = 'ВЕСТНИК';
       document.getElementById('art-author').value = 'Редакция';
       document.getElementById('art-content').value = '';
-      document.getElementById('article-form-header').innerText = 'Добавить новую статью';
+      document.getElementById('art-featured').checked = false;
+      document.getElementById('art-form-title').innerText = 'Добавить публикацию в вестник';
     }
 
     async function saveArticle() {
@@ -643,7 +888,8 @@
         title: document.getElementById('art-title').value,
         tag: document.getElementById('art-tag').value,
         author: document.getElementById('art-author').value,
-        content: document.getElementById('art-content').value
+        content: document.getElementById('art-content').value,
+        featured: document.getElementById('art-featured').checked
       };
 
       const res = await fetch('/api/articles/save', {
@@ -660,8 +906,27 @@
       }
     }
 
+    async function moveArticle(idx, step) {
+      const targetIdx = idx + step;
+      if (targetIdx < 0 || targetIdx >= articlesList.length) return;
+
+      const temp = articlesList[idx];
+      articlesList[idx] = articlesList[targetIdx];
+      articlesList[targetIdx] = temp;
+
+      const res = await fetch('/api/articles/reorder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(articlesList)
+      });
+
+      if (res.ok) {
+        renderArticles();
+      }
+    }
+
     async function deleteArticle(id) {
-      if (!confirm('Удалить эту статью?')) return;
+      if (!confirm('Удалить эту публикацию?')) return;
       const res = await fetch('/api/articles/delete', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -670,20 +935,65 @@
       if (res.ok) await loadArticles();
     }
 
-    // --- МОДАЛЬНОЕ ОКНО КАДРИРОВАНИЯ ---
+    async function loadPublished() {
+      try {
+        const res = await fetch('/api/data');
+        publishedList = await res.json();
+        document.getElementById('count-published').innerText = publishedList.length;
+        renderPublished();
+      } catch (err) {
+        console.error('Ошибка загрузки опубликованных карточек:', err);
+      }
+    }
+
+    function renderPublished() {
+      const container = document.getElementById('published-grid');
+      if (!publishedList.length) {
+        container.innerHTML = '<p style="color: var(--text-muted); grid-column: 1 / -1;">Пока нет опубликованных карточек.</p>';
+        return;
+      }
+
+      container.innerHTML = publishedList.map(item => {
+        const fn = extractPureFilename(item);
+        const imgPath = resolveImagePath(item, 'images/');
+
+        return `
+          <div class="card">
+            <div class="card-thumb">
+              <img src="${imgPath}" style="object-position: ${item.crop_x ?? 50}% ${item.crop_y ?? 50}%;">
+              <div class="badges-overlay">
+                <span class="score-badge">${item.score ?? 5}/10</span>
+                <span class="tag-badge">${item.tag ?? 'ОСНОВА'}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div>
+                <div class="card-title">${item.title || 'Без названия'}</div>
+                <div class="card-caption">${item.caption || ''}</div>
+              </div>
+              <div class="card-actions">
+                <button class="btn btn-red" onclick="executeDeleteCard('${fn}', null)">Удалить</button>
+                <button class="btn btn-blue" onclick="openEditModal('${fn}', null)">Править</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
     function openApproveModal(filename) {
-      const item = pendingData.find(x => x.filename === filename);
+      const item = pendingList.find(x => extractPureFilename(x) === filename);
       if (!item) return;
 
       currentModalMode = 'approve';
-      currentModalTarget = item;
-      setupCropModal(`pending/${filename}`, item);
+      currentModalTarget = { ...item, filename: filename };
+      setupCropModal(resolveImagePath(item, 'pending/'), currentModalTarget);
     }
 
     function openEditModal(filename, requestId = null) {
-      let item = approvedData.find(x => x.filename === filename);
+      let item = publishedList.find(x => extractPureFilename(x) === filename);
       if (!item) {
-        const req = requestsData.find(r => r.id === requestId);
+        const req = requestsList.find(r => r.id === requestId);
         item = {
           filename: filename,
           title: req ? req.title : '',
@@ -694,67 +1004,71 @@
         };
       }
 
-      currentModalMode = 'update';
-      currentModalTarget = { ...item, request_id: requestId };
-      setupCropModal(`images/${filename}`, currentModalTarget);
+      currentModalMode = 'edit';
+      currentModalTarget = { ...item, filename: filename, request_id: requestId };
+      setupCropModal(resolveImagePath(item, 'images/'), currentModalTarget);
     }
 
-    function setupCropModal(imageSrc, data) {
-      cropPoint.x = data.crop_x ?? 50;
-      cropPoint.y = data.crop_y ?? 50;
+    function setupCropModal(imgSrc, data) {
+      currentCrop.x = data.crop_x ?? 50;
+      currentCrop.y = data.crop_y ?? 50;
 
       const srcImg = document.getElementById('crop-src-img');
-      const prevImg = document.getElementById('crop-preview-img');
-      srcImg.src = imageSrc;
-      prevImg.src = imageSrc;
+      const prevImg = document.getElementById('crop-prev-img');
+      srcImg.src = imgSrc;
+      prevImg.src = imgSrc;
 
-      document.getElementById('modal-field-title').value = data.title || '';
-      document.getElementById('modal-field-tag').value = data.tag || 'ФОТО';
-      document.getElementById('modal-field-caption').value = data.caption || '';
+      document.getElementById('modal-title').value = data.title || '';
+      document.getElementById('modal-tag').value = data.tag || 'ФОТО';
+      document.getElementById('modal-caption').value = data.caption || '';
+      document.getElementById('modal-heading').innerText = (currentModalMode === 'approve')
+        ? 'Одобрение карточки в состав'
+        : 'Редактирование кадрирования и данных';
 
-      updateCropElements();
+      updateCropDisplay();
       document.getElementById('crop-modal').style.display = 'flex';
 
       document.getElementById('modal-btn-confirm').onclick = async () => {
         if (currentModalMode === 'approve') {
           await submitApprove();
         } else {
-          await submitUpdate();
+          await submitEdit();
         }
       };
     }
 
-    function closeCropModal() {
-      document.getElementById('crop-modal').style.display = 'none';
-      currentModalTarget = null;
-    }
+    function updateCropDisplay() {
+      document.getElementById('crop-marker').style.left = `${currentCrop.x}%`;
+      document.getElementById('crop-marker').style.top = `${currentCrop.y}%`;
+      document.getElementById('val-crop-x').innerText = Math.round(currentCrop.x);
+      document.getElementById('val-crop-y').innerText = Math.round(currentCrop.y);
 
-    function updateCropElements() {
-      document.getElementById('crop-marker').style.left = `${cropPoint.x}%`;
-      document.getElementById('crop-marker').style.top = `${cropPoint.y}%`;
-      document.getElementById('lbl-crop-x').innerText = Math.round(cropPoint.x);
-      document.getElementById('lbl-crop-y').innerText = Math.round(cropPoint.y);
-
-      document.getElementById('crop-preview-img').style.objectPosition = `${cropPoint.x}% ${cropPoint.y}%`;
+      document.getElementById('crop-prev-img').style.objectPosition = `${currentCrop.x}% ${currentCrop.y}%`;
     }
 
     document.getElementById('crop-picker').addEventListener('click', (e) => {
       const rect = e.currentTarget.getBoundingClientRect();
       const x = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
       const y = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
-      cropPoint.x = x;
-      cropPoint.y = y;
-      updateCropElements();
+
+      currentCrop.x = x;
+      currentCrop.y = y;
+      updateCropDisplay();
     });
+
+    function closeCropModal() {
+      document.getElementById('crop-modal').style.display = 'none';
+      currentModalTarget = null;
+    }
 
     async function submitApprove() {
       const payload = {
         filename: currentModalTarget.filename,
-        title: document.getElementById('modal-field-title').value,
-        tag: document.getElementById('modal-field-tag').value,
-        caption: document.getElementById('modal-field-caption').value,
-        crop_x: Math.round(cropPoint.x),
-        crop_y: Math.round(cropPoint.y)
+        title: document.getElementById('modal-title').value,
+        tag: document.getElementById('modal-tag').value,
+        caption: document.getElementById('modal-caption').value,
+        crop_x: Math.round(currentCrop.x),
+        crop_y: Math.round(currentCrop.y)
       };
 
       const res = await fetch('/api/approve', {
@@ -765,18 +1079,18 @@
 
       if (res.ok) {
         closeCropModal();
-        await Promise.all([loadPending(), loadApproved()]);
+        await Promise.all([loadPending(), loadPublished()]);
       }
     }
 
-    async function submitUpdate() {
+    async function submitEdit() {
       const payload = {
         filename: currentModalTarget.filename,
-        title: document.getElementById('modal-field-title').value,
-        tag: document.getElementById('modal-field-tag').value,
-        caption: document.getElementById('modal-field-caption').value,
-        crop_x: Math.round(cropPoint.x),
-        crop_y: Math.round(cropPoint.y),
+        title: document.getElementById('modal-title').value,
+        tag: document.getElementById('modal-tag').value,
+        caption: document.getElementById('modal-caption').value,
+        crop_x: Math.round(currentCrop.x),
+        crop_y: Math.round(currentCrop.y),
         request_id: currentModalTarget.request_id || null
       };
 
@@ -788,11 +1102,10 @@
 
       if (res.ok) {
         closeCropModal();
-        await Promise.all([loadRequests(), loadApproved()]);
+        await Promise.all([loadRequests(), loadPublished()]);
       }
     }
 
-    // Хоткеи модерации
     window.addEventListener('keydown', (e) => {
       if (document.getElementById('crop-modal').style.display === 'flex') {
         if (e.key === 'Escape') closeCropModal();
@@ -802,12 +1115,13 @@
 
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
-      if (pendingData.length > 0) {
-        const topItem = pendingData[0];
+      if (pendingList.length > 0) {
+        const topItem = pendingList[0];
+        const fn = extractPureFilename(topItem);
         if (e.key === 'a' || e.key === 'A' || e.key === 'ф' || e.key === 'Ф') {
-          openApproveModal(topItem.filename);
+          openApproveModal(fn);
         } else if (e.key === 'd' || e.key === 'D' || e.key === 'в' || e.key === 'В') {
-          rejectItem(topItem.filename);
+          rejectItem(fn);
         }
       }
     });
