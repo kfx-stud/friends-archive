@@ -61,7 +61,7 @@
 
     .nav-links {
       display: flex;
-      gap: 16px;
+      gap: 12px;
     }
 
     .nav-btn {
@@ -81,6 +81,16 @@
       border-color: var(--accent);
     }
 
+    .nav-btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .nav-btn-primary:hover {
+      background: #2563eb;
+    }
+
     main {
       flex: 1;
       max-width: 1400px;
@@ -98,7 +108,6 @@
       gap: 8px;
     }
 
-    /* Сетка статей */
     .articles-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -114,11 +123,6 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: border-color 0.2s;
-    }
-
-    .article-card:hover {
-      border-color: var(--accent);
     }
 
     .article-card.featured {
@@ -142,21 +146,10 @@
       font-weight: 700;
     }
 
-    .article-card.featured .article-tag {
-      background: var(--accent-gold);
-      color: #000;
-      font-weight: 900;
-    }
-
     .article-title {
       font-size: 18px;
       font-weight: 700;
       margin-bottom: 10px;
-    }
-
-    .article-card.featured .article-title {
-      color: var(--accent-gold);
-      font-size: 20px;
     }
 
     .article-content {
@@ -166,16 +159,6 @@
       white-space: pre-wrap;
     }
 
-    .article-footer {
-      margin-top: 16px;
-      padding-top: 12px;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    /* Галерея карточек */
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -266,12 +249,13 @@
       overflow: hidden;
     }
 
-    /* Модальное окно просмотра */
+    /* Модальные окна */
     .modal-backdrop {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.9);
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(4px);
       z-index: 1000;
       align-items: center;
       justify-content: center;
@@ -316,6 +300,44 @@
       background: #11141e;
     }
 
+    .form-modal-window {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      width: 100%;
+      max-width: 580px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text-muted);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 12px;
+      background: #0b0d14;
+      border: 1px solid var(--border);
+      color: #fff;
+      border-radius: 6px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--accent);
+    }
+
     .btn-action {
       width: 100%;
       padding: 10px;
@@ -329,7 +351,37 @@
 
     .btn-action:hover { opacity: 0.9; }
 
-    /* Слот Sugar Rush */
+    /* Выбор типа предложки */
+    .type-switcher {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .type-btn {
+      padding: 12px;
+      background: #0b0d14;
+      border: 2px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+
+    .type-btn.active {
+      border-color: var(--accent);
+      color: #fff;
+      background: rgba(59, 130, 246, 0.15);
+    }
+
+    /* Слот */
     #slot-modal {
       display: none;
       position: fixed;
@@ -399,23 +451,21 @@
     </div>
     <div class="nav-links">
       <button class="nav-btn" onclick="openSlot()">🍭 Sugar Rush 7x7</button>
-      <button class="nav-btn" onclick="openSuggestModal()">➕ В предложку</button>
+      <button class="nav-btn nav-btn-primary" onclick="openSuggestModal()">➕ В предложку</button>
     </div>
   </header>
 
   <main>
-    <!-- Вестник Клуба -->
     <div id="articles-section" style="display: none;">
-      <div class="section-title">📰 Вестник Клуба / Главные события</div>
+      <div class="section-title">📰 Вестник Клуба</div>
       <div id="articles-list" class="articles-grid"></div>
     </div>
 
-    <!-- Галерея Карточек -->
     <div class="section-title">📸 Основной состав</div>
     <div id="gallery" class="gallery-grid"></div>
   </main>
 
-  <!-- Модальное окно просмотра карточки -->
+  <!-- Модальное окно полного фото -->
   <div id="card-modal" class="modal-backdrop">
     <div class="modal-box">
       <div class="modal-photo-col">
@@ -440,20 +490,101 @@
     </div>
   </div>
 
-  <!-- Модальное окно предложки -->
+  <!-- Модальное окно: Предложка (Статья или Фото) -->
   <div id="suggest-modal" class="modal-backdrop">
-    <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 24px; width: 100%; max-width: 480px;">
-      <h3 style="margin-bottom: 16px;">Предложить фото или новость</h3>
-      <input type="text" id="sug-title" placeholder="Заголовок..." style="width: 100%; padding: 10px; background: #0f121d; border: 1px solid var(--border); color: #fff; border-radius: 6px; margin-bottom: 12px;">
-      <textarea id="sug-text" rows="4" placeholder="Описание / контекст / ссылка на фото..." style="width: 100%; padding: 10px; background: #0f121d; border: 1px solid var(--border); color: #fff; border-radius: 6px; margin-bottom: 16px;"></textarea>
-      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+    <div class="form-modal-window">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="font-size: 18px;">Предложить материал в клуб</h3>
+        <button class="nav-btn" style="padding: 4px 10px;" onclick="closeSuggestModal()">✕</button>
+      </div>
+
+      <div class="type-switcher">
+        <button id="btn-type-art" class="type-btn active" onclick="switchSuggestType('article')">
+          <span style="font-size: 20px;">📰</span>
+          <span>Статья / Новость</span>
+        </button>
+        <button id="btn-type-photo" class="type-btn" onclick="switchSuggestType('photo')">
+          <span style="font-size: 20px;">📸</span>
+          <span>Фотография</span>
+        </button>
+      </div>
+
+      <!-- Поля для статьи (3 поля) -->
+      <div id="form-article-fields">
+        <div class="form-group">
+          <label>Заголовок статьи:</label>
+          <input type="text" id="sug-art-title" class="form-control" placeholder="Инспекция периметра...">
+        </div>
+        <div class="form-group">
+          <label>Тег рубрики:</label>
+          <input type="text" id="sug-art-tag" class="form-control" placeholder="ДИРЕКЦИЯ, ЛУДКА, ВЕСТНИК...">
+        </div>
+        <div class="form-group">
+          <label>Текст статьи:</label>
+          <textarea id="sug-art-content" rows="6" class="form-control" placeholder="Подробный текст для вестника..."></textarea>
+        </div>
+      </div>
+
+      <!-- Поля для фото (4 поля) -->
+      <div id="form-photo-fields" style="display: none;">
+        <div class="form-group">
+          <label>Название кадра:</label>
+          <input type="text" id="sug-photo-title" class="form-control" placeholder="Вертикальный паркинг...">
+        </div>
+        <div class="form-group">
+          <label>Тег:</label>
+          <input type="text" id="sug-photo-tag" class="form-control" placeholder="ОСНОВА, ЛЕГЕНДА, ЛУДКА...">
+        </div>
+        <div class="form-group">
+          <label>Описание / Панчлайн:</label>
+          <textarea id="sug-photo-caption" rows="3" class="form-control" placeholder="Мемная подпись к ситуации..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Прямая ссылка на фото:</label>
+          <input type="url" id="sug-photo-url" class="form-control" placeholder="https://i.imgur.com/... или ссылка на файл">
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
         <button class="nav-btn" onclick="closeSuggestModal()">Отмена</button>
-        <button class="btn-action" style="background: var(--accent-green); color: #fff; width: auto; padding: 10px 20px;" onclick="sendSuggest()">Отправить</button>
+        <button class="btn-action" style="background: var(--accent-green); color: #fff; width: auto; padding: 10px 24px;" onclick="sendSuggest()">Отправить в штаб</button>
       </div>
     </div>
   </div>
 
-  <!-- Слот Sugar Rush -->
+  <!-- Модальное окно: Полноценное редактирование статьи -->
+  <div id="article-edit-modal" class="modal-backdrop">
+    <div class="form-modal-window" style="max-width: 650px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="font-size: 18px;">Предложить правку статьи</h3>
+        <button class="nav-btn" style="padding: 4px 10px;" onclick="closeArticleEditModal()">✕</button>
+      </div>
+
+      <input type="hidden" id="edit-art-id">
+
+      <div class="form-group">
+        <label>Заголовок статьи:</label>
+        <input type="text" id="edit-art-title" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label>Тег рубрики:</label>
+        <input type="text" id="edit-art-tag" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label>Полный текст статьи:</label>
+        <textarea id="edit-art-content" rows="8" class="form-control"></textarea>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+        <button class="nav-btn" onclick="closeArticleEditModal()">Отмена</button>
+        <button class="btn-action" style="background: var(--accent); color: #fff; width: auto; padding: 10px 24px;" onclick="submitArticleEdit()">Отправить правку</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Слот -->
   <div id="slot-modal">
     <div class="slot-container">
       <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
@@ -480,7 +611,8 @@
 
     let activeCard = null;
     let cardsData = [];
-    let articlesData = [];
+    let loadedArticles = [];
+    let currentSuggestType = 'article';
 
     function resolveImagePath(item) {
       if (!item) return '';
@@ -500,13 +632,11 @@
 
       try {
         const res = await fetch('data/articles.json');
-        articlesData = await res.json();
-        if (articlesData && articlesData.length > 0) {
-          renderArticles(articlesData);
+        loadedArticles = await res.json();
+        if (loadedArticles && loadedArticles.length > 0) {
+          renderArticles(loadedArticles);
         }
-      } catch (e) {
-        console.error("Ошибка загрузки articles.json", e);
-      }
+      } catch (e) {}
     }
 
     function renderArticles(articles) {
@@ -516,15 +646,15 @@
         <div class="article-card ${a.featured ? 'featured' : ''}">
           <div>
             <div class="article-header">
-              <span class="article-tag">${a.featured ? '★ ' : ''}${a.tag}</span>
+              <span class="article-tag">${a.tag}</span>
               <span style="color: var(--text-muted);">${a.date}</span>
             </div>
             <div class="article-title">${a.title}</div>
             <div class="article-content">${a.content}</div>
           </div>
-          <div class="article-footer">
-            <span style="font-size: 12px; color: var(--text-muted);">Автор: ${a.author || 'Редакция'}</span>
-            <button class="nav-btn" style="padding: 4px 10px; font-size: 12px;" onclick="requestArticleEdit('${a.id}')">✏️ Предложить правку</button>
+          <div style="margin-top: 14px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;">
+            <span style="font-size: 12px; color: var(--text-muted);">Автор: ${a.author}</span>
+            <button class="nav-btn" style="padding: 4px 10px; font-size: 12px;" onclick="openArticleEditModal('${a.id}')">✏️ Править статью</button>
           </div>
         </div>
       `).join('');
@@ -603,7 +733,7 @@
 
     async function requestEdit() {
       if (!activeCard) return;
-      const newTitle = prompt('Новый заголовок:', activeCard.title);
+      const newTitle = prompt('Новый заголовок карточки:', activeCard.title);
       if (newTitle === null) return;
       const newCaption = prompt('Новое описание:', activeCard.caption);
       if (newCaption === null) return;
@@ -617,7 +747,7 @@
         current_crop_y: activeCard.crop_y ?? 50
       });
 
-      if (ok) alert('Заявка на правку отправлена модераторам!');
+      if (ok) alert('Заявка на правку карточки отправлена в штаб!');
       closeModal();
     }
 
@@ -635,57 +765,134 @@
       closeModal();
     }
 
-    async function requestArticleEdit(articleId) {
-      const art = articlesData.find(a => a.id === articleId);
+    // --- МОДАЛЬНОЕ ОКНО РЕДАКТИРОВАНИЯ СТАТЬИ ---
+    function openArticleEditModal(id) {
+      const art = loadedArticles.find(a => a.id === id);
       if (!art) return;
 
-      const newTitle = prompt('Новый заголовок статьи:', art.title);
-      if (newTitle === null) return;
+      document.getElementById('edit-art-id').value = art.id;
+      document.getElementById('edit-art-title').value = art.title || '';
+      document.getElementById('edit-art-tag').value = art.tag || '';
+      document.getElementById('edit-art-content').value = art.content || '';
 
-      const newContent = prompt('Новый текст статьи:', art.content);
-      if (newContent === null) return;
+      document.getElementById('article-edit-modal').style.display = 'flex';
+    }
+
+    function closeArticleEditModal() {
+      document.getElementById('article-edit-modal').style.display = 'none';
+    }
+
+    async function submitArticleEdit() {
+      const id = document.getElementById('edit-art-id').value;
+      const title = document.getElementById('edit-art-title').value.trim();
+      const tag = document.getElementById('edit-art-tag').value.trim();
+      const content = document.getElementById('edit-art-content').value.trim();
+
+      if (!title || !content) {
+        alert('Заполните заголовок и текст статьи');
+        return;
+      }
 
       const ok = await sendToCloudBuffer({
         type: 'article_edit',
-        article_id: art.id,
-        title: newTitle,
-        content: newContent,
-        old_title: art.title
+        article_id: id,
+        title: title,
+        tag: tag,
+        content: content
       });
 
       if (ok) {
-        alert('Правка статьи передана в штаб модерации!');
+        alert('Правка статьи отправлена в штаб модерации!');
+        closeArticleEditModal();
       }
     }
 
+    // --- ПРЕДЛОЖКА ---
     function openSuggestModal() {
       document.getElementById('suggest-modal').style.display = 'flex';
+      switchSuggestType('article');
     }
 
     function closeSuggestModal() {
       document.getElementById('suggest-modal').style.display = 'none';
     }
 
-    async function sendSuggest() {
-      const title = document.getElementById('sug-title').value.trim();
-      const text = document.getElementById('sug-text').value.trim();
-      if (!title || !text) return alert('Заполните поля');
+    function switchSuggestType(type) {
+      currentSuggestType = type;
+      const btnArt = document.getElementById('btn-type-art');
+      const btnPhoto = document.getElementById('btn-type-photo');
+      const fieldsArt = document.getElementById('form-article-fields');
+      const fieldsPhoto = document.getElementById('form-photo-fields');
 
-      const ok = await sendToCloudBuffer({
-        type: 'suggest',
-        title: title,
-        caption: text
-      });
-
-      if (ok) {
-        alert('Заявка отправлена в штаб!');
-        document.getElementById('sug-title').value = '';
-        document.getElementById('sug-text').value = '';
-        closeSuggestModal();
+      if (type === 'article') {
+        btnArt.classList.add('active');
+        btnPhoto.classList.remove('active');
+        fieldsArt.style.display = 'block';
+        fieldsPhoto.style.display = 'none';
+      } else {
+        btnPhoto.classList.add('active');
+        btnArt.classList.remove('active');
+        fieldsArt.style.display = 'none';
+        fieldsPhoto.style.display = 'block';
       }
     }
 
-    /* --- СЛОТ SUGAR RUSH 7x7 --- */
+    async function sendSuggest() {
+      if (currentSuggestType === 'article') {
+        const title = document.getElementById('sug-art-title').value.trim();
+        const tag = document.getElementById('sug-art-tag').value.trim();
+        const content = document.getElementById('sug-art-content').value.trim();
+
+        if (!title || !content) {
+          alert('Укажите название и текст статьи');
+          return;
+        }
+
+        const ok = await sendToCloudBuffer({
+          type: 'suggest_article',
+          title: title,
+          tag: tag || 'ВЕСТНИК',
+          content: content
+        });
+
+        if (ok) {
+          alert('Статья отправлена в штаб модерации!');
+          document.getElementById('sug-art-title').value = '';
+          document.getElementById('sug-art-tag').value = '';
+          document.getElementById('sug-art-content').value = '';
+          closeSuggestModal();
+        }
+      } else {
+        const title = document.getElementById('sug-photo-title').value.trim();
+        const tag = document.getElementById('sug-photo-tag').value.trim();
+        const caption = document.getElementById('sug-photo-caption').value.trim();
+        const url = document.getElementById('sug-photo-url').value.trim();
+
+        if (!title || !url) {
+          alert('Укажите название кадра и ссылку на фото');
+          return;
+        }
+
+        const ok = await sendToCloudBuffer({
+          type: 'suggest_photo',
+          title: title,
+          tag: tag || 'ОСНОВА',
+          caption: caption,
+          photo_url: url
+        });
+
+        if (ok) {
+          alert('Фотография отправлена в штаб модерации!');
+          document.getElementById('sug-photo-title').value = '';
+          document.getElementById('sug-photo-tag').value = '';
+          document.getElementById('sug-photo-caption').value = '';
+          document.getElementById('sug-photo-url').value = '';
+          closeSuggestModal();
+        }
+      }
+    }
+
+    // --- СЛОТ SUGAR RUSH ---
     const ICONS = ['🍬', '🍭', '🍇', '🍉', '⭐', '🐻', '🚀'];
     let grid = Array(49).fill('');
     let spots = Array(49).fill(0);
