@@ -52,7 +52,9 @@
     "tag_class": "",
     "score": 9,
     "date": "2026-06-28",
-    "sha256": "a96efd0124d953f9d6391af02c0d09565c1e96eff56e215c4a3885eca17cf11e"
+    "sha256": "a96efd0124d953f9d6391af02c0d09565c1e96eff56e215c4a3885eca17cf11e",
+    "crop_x": 48,
+    "crop_y": 16
   },
   {
     "id": "15b6328f9279",
