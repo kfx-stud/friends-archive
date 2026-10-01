@@ -19,7 +19,9 @@
     "tag_class": "alt",
     "score": 9,
     "date": "2026-06-28",
-    "sha256": "15b6328f92797580e3f91150cf82c51325d5498ec53788d99a91c10973dfbae2"
+    "sha256": "15b6328f92797580e3f91150cf82c51325d5498ec53788d99a91c10973dfbae2",
+    "crop_x": 47,
+    "crop_y": 29
   },
   {
     "id": "8a269fd0ed61",
@@ -30,7 +32,9 @@
     "tag_class": "",
     "score": 8,
     "date": "2026-04-22",
-    "sha256": "8a269fd0ed61cb4d6f1e2ac173b6470da377b91c703beed6bb1648897f2d4254"
+    "sha256": "8a269fd0ed61cb4d6f1e2ac173b6470da377b91c703beed6bb1648897f2d4254",
+    "crop_x": 51,
+    "crop_y": 33
   },
   {
     "id": "90eef0b79bc6",

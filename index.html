@@ -115,10 +115,11 @@
       color: var(--accent-gold);
     }
 
-    /* Компактные статьи */
+    /* Компактные статьи с центрированием */
     .articles-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(260px, 320px));
+      justify-content: center;
       gap: 14px;
       margin-bottom: 36px;
     }
@@ -140,6 +141,7 @@
 
     .article-card.featured {
       grid-column: 1 / -1;
+      max-width: 100%;
       border-left: 5px solid var(--accent-gold);
       background: linear-gradient(90deg, rgba(220, 38, 38, 0.2) 0%, var(--card-bg) 100%);
     }
@@ -259,14 +261,12 @@
       color: #fff;
     }
 
+    /* Текст карточки отображается полностью без обрезки */
     .media-caption {
       font-size: 13px;
       color: var(--text-muted);
-      line-height: 1.4;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+      line-height: 1.45;
+      white-space: pre-wrap;
     }
 
     /* Модальные окна */
@@ -495,7 +495,7 @@
         
         <!-- Режим обычного просмотра -->
         <div id="modal-view-mode" style="display: flex; flex-direction: column; height: 100%; justify-content: space-between;">
-          <div>
+          <div style="overflow-y: auto; padding-right: 4px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
               <span id="modal-tag" class="badge-tag"></span>
               <span id="modal-score" class="badge-score"></span>
@@ -504,7 +504,7 @@
             <p id="modal-caption" style="color: var(--text-muted); font-size: 13.5px; line-height: 1.5; white-space: pre-wrap;"></p>
           </div>
 
-          <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
             <button class="btn-action" style="background: var(--accent-gold); color: #000;" onclick="enableInlineCardEdit()">✏️ Править</button>
             <button class="btn-action" style="background: var(--accent-red); color: #fff;" onclick="requestDelete()">🗑️ Запрос на удаление</button>
             <button class="btn-action" style="background: #2a161b; color: #fff;" onclick="closeModal()">Закрыть</button>
@@ -513,7 +513,7 @@
 
         <!-- Режим инлайн-редактирования -->
         <div id="modal-edit-mode" style="display: none; flex-direction: column; height: 100%; justify-content: space-between;">
-          <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-right: 4px;">
             <div style="font-weight: 700; font-size: 15px; color: var(--accent-gold);">Редактирование карточки</div>
             
             <div class="form-group" style="margin: 0;">
@@ -528,11 +528,11 @@
 
             <div class="form-group" style="margin: 0;">
               <label>Описание / Панчлайн:</label>
-              <textarea id="inline-card-caption" rows="5" class="form-control"></textarea>
+              <textarea id="inline-card-caption" rows="6" class="form-control"></textarea>
             </div>
           </div>
 
-          <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
             <button class="btn-action" style="background: var(--accent-green); color: #fff;" onclick="submitInlineCardEdit()">Отправить</button>
             <button class="btn-action" style="background: #2a161b; color: #fff;" onclick="disableInlineCardEdit()">Отмена</button>
           </div>
@@ -1134,7 +1134,6 @@
       document.getElementById('slot-balance').innerText = balance;
     }
 
-    // Закрытие окон по нажатию клавиши Escape
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeModal();
