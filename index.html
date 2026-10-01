@@ -7,12 +7,12 @@
   <link rel="icon" type="image/png" href="symbol.png">
   <style>
     :root {
-      --bg: #0d0a0b;
-      --card-bg: #181214;
-      --card-inner: #21171a;
-      --border: #332024;
-      --text: #fef2f2;
-      --text-muted: #a89a9c;
+      --bg: #0c090a;
+      --card-bg: #161012;
+      --card-inner: #1f1418;
+      --border: #311c21;
+      --text: #fff1f2;
+      --text-muted: #a39598;
       --accent-red: #dc2626;
       --accent-red-hover: #b91c1c;
       --accent-gold: #facc15;
@@ -37,7 +37,7 @@
     }
 
     header {
-      background: #140d0f;
+      background: #140b0e;
       border-bottom: 2px solid var(--accent-red);
       padding: 14px 28px;
       display: flex;
@@ -120,9 +120,9 @@
 
     .articles-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 340px));
+      grid-template-columns: repeat(auto-fill, minmax(260px, 330px));
       justify-content: center;
-      gap: 16px;
+      gap: 14px;
       margin-bottom: 40px;
     }
 
@@ -130,7 +130,7 @@
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 16px;
+      padding: 15px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -147,18 +147,17 @@
       grid-column: 1 / -1;
       max-width: 100%;
       border-left: 5px solid var(--highlight-color, var(--accent-gold));
-      background: linear-gradient(90deg, rgba(239, 68, 68, 0.18) 0%, var(--card-bg) 100%);
+      background: linear-gradient(90deg, rgba(220, 38, 38, 0.22) 0%, var(--card-bg) 100%);
     }
 
-    /* Заголовок Вестника в начале первой статьи */
     .vestnik-lead-header {
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       padding-bottom: 8px;
       border-bottom: 1px solid rgba(250, 204, 21, 0.25);
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 800;
       color: var(--accent-gold);
       letter-spacing: 0.5px;
@@ -182,7 +181,7 @@
     }
 
     .art-heading {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       color: #fff;
       margin-bottom: 8px;
@@ -190,7 +189,7 @@
     }
 
     .art-body {
-      font-size: 13px;
+      font-size: 12.5px;
       color: var(--text-muted);
       line-height: 1.45;
       white-space: pre-wrap;
@@ -382,7 +381,6 @@
       overflow-y: auto;
     }
 
-    /* Живое превью фокуса для галереи */
     .gallery-preview-box {
       background: var(--card-inner);
       border: 1px solid var(--border);
@@ -395,8 +393,8 @@
     }
 
     .preview-frame-rect {
-      width: 200px;
-      height: 155px;
+      width: 190px;
+      height: 145px;
       border-radius: 6px;
       overflow: hidden;
       border: 2px solid var(--accent-gold);
@@ -491,7 +489,6 @@
       background: rgba(250, 204, 21, 0.1);
     }
 
-    /* Уведомление вместо alert */
     .toast-box {
       position: fixed;
       bottom: 24px;
@@ -514,7 +511,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Слот Sugar Rush */
     #slot-modal {
       display: none;
       position: fixed;
@@ -589,32 +585,27 @@
   </header>
 
   <main>
-    <!-- Контейнер статей (заголовок перенесен к началу первой статьи) -->
     <div id="articles-section" style="display: none;">
       <div id="articles-list" class="articles-grid"></div>
     </div>
 
-    <!-- Галерея карточек основного состава -->
     <div class="section-title">📸 Основной состав</div>
     <div id="gallery" class="gallery-grid"></div>
   </main>
 
   <div id="card-modal" class="modal-backdrop">
     <div class="modal-box">
-      <!-- Фото с интерактивным выбором фокуса -->
       <div class="modal-photo-col">
         <div id="modal-photo-wrapper">
           <img id="modal-img" src="" alt="Full photo">
           <div id="inline-crop-marker" class="crop-target-marker"></div>
           <div id="inline-crop-hint" class="crop-hint-badge">
-            🎯 Кликните по фото, чтобы спозиционировать фокус
+            🎯 Кликните по фото, чтобы переместить фокус карточки
           </div>
         </div>
       </div>
 
-      <!-- Боковая колонка -->
       <div class="modal-sidebar-col">
-        <!-- Режим обычного просмотра -->
         <div id="modal-view-mode" style="display: flex; flex-direction: column; height: 100%; justify-content: space-between;">
           <div style="overflow-y: auto; padding-right: 4px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -627,19 +618,17 @@
 
           <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
             <button class="btn-action" style="background: var(--accent-gold); color: #000;" onclick="enableInlineCardEdit()">✏️ Править</button>
-            <button class="btn-action" style="background: var(--accent-red); color: #fff;" onclick="requestDelete()">🗑️ Запрос на удаление</button>
+            <button class="btn-action" style="background: var(--accent-red); color: #fff;" onclick="openDeleteConfirmModal()">🗑️ Запрос на удаление</button>
             <button class="btn-action" style="background: #2a161b; color: #fff;" onclick="closeModal()">Закрыть</button>
           </div>
         </div>
 
-        <!-- Режим инлайн-редактирования с выбором фокуса и превью -->
         <div id="modal-edit-mode" style="display: none; flex-direction: column; height: 100%; justify-content: space-between;">
           <div style="display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-right: 4px;">
             <div style="font-weight: 800; font-size: 15px; color: var(--accent-gold);">
               Редактирование карточки и фокуса
             </div>
 
-            <!-- Живое превью в пропорциях карточки галереи -->
             <div class="gallery-preview-box">
               <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase;">
                 Превью в галерее на сайте:
@@ -767,7 +756,20 @@
     </div>
   </div>
 
-  <div id="slot-modal">
+  <div id="confirm-modal" class="modal-backdrop">
+    <div class="form-modal-window" style="max-width: 440px; text-align: center;">
+      <h3 style="font-size: 17px; color: var(--accent-gold); margin-bottom: 10px;">Подтверждение</h3>
+      <p id="confirm-modal-text" style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.45;">
+        Вы уверены, что хотите отправить запрос на удаление карточки?
+      </p>
+      <div style="display: flex; justify-content: center; gap: 12px;">
+        <button class="nav-btn" onclick="closeConfirmModal()">Отмена</button>
+        <button id="confirm-modal-btn-ok" class="btn-action" style="background: var(--accent-red); color: #fff; width: auto; padding: 8px 22px;">Да, удалить</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="slot-modal" class="modal-backdrop">
     <div class="slot-container">
       <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
         <h3 style="color: var(--accent-gold);">🍭 Sugar Rush 7x7</h3>
@@ -787,12 +789,10 @@
     </div>
   </div>
 
-  <!-- Всплывающий тост для сообщений -->
   <div id="toast" class="toast-box"></div>
 
   <script>
-    const JSONBIN_BIN_ID = "6abbe438ffd5c4501258671d";
-    const JSONBIN_ACCESS_KEY = "$2a$10$VKrFmEhyEw6K8uXv1s3ZCeXqA4M/XzI1G8Xy7M7J0J.hH7c6Tq8O.";
+    const DEFAULT_BIN_ID = "6abbe438ffd5d160533c11f1";
 
     let activeCard = null;
     let cardsData = [];
@@ -801,12 +801,53 @@
 
     let isInlineEditingPhoto = false;
     let currentCrop = { x: 50, y: 50 };
+    let envConfigCache = null;
 
     function showToast(text) {
       const t = document.getElementById('toast');
       t.innerText = text;
       t.style.display = 'block';
       setTimeout(() => { t.style.display = 'none'; }, 3200);
+    }
+
+    async function getEnvConfig() {
+      if (envConfigCache) return envConfigCache;
+
+      try {
+        const res = await fetch('data/config.json');
+        if (res.ok) {
+          envConfigCache = await res.json();
+          return envConfigCache;
+        }
+      } catch (e) {}
+
+      try {
+        const res = await fetch('/api/config');
+        if (res.ok) {
+          envConfigCache = await res.json();
+          return envConfigCache;
+        }
+      } catch (e) {}
+
+      try {
+        const res = await fetch('.env');
+        if (res.ok) {
+          const text = await res.text();
+          const cfg = {};
+          text.split('\n').forEach(line => {
+            line = line.trim();
+            if (line && !line.startsWith('#') && line.includes('=')) {
+              const [k, ...v] = line.split('=');
+              cfg[k.trim()] = v.join('=').trim().replace(/^["']|["']$/g, '');
+            }
+          });
+          envConfigCache = cfg;
+          return envConfigCache;
+        }
+      } catch (e) {}
+
+      envConfigCache = { JSONBIN_BIN_ID: DEFAULT_BIN_ID };
+      return envConfigCache;
     }
 
     function resolveImagePath(item) {
@@ -836,12 +877,36 @@
       }
     }
 
+    function renderGallery(cards) {
+      const container = document.getElementById('gallery');
+      container.innerHTML = cards.map(c => {
+        const imgPath = resolveImagePath(c);
+        const cardKey = c.id || c.file || c.filename;
+
+        return `
+          <div class="media-card" id="card-el-${cardKey}" data-card-key="${cardKey}" onclick="openModal('${cardKey}')">
+            <div class="media-thumb-box">
+              <img src="${imgPath}" loading="lazy" style="object-position: ${c.crop_x ?? 50}% ${c.crop_y ?? 50}%;">
+              <div class="media-badges">
+                <span class="badge-score">${c.score ?? 5}/10</span>
+                <span class="badge-tag">${c.tag ?? 'ФОТО'}</span>
+              </div>
+            </div>
+            <div class="media-info">
+              <div class="media-title">${c.title || 'Без названия'}</div>
+              <div class="media-caption">${c.caption || ''}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
     function renderArticles(articles) {
       document.getElementById('articles-section').style.display = 'block';
       const container = document.getElementById('articles-list');
 
       container.innerHTML = articles.map((a, index) => {
-        const col = a.color || (a.featured ? '#facc15' : 'var(--accent-gold)');
+        const col = a.color || a.highlight_color || (a.featured ? '#facc15' : 'var(--accent-gold)');
         const isFirst = (index === 0);
 
         return `
@@ -862,30 +927,6 @@
             </div>
             <div style="margin-top: 14px; display: flex; justify-content: flex-end; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px;">
               <button class="nav-btn" style="padding: 3px 10px; font-size: 11px;" onclick="openArticleEditModal('${a.id}')">✏️ Править</button>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function renderGallery(cards) {
-      const container = document.getElementById('gallery');
-      container.innerHTML = cards.map(c => {
-        const imgPath = resolveImagePath(c);
-        const cardKey = c.id || c.file || c.filename;
-
-        return `
-          <div class="media-card" data-card-key="${cardKey}" onclick="openModal('${cardKey}')">
-            <div class="media-thumb-box">
-              <img src="${imgPath}" loading="lazy" style="object-position: ${c.crop_x ?? 50}% ${c.crop_y ?? 50}%;">
-              <div class="media-badges">
-                <span class="badge-score">${c.score ?? 5}/10</span>
-                <span class="badge-tag">${c.tag ?? 'ФОТО'}</span>
-              </div>
-            </div>
-            <div class="media-info">
-              <div class="media-title">${c.title || 'Без названия'}</div>
-              <div class="media-caption">${c.caption || ''}</div>
             </div>
           </div>
         `;
@@ -947,7 +988,6 @@
       document.getElementById('modal-photo-wrapper').style.cursor = 'default';
     }
 
-    /* Геометрический расчет фокуса кадрирования */
     function updateInlineCropUI() {
       const marker = document.getElementById('inline-crop-marker');
       const img = document.getElementById('modal-img');
@@ -986,7 +1026,6 @@
       marker.style.top = `${markerTop}px`;
     }
 
-    /* Обработка клика по фото для изменения фокуса */
     document.getElementById('modal-photo-wrapper').addEventListener('click', (e) => {
       if (!isInlineEditingPhoto) return;
       const img = document.getElementById('modal-img');
@@ -1058,12 +1097,24 @@
         document.getElementById('modal-tag').innerText = newTag || 'ФОТО';
         document.getElementById('modal-caption').innerText = newCaption;
 
-        /* Мгновенно обновляем фокус на карточке в галерее */
         renderGallery(cardsData);
         disableInlineCardEdit();
-      } else {
-        showToast('Не удалось отправить правку. Попробуйте еще раз.');
       }
+    }
+
+    function openDeleteConfirmModal() {
+      if (!activeCard) return;
+      const modal = document.getElementById('confirm-modal');
+      document.getElementById('confirm-modal-text').innerText = `Отправить запрос на удаление карточки «${activeCard.title || 'Без названия'}»?`;
+      document.getElementById('confirm-modal-btn-ok').onclick = async () => {
+        closeConfirmModal();
+        await requestDelete();
+      };
+      modal.style.display = 'flex';
+    }
+
+    function closeConfirmModal() {
+      document.getElementById('confirm-modal').style.display = 'none';
     }
 
     async function requestDelete() {
@@ -1119,8 +1170,6 @@
       if (ok) {
         showToast('Правка статьи отправлена в штаб модерации!');
         closeArticleEditModal();
-      } else {
-        showToast('Ошибка при отправке правки');
       }
     }
 
@@ -1209,10 +1258,28 @@
     }
 
     async function sendToCloudBuffer(payload) {
+      const cfg = await getEnvConfig();
+      const binId = cfg.JSONBIN_BIN_ID || DEFAULT_BIN_ID;
+      const apiKey = cfg.JSONBIN_API_KEY || cfg.JSONBIN_ACCESS_KEY || '';
+
+      if (!binId || !apiKey) {
+        showToast('Ключи JSONBin не найдены в конфигурации');
+        return false;
+      }
+
       try {
-        const getRes = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
-          headers: { 'X-Access-Key': JSONBIN_ACCESS_KEY }
+        const getRes = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+          headers: { 
+            'X-Master-Key': apiKey,
+            'X-Access-Key': apiKey 
+          }
         });
+
+        if (!getRes.ok) {
+          showToast(`Ошибка облака JSONBin: HTTP ${getRes.status}`);
+          return false;
+        }
+
         const json = await getRes.json();
         let queue = json.record?.queue || [];
 
@@ -1222,37 +1289,23 @@
           ...payload
         });
 
-        await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+        const putRes = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            'X-Access-Key': JSONBIN_ACCESS_KEY
+            'X-Master-Key': apiKey,
+            'X-Access-Key': apiKey
           },
           body: JSON.stringify({ queue })
         });
-        return true;
+
+        return putRes.ok;
       } catch (err) {
         console.error("Ошибка буфера JSONBin:", err);
+        showToast('Сетевая ошибка при отправке в облако');
         return false;
       }
     }
-
-    /* Закрытие по клику мимо окна (backdrop) */
-    document.getElementById('card-modal').addEventListener('click', (e) => {
-      if (e.target.id === 'card-modal') closeModal();
-    });
-
-    document.getElementById('suggest-modal').addEventListener('click', (e) => {
-      if (e.target.id === 'suggest-modal') closeSuggestModal();
-    });
-
-    document.getElementById('article-edit-modal').addEventListener('click', (e) => {
-      if (e.target.id === 'article-edit-modal') closeArticleEditModal();
-    });
-
-    document.getElementById('slot-modal').addEventListener('click', (e) => {
-      if (e.target.id === 'slot-modal') closeSlot();
-    });
 
     const ICONS = ['🍬', '🍭', '🍇', '🍉', '⭐', '🐻', '🚀'];
     let grid = Array(49).fill('');
@@ -1397,13 +1450,33 @@
       document.getElementById('slot-balance').innerText = balance;
     }
 
-    /* Хоткеи и закрытие по Esc */
+    document.getElementById('card-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'card-modal') closeModal();
+    });
+
+    document.getElementById('suggest-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'suggest-modal') closeSuggestModal();
+    });
+
+    document.getElementById('article-edit-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'article-edit-modal') closeArticleEditModal();
+    });
+
+    document.getElementById('slot-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'slot-modal') closeSlot();
+    });
+
+    document.getElementById('confirm-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'confirm-modal') closeConfirmModal();
+    });
+
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeModal();
         closeSuggestModal();
         closeArticleEditModal();
         closeSlot();
+        closeConfirmModal();
       }
     });
 

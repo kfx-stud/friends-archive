@@ -853,6 +853,16 @@
         await loadPending();
       }
     }
+    async function manualSyncCloud() {
+      try {
+        const res = await fetch('/api/sync-cloud');
+        const data = await res.json();
+        alert(`Синхронизация завершена! Новых заявок получено: ${data.added}`);
+        await loadRequests();
+      } catch (e) {
+        alert('Ошибка связи с локальным сервером');
+      }
+    }
 
     async function approvePendingDirect(filename) {
       const item = pendingList.find(x => extractFilename(x) === filename);
