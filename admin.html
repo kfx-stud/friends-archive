@@ -3,20 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ФК «ГазМяс» – Официальный вестник и архив</title>
+  <title>Штаб Модерации – ФК «ГазМяс»</title>
   <link rel="icon" type="image/png" href="symbol.png">
   <style>
     :root {
-      --bg: #0d0a0b;
-      --card-bg: #181214;
-      --border: #332024;
-      --text: #fef2f2;
-      --text-muted: #a89a9c;
-      --accent-red: #dc2626;
-      --accent-red-hover: #b91c1c;
+      --bg: #08090d;
+      --card-bg: #12151f;
+      --card-inner: #181d2b;
+      --border: #23293a;
+      --border-focus: #eab308;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-red: #ef4444;
+      --accent-red-hover: #dc2626;
       --accent-gold: #facc15;
       --accent-gold-hover: #eab308;
-      --accent-green: #16a34a;
+      --accent-green: #10b981;
+      --accent-blue: #3b82f6;
+      --accent-purple: #a855f7;
     }
 
     * {
@@ -35,8 +39,8 @@
     }
 
     header {
-      background: #140d0f;
-      border-bottom: 2px solid var(--accent-red);
+      background: #0f121b;
+      border-bottom: 2px solid #2d1419;
       padding: 14px 28px;
       display: flex;
       justify-content: space-between;
@@ -44,180 +48,148 @@
       position: sticky;
       top: 0;
       z-index: 100;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
     }
 
     .brand {
       display: flex;
       align-items: center;
       gap: 12px;
-      font-size: 20px;
+      font-size: 19px;
       font-weight: 800;
-      letter-spacing: 0.5px;
       color: var(--accent-gold);
+      letter-spacing: 0.5px;
     }
 
     .brand img {
-      width: 34px;
-      height: 34px;
+      width: 32px;
+      height: 32px;
     }
 
-    .nav-links {
+    .tabs-nav {
       display: flex;
-      gap: 10px;
+      gap: 8px;
+      background: #090b10;
+      padding: 5px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
     }
 
-    .nav-btn {
-      background: #221417;
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 8px 14px;
-      border-radius: 6px;
+    .tab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 9px 16px;
+      border-radius: 8px;
       cursor: pointer;
-      font-weight: 600;
+      font-weight: 700;
       font-size: 13px;
       transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .nav-btn:hover {
+    .tab-btn:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .tab-btn.active {
       background: var(--accent-red);
-      border-color: var(--accent-red);
       color: #fff;
+      border-color: rgba(250, 204, 21, 0.4);
+      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
     }
 
-    .nav-btn-gold {
-      background: var(--accent-gold);
-      border-color: var(--accent-gold);
-      color: #000;
-      font-weight: 700;
+    .tab-btn.live-tab.active {
+      background: linear-gradient(135deg, #b91c1c 0%, #d97706 100%);
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
     }
 
-    .nav-btn-gold:hover {
-      background: var(--accent-gold-hover);
-      border-color: var(--accent-gold-hover);
-      color: #000;
+    .badge-counter {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 2px 7px;
+      border-radius: 12px;
+      font-size: 11px;
     }
 
     main {
       flex: 1;
-      max-width: 1400px;
+      max-width: 1440px;
       width: 100%;
       margin: 0 auto;
       padding: 24px 20px;
     }
 
+    .section-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
     .section-title {
-      font-size: 20px;
+      font-size: 21px;
       font-weight: 800;
-      margin-bottom: 16px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       color: var(--accent-gold);
     }
 
-    /* Компактные статьи с центрированием */
-    .articles-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 320px));
-      justify-content: center;
-      gap: 14px;
-      margin-bottom: 36px;
-    }
-
-    .article-card {
+    .info-pill {
+      font-size: 13px;
+      color: var(--text-muted);
       background: var(--card-bg);
       border: 1px solid var(--border);
+      padding: 6px 14px;
       border-radius: 8px;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: border-color 0.2s;
     }
 
-    .article-card:hover {
-      border-color: var(--accent-gold);
-    }
-
-    .article-card.featured {
-      grid-column: 1 / -1;
-      max-width: 100%;
-      border-left: 5px solid var(--accent-gold);
-      background: linear-gradient(90deg, rgba(220, 38, 38, 0.2) 0%, var(--card-bg) 100%);
-    }
-
-    .article-header {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 8px;
-      font-size: 11px;
-    }
-
-    .article-tag {
-      background: rgba(220, 38, 38, 0.25);
-      color: var(--accent-gold);
-      border: 1px solid rgba(250, 204, 21, 0.3);
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-weight: 700;
-      font-size: 11px;
-    }
-
-    .article-title {
-      font-size: 15px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      color: #fff;
-      line-height: 1.3;
-    }
-
-    .article-content {
-      color: var(--text-muted);
-      font-size: 12.5px;
-      line-height: 1.45;
-      white-space: pre-wrap;
-    }
-
-    /* Галерея */
-    .gallery-grid {
+    /* Карточки фото-очереди (квадратные превью с полным текстом) */
+    .photo-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 18px;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 20px;
     }
 
-    .media-card {
+    .photo-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 10px;
       overflow: hidden;
-      cursor: pointer;
-      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
       display: flex;
       flex-direction: column;
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.2s, box-shadow 0.2s;
     }
 
-    .media-card:hover {
+    .photo-card:hover {
       transform: translateY(-3px);
-      border-color: var(--accent-red);
-      box-shadow: 0 6px 16px rgba(220, 38, 38, 0.2);
+      border-color: var(--accent-gold);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
     }
 
-    .media-thumb-box {
+    .card-photo-box {
       width: 100%;
-      height: 220px;
-      background: #000;
+      aspect-ratio: 1 / 1;
+      background: #050608;
       position: relative;
       overflow: hidden;
     }
 
-    .media-thumb-box img {
+    .card-photo-box img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
     }
 
-    .media-badges {
+    .card-badges-top {
       position: absolute;
       top: 10px;
       left: 10px;
@@ -227,108 +199,250 @@
       pointer-events: none;
     }
 
-    .badge-score {
+    .score-badge {
       background: rgba(0, 0, 0, 0.85);
       color: var(--accent-gold);
       border: 1px solid var(--accent-gold);
-      padding: 2px 6px;
+      padding: 3px 7px;
       border-radius: 4px;
       font-size: 11px;
       font-weight: 800;
     }
 
-    .badge-tag {
+    .tag-badge {
       background: rgba(0, 0, 0, 0.85);
       color: #fff;
       border: 1px solid var(--accent-red);
-      padding: 2px 6px;
+      padding: 3px 7px;
       border-radius: 4px;
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 800;
     }
 
-    .media-info {
-      padding: 14px;
+    .card-info {
+      padding: 16px;
       flex: 1;
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
     }
 
-    .media-title {
+    .card-title {
       font-size: 15px;
       font-weight: 700;
-      margin-bottom: 6px;
       color: #fff;
+      line-height: 1.35;
     }
 
-    /* Текст карточки отображается полностью без обрезки */
-    .media-caption {
+    /* Полный текст без обрезки */
+    .card-caption {
       font-size: 13px;
       color: var(--text-muted);
       line-height: 1.45;
       white-space: pre-wrap;
+      word-break: break-word;
     }
 
-    /* Модальные окна */
+    .card-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 6px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .btn {
+      padding: 9px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: opacity 0.15s, transform 0.15s;
+    }
+
+    .btn:hover { opacity: 0.92; transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+
+    .btn-green { background: var(--accent-green); color: #fff; }
+    .btn-red { background: var(--accent-red); color: #fff; }
+    .btn-gold { background: var(--accent-gold); color: #000; font-weight: 800; }
+    .btn-gray { background: var(--card-inner); color: var(--text); border: 1px solid var(--border); }
+    .btn-gray:hover { background: #222838; }
+
+    .articles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 340px));
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .article-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.15s;
+    }
+
+    .article-box:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-gold);
+    }
+
+    .article-box.featured {
+      grid-column: 1 / -1;
+      max-width: 100%;
+      border-left: 5px solid var(--highlight-color, var(--accent-gold));
+      background: linear-gradient(90deg, rgba(239, 68, 68, 0.15) 0%, var(--card-bg) 100%);
+    }
+
+    .art-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .art-badge {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--highlight-color, var(--accent-gold));
+      border: 1px solid var(--highlight-color, var(--accent-gold));
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .art-heading {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+
+    .art-body {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.45;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
     .modal-backdrop {
       display: none;
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.88);
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(5px);
       z-index: 1000;
       align-items: center;
       justify-content: center;
       padding: 20px;
     }
 
-    .modal-box {
-      display: flex;
-      width: 100%;
-      max-width: 1150px;
-      height: 85vh;
+    .modal-window {
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
-    }
-
-    .modal-photo-col {
-      flex: 2;
-      background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-
-    .modal-photo-col img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-    }
-
-    .modal-sidebar-col {
-      flex: 1;
-      min-width: 320px;
-      max-width: 400px;
+      width: 100%;
+      max-width: 940px;
+      max-height: 90vh;
+      overflow-y: auto;
       padding: 24px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      border-left: 1px solid var(--border);
-      background: #140d10;
+      gap: 16px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
     }
 
-    .form-modal-window {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px;
+    .crop-workspace {
+      display: flex;
+      gap: 20px;
+      margin: 10px 0;
+      flex-wrap: wrap;
+    }
+
+    .crop-source-col {
+      flex: 2;
+      min-width: 320px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .crop-canvas {
+      position: relative;
       width: 100%;
-      max-width: 580px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+      max-height: 400px;
+      background: #000;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: crosshair;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .crop-canvas img {
+      width: 100%;
+      height: auto;
+      max-height: 400px;
+      object-fit: contain;
+      user-select: none;
+      display: block;
+    }
+
+    .crop-dot {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--accent-red);
+      background: rgba(239, 68, 68, 0.4);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.9);
+    }
+
+    .crop-preview-col {
+      flex: 1;
+      min-width: 240px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .site-preview-frame {
+      width: 240px;
+      height: 220px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid var(--accent-gold);
+      background: #000;
+    }
+
+    .site-preview-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .form-group {
@@ -339,126 +453,82 @@
       display: block;
       font-size: 12px;
       font-weight: 700;
-      margin-bottom: 4px;
+      margin-bottom: 5px;
       color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .form-control {
       width: 100%;
-      padding: 9px 12px;
-      background: #0a0607;
+      background: #090b10;
       border: 1px solid var(--border);
       color: #fff;
+      padding: 10px 14px;
       border-radius: 6px;
-      font-size: 13.5px;
+      font-size: 14px;
       outline: none;
-      transition: border-color 0.2s;
     }
 
     .form-control:focus {
       border-color: var(--accent-gold);
     }
 
-    .btn-action {
-      width: 100%;
-      padding: 10px;
-      border-radius: 6px;
-      font-size: 13.5px;
-      font-weight: 700;
-      cursor: pointer;
-      border: none;
-      transition: opacity 0.2s;
+    .color-swatches {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 6px;
     }
 
-    .btn-action:hover { opacity: 0.9; }
+    .color-swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.15s;
+    }
 
-    .type-switcher {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+    .color-swatch:hover, .color-swatch.selected {
+      transform: scale(1.15);
+      border-color: #fff;
+    }
+
+    /* Баннер режима Live */
+    .live-banner {
+      background: linear-gradient(90deg, rgba(245, 158, 11, 0.2) 0%, rgba(239, 68, 68, 0.2) 100%);
+      border: 1px solid var(--accent-gold);
+      border-radius: 8px;
+      padding: 12px 18px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
       gap: 12px;
-      margin-bottom: 18px;
+      font-size: 13.5px;
     }
 
-    .type-btn {
-      padding: 10px;
-      background: #0a0607;
-      border: 2px solid var(--border);
-      color: var(--text-muted);
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 700;
-      font-size: 13px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      transition: all 0.2s;
-    }
-
-    .type-btn.active {
-      border-color: var(--accent-gold);
-      color: var(--accent-gold);
-      background: rgba(250, 204, 21, 0.1);
-    }
-
-    /* Слот */
-    #slot-modal {
-      display: none;
+    /* Модалка уведомлений / подтверждений */
+    .toast-box {
       position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.9);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .slot-container {
-      background: #1e0f14;
-      border: 2px solid var(--accent-gold);
-      border-radius: 12px;
-      padding: 20px;
-      width: 95%;
-      max-width: 620px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      bottom: 24px;
+      right: 24px;
+      background: var(--card-bg);
+      border: 1px solid var(--accent-gold);
       color: #fff;
-    }
-
-    .slot-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 4px;
-      background: #0d0608;
-      padding: 8px;
+      padding: 12px 20px;
       border-radius: 8px;
-      width: 100%;
-      aspect-ratio: 1/1;
-      max-width: 480px;
-      margin: 12px 0;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      z-index: 2000;
+      display: none;
+      animation: fadeIn 0.2s ease;
+      font-size: 13.5px;
+      font-weight: 600;
     }
 
-    .slot-cell {
-      background: #2a1218;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      position: relative;
-      user-select: none;
-    }
-
-    .cell-mult {
-      position: absolute;
-      top: 2px;
-      right: 2px;
-      background: var(--accent-gold);
-      color: #000;
-      font-size: 10px;
-      font-weight: 800;
-      padding: 1px 4px;
-      border-radius: 3px;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
@@ -467,683 +537,883 @@
   <header>
     <div class="brand">
       <img src="symbol.png" alt="Герб">
-      <span>ФК «ГазМяс»</span>
+      <span>Штаб Модерации ФК «ГазМяс»</span>
     </div>
-    <div class="nav-links">
-      <button class="nav-btn" onclick="openSlot()">🍭 Sugar Rush 7x7</button>
-      <button class="nav-btn nav-btn-gold" onclick="openSuggestModal()">➕ В предложку</button>
+
+    <!-- 4 Окна с переключением сверху -->
+    <div class="tabs-nav">
+      <button class="tab-btn active" onclick="switchWindow('pending', this)">
+        <span>⏳ В ожидании</span>
+        <span id="badge-pending" class="badge-counter">0</span>
+      </button>
+      <button class="tab-btn" onclick="switchWindow('photo_requests', this)">
+        <span>📬 Фото предложка</span>
+        <span id="badge-photo-req" class="badge-counter">0</span>
+      </button>
+      <button class="tab-btn" onclick="switchWindow('article_requests', this)">
+        <span>📰 Статьи предложка</span>
+        <span id="badge-art-req" class="badge-counter">0</span>
+      </button>
+      <button class="tab-btn live-tab" onclick="switchWindow('live_site', this)">
+        <span>⚡ Копия сайта (Live-правка)</span>
+        <span id="badge-live" class="badge-counter">0</span>
+      </button>
     </div>
   </header>
 
   <main>
-    <div id="articles-section" style="display: none;">
-      <div class="section-title">📰 Вестник Клуба</div>
-      <div id="articles-list" class="articles-grid"></div>
-    </div>
+    <!-- 1. ОКНО: В ОЖИДАНИИ (ФОТО ПОСЛЕ НЕЙРОСЕТИ) -->
+    <section id="window-pending">
+      <div class="section-bar">
+        <div class="section-title">⏳ Фото после обработки нейросети</div>
+        <div class="info-pill">
+          Горячие клавиши для первой карточки: <kbd style="background:#2a3142; padding:2px 5px; border-radius:3px;">A</kbd> — одобрить, <kbd style="background:#2a3142; padding:2px 5px; border-radius:3px;">D</kbd> — в брак. Кликните на карточку для правки фокуса.
+        </div>
+      </div>
+      <div id="pending-grid" class="photo-grid"></div>
+    </section>
 
-    <div class="section-title">📸 Основной состав</div>
-    <div id="gallery" class="gallery-grid"></div>
+    <!-- 2. ОКНО: ПОДТВЕРЖДЕНИЕ ФОТО ИЗ ПРЕДЛОЖКИ -->
+    <section id="window-photo_requests" style="display: none;">
+      <div class="section-bar">
+        <div class="section-title">📬 Входящие фото из предложки и правки</div>
+        <button class="btn btn-gray" onclick="loadAllData()">🔄 Обновить</button>
+      </div>
+      <div id="photo-requests-grid" class="photo-grid"></div>
+    </section>
+
+    <!-- 3. ОКНО: ПОДТВЕРЖДЕНИЕ СТАТЕЙ (СТАТЬИ ПРЕДЛОЖКА) -->
+    <section id="window-article_requests" style="display: none;">
+      <div class="section-bar">
+        <div class="section-title">📰 Статьи предложки и материалы вестника</div>
+        <button class="btn btn-gold" onclick="openNewArticleModal()">➕ Добавить новую статью</button>
+      </div>
+      <div id="articles-requests-grid" class="articles-grid"></div>
+    </section>
+
+    <!-- 4. ОКНО: ПОЛНОЕ КОПИРОВАНИЕ САЙТА (БЕЗ ПРОВЕРКИ, СРАЗУ В БАЗУ) -->
+    <section id="window-live_site" style="display: none;">
+      <div class="live-banner">
+        <span style="font-size: 20px;">⚡</span>
+        <div>
+          <strong>Режим прямого редактирования сайта:</strong> Все карточки и статьи отображаются в точности как на сайте. Любой клик сразу открывает редактирование и вносит изменения прямо в основную базу без очередей.
+        </div>
+      </div>
+
+      <div class="section-title" style="margin-bottom: 14px;">📰 Вестник Клуба / Главные события</div>
+      <div id="live-articles-grid" class="articles-grid" style="margin-bottom: 40px;"></div>
+
+      <div class="section-title" style="margin-bottom: 14px;">📸 Основной состав клуба</div>
+      <div id="live-photos-grid" class="photo-grid"></div>
+    </section>
   </main>
 
-  <!-- Модальное окно просмотра / правки карточки -->
-  <div id="card-modal" class="modal-backdrop">
-    <div class="modal-box">
-      <div class="modal-photo-col">
-        <img id="modal-img" src="" alt="Full photo">
+  <!-- МОДАЛЬНОЕ ОКНО РЕДАКТИРОВАНИЯ ФОТО, ФОКУСА И ПРЕВЬЮ -->
+  <div id="photo-modal" class="modal-backdrop">
+    <div class="modal-window">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 id="photo-modal-title">Настройка фокуса кадрирования и описания</h3>
+        <button class="btn btn-gray" style="padding: 4px 10px;" onclick="closeModal('photo-modal')">✕</button>
       </div>
-      <div class="modal-sidebar-col">
-        
-        <!-- Режим обычного просмотра -->
-        <div id="modal-view-mode" style="display: flex; flex-direction: column; height: 100%; justify-content: space-between;">
-          <div style="overflow-y: auto; padding-right: 4px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <span id="modal-tag" class="badge-tag"></span>
-              <span id="modal-score" class="badge-score"></span>
-            </div>
-            <h2 id="modal-title" style="margin-bottom: 10px; font-size: 18px; color: #fff;"></h2>
-            <p id="modal-caption" style="color: var(--text-muted); font-size: 13.5px; line-height: 1.5; white-space: pre-wrap;"></p>
-          </div>
 
-          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
-            <button class="btn-action" style="background: var(--accent-gold); color: #000;" onclick="enableInlineCardEdit()">✏️ Править</button>
-            <button class="btn-action" style="background: var(--accent-red); color: #fff;" onclick="requestDelete()">🗑️ Запрос на удаление</button>
-            <button class="btn-action" style="background: #2a161b; color: #fff;" onclick="closeModal()">Закрыть</button>
+      <p style="font-size: 13px; color: var(--text-muted);">
+        Кликните по фотографии слева, чтобы спозиционировать центр внимания для карточки на сайте:
+      </p>
+
+      <div class="crop-workspace">
+        <!-- Поле выбора фокуса -->
+        <div class="crop-source-col">
+          <div id="crop-picker" class="crop-canvas">
+            <img id="crop-img-src" src="" alt="Source">
+            <div id="crop-dot" class="crop-dot"></div>
           </div>
         </div>
 
-        <!-- Режим инлайн-редактирования -->
-        <div id="modal-edit-mode" style="display: none; flex-direction: column; height: 100%; justify-content: space-between;">
-          <div style="display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-right: 4px;">
-            <div style="font-weight: 700; font-size: 15px; color: var(--accent-gold);">Редактирование карточки</div>
-            
-            <div class="form-group" style="margin: 0;">
-              <label>Заголовок:</label>
-              <input type="text" id="inline-card-title" class="form-control">
-            </div>
-
-            <div class="form-group" style="margin: 0;">
-              <label>Тег:</label>
-              <input type="text" id="inline-card-tag" class="form-control">
-            </div>
-
-            <div class="form-group" style="margin: 0;">
-              <label>Описание / Панчлайн:</label>
-              <textarea id="inline-card-caption" rows="6" class="form-control"></textarea>
-            </div>
+        <!-- Превью в точности как на сайте -->
+        <div class="crop-preview-col">
+          <span style="font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">
+            Превью на витрине клуба:
+          </span>
+          <div class="site-preview-frame">
+            <img id="crop-img-prev" src="" alt="Preview">
           </div>
-
-          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
-            <button class="btn-action" style="background: var(--accent-green); color: #fff;" onclick="submitInlineCardEdit()">Отправить</button>
-            <button class="btn-action" style="background: #2a161b; color: #fff;" onclick="disableInlineCardEdit()">Отмена</button>
+          <div style="margin-top: 10px; font-family: monospace; font-size: 12px; color: var(--accent-gold);">
+            Фокус: X: <span id="val-cx">50</span>% | Y: <span id="val-cy">50</span>%
           </div>
         </div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- Модальное окно предложки -->
-  <div id="suggest-modal" class="modal-backdrop">
-    <div class="form-modal-window">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-        <h3 style="font-size: 17px; color: var(--accent-gold);">Предложить материал в клуб</h3>
-        <button class="nav-btn" style="padding: 2px 8px;" onclick="closeSuggestModal()">✕</button>
       </div>
 
-      <div class="type-switcher">
-        <button id="btn-type-art" class="type-btn active" onclick="switchSuggestType('article')">
-          <span style="font-size: 18px;">📰</span>
-          <span>Статья / Новость</span>
-        </button>
-        <button id="btn-type-photo" class="type-btn" onclick="switchSuggestType('photo')">
-          <span style="font-size: 18px;">📸</span>
-          <span>Фотография</span>
-        </button>
-      </div>
-
-      <div id="form-article-fields">
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 14px;">
         <div class="form-group">
-          <label>Заголовок статьи:</label>
-          <input type="text" id="sug-art-title" class="form-control" placeholder="Инспекция периметра...">
+          <label>Заголовок карточки:</label>
+          <input type="text" id="photo-field-title" class="form-control">
         </div>
         <div class="form-group">
           <label>Тег рубрики:</label>
-          <input type="text" id="sug-art-tag" class="form-control" placeholder="ДИРЕКЦИЯ, ЛУДКА, ВЕСТНИК...">
-        </div>
-        <div class="form-group">
-          <label>Текст статьи:</label>
-          <textarea id="sug-art-content" rows="5" class="form-control" placeholder="Подробный текст..."></textarea>
+          <input type="text" id="photo-field-tag" class="form-control">
         </div>
       </div>
 
-      <div id="form-photo-fields" style="display: none;">
-        <div class="form-group">
-          <label>Название кадра:</label>
-          <input type="text" id="sug-photo-title" class="form-control" placeholder="Вертикальный паркинг...">
+      <div class="form-group">
+        <label>Панчлайн / Описание:</label>
+        <textarea id="photo-field-caption" rows="3" class="form-control"></textarea>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+        <button id="photo-modal-btn-delete" class="btn btn-red" style="display: none;">🗑️ Удалить карточку</button>
+        <div style="display: flex; gap: 10px; margin-left: auto;">
+          <button class="btn btn-gray" onclick="closeModal('photo-modal')">Отмена</button>
+          <button id="photo-modal-btn-confirm" class="btn btn-green">Применить</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- МОДАЛЬНОЕ ОКНО РЕДАКТИРОВАНИЯ СТАТЬИ -->
+  <div id="article-modal" class="modal-backdrop">
+    <div class="modal-window" style="max-width: 680px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 id="art-modal-heading">Редактирование статьи вестника</h3>
+        <button class="btn btn-gray" style="padding: 4px 10px;" onclick="closeModal('article-modal')">✕</button>
+      </div>
+
+      <input type="hidden" id="art-edit-id">
+
+      <div class="form-group">
+        <label>Название статьи:</label>
+        <input type="text" id="art-edit-title" class="form-control" placeholder="Заголовок материала...">
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
         <div class="form-group">
           <label>Тег:</label>
-          <input type="text" id="sug-photo-tag" class="form-control" placeholder="ОСНОВА, ЛЕГЕНДА, ЛУДКА...">
+          <input type="text" id="art-edit-tag" class="form-control" value="ВЕСТНИК">
         </div>
         <div class="form-group">
-          <label>Описание / Панчлайн:</label>
-          <textarea id="sug-photo-caption" rows="3" class="form-control" placeholder="Мемная подпись..."></textarea>
-        </div>
-        <div class="form-group">
-          <label>Прямая ссылка на фото:</label>
-          <input type="url" id="sug-photo-url" class="form-control" placeholder="https://... или ссылка на файл">
+          <label>Автор:</label>
+          <input type="text" id="art-edit-author" class="form-control" value="Редакция">
         </div>
       </div>
 
-      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
-        <button class="nav-btn" onclick="closeSuggestModal()">Отмена</button>
-        <button class="btn-action" style="background: var(--accent-green); color: #fff; width: auto; padding: 8px 20px;" onclick="sendSuggest()">Отправить</button>
+      <div class="form-group">
+        <label>Основной текст:</label>
+        <textarea id="art-edit-content" rows="6" class="form-control" placeholder="Текст публикации..."></textarea>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 10px; margin: 8px 0;">
+        <input type="checkbox" id="art-edit-featured" style="width: 18px; height: 18px; cursor: pointer;">
+        <label for="art-edit-featured" style="margin: 0; cursor: pointer; color: #fff; font-size: 13px; font-weight: 700;">
+          ★ Отображать статью на весь экран (главный материал с цветной каймой)
+        </label>
+      </div>
+
+      <div class="form-group" style="margin-top: 6px;">
+        <label>Выбор цвета выделения:</label>
+        <div class="color-swatches">
+          <div class="color-swatch selected" style="background: #facc15;" onclick="selectColor('#facc15', this)"></div>
+          <div class="color-swatch" style="background: #ef4444;" onclick="selectColor('#ef4444', this)"></div>
+          <div class="color-swatch" style="background: #3b82f6;" onclick="selectColor('#3b82f6', this)"></div>
+          <div class="color-swatch" style="background: #10b981;" onclick="selectColor('#10b981', this)"></div>
+          <div class="color-swatch" style="background: #a855f7;" onclick="selectColor('#a855f7', this)"></div>
+          <input type="color" id="art-edit-color" value="#facc15" style="background: none; border: none; width: 32px; height: 32px; cursor: pointer;" onchange="syncCustomColor(this.value)">
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
+        <button id="art-modal-btn-delete" class="btn btn-red" style="display: none;">🗑️ Удалить</button>
+        <div style="display: flex; gap: 10px; margin-left: auto;">
+          <button class="btn btn-gray" onclick="closeModal('article-modal')">Отмена</button>
+          <button id="art-modal-btn-save" class="btn btn-green" onclick="saveArticleFromModal()">💾 Сохранить</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Модальное окно редактирования статьи -->
-  <div id="article-edit-modal" class="modal-backdrop">
-    <div class="form-modal-window" style="max-width: 600px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-        <h3 style="font-size: 17px; color: var(--accent-gold);">Предложить правку статьи</h3>
-        <button class="nav-btn" style="padding: 2px 8px;" onclick="closeArticleEditModal()">✕</button>
-      </div>
-
-      <input type="hidden" id="edit-art-id">
-
-      <div class="form-group">
-        <label>Заголовок статьи:</label>
-        <input type="text" id="edit-art-title" class="form-control">
-      </div>
-
-      <div class="form-group">
-        <label>Тег рубрики:</label>
-        <input type="text" id="edit-art-tag" class="form-control">
-      </div>
-
-      <div class="form-group">
-        <label>Полный текст статьи:</label>
-        <textarea id="edit-art-content" rows="6" class="form-control"></textarea>
-      </div>
-
-      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
-        <button class="nav-btn" onclick="closeArticleEditModal()">Отмена</button>
-        <button class="btn-action" style="background: var(--accent-gold); color: #000; width: auto; padding: 8px 20px;" onclick="submitArticleEdit()">Отправить</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Слот Sugar Rush -->
-  <div id="slot-modal">
-    <div class="slot-container">
-      <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-        <h3 style="color: var(--accent-gold);">🍭 Sugar Rush 7x7</h3>
-        <button class="nav-btn" onclick="closeSlot()">✕</button>
-      </div>
-      <div style="display: flex; gap: 20px; margin-top: 8px; font-weight: 700;">
-        <div>Баланс: <span id="slot-balance" style="color: #4ade80;">1000</span></div>
-        <div>Выигрыш: <span id="slot-win" style="color: var(--accent-gold);">0</span></div>
-      </div>
-
-      <div id="slot-board" class="slot-grid"></div>
-
-      <div style="display: flex; gap: 10px; width: 100%; justify-content: center;">
-        <button id="btn-spin" class="btn-action" style="background: var(--accent-red); color: #fff; max-width: 150px;" onclick="spin()">КРУТИТЬ (20)</button>
-        <button id="btn-buy" class="btn-action" style="background: var(--accent-gold); color: #000; max-width: 170px;" onclick="buyBonus()">BUY BONUS (2000)</button>
-      </div>
-    </div>
-  </div>
+  <!-- Всплывающее уведомление (вместо запрещенного alert) -->
+  <div id="toast" class="toast-box"></div>
 
   <script>
-    const JSONBIN_BIN_ID = "6abbe438ffd5c4501258671d";
-    const JSONBIN_ACCESS_KEY = "$2a$10$VKrFmEhyEw6K8uXv1s3ZCeXqA4M/XzI1G8Xy7M7J0J.hH7c6Tq8O.";
+    let pendingList = [];
+    let requestsList = [];
+    let articlesList = [];
+    let publishedList = [];
 
-    let activeCard = null;
-    let cardsData = [];
-    let loadedArticles = [];
-    let currentSuggestType = 'article';
+    let currentWindow = 'pending';
+    let currentPhotoTarget = null;
+    let photoModalMode = 'pending'; // 'pending' | 'request' | 'live'
+    let currentCrop = { x: 50, y: 50 };
+    let selectedArticleColor = '#facc15';
 
-    function resolveImagePath(item) {
+    function showToast(text) {
+      const t = document.getElementById('toast');
+      t.innerText = text;
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 3000);
+    }
+
+    function resolveImagePath(item, fallbackFolder = 'images/') {
       if (!item) return '';
       const raw = item.file || item.filename || '';
       if (!raw) return '';
-      return raw.startsWith('images/') ? raw : ('images/' + raw);
+      if (raw.startsWith('images/') || raw.startsWith('pending/')) return raw;
+      return fallbackFolder + raw;
     }
 
-    async function loadData() {
+    function extractFilename(item) {
+      if (!item) return '';
+      const raw = item.filename || item.file || '';
+      return raw.split('/').pop();
+    }
+
+    async function init() {
+      await loadAllData();
+      setupCropPickerEvents();
+    }
+
+    async function loadAllData() {
+      await Promise.all([
+        loadPending(),
+        loadRequests(),
+        loadArticles(),
+        loadPublished()
+      ]);
+    }
+
+    function switchWindow(windowName, btn) {
+      currentWindow = windowName;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      ['pending', 'photo_requests', 'article_requests', 'live_site'].forEach(name => {
+        const el = document.getElementById(`window-${name}`);
+        if (el) el.style.display = (name === windowName) ? 'block' : 'none';
+      });
+
+      if (windowName === 'live_site') {
+        renderLiveSite();
+      }
+    }
+
+    async function loadPending() {
       try {
-        const res = await fetch('data/data.json');
-        cardsData = await res.json();
-        renderGallery(cardsData);
+        const res = await fetch('/api/pending');
+        pendingList = await res.json();
+        document.getElementById('badge-pending').innerText = pendingList.length;
+        renderPending();
       } catch (e) {
-        console.error("Ошибка загрузки data.json", e);
+        console.error('Ошибка загрузки очереди pending:', e);
+      }
+    }
+
+    function renderPending() {
+      const container = document.getElementById('pending-grid');
+      if (!pendingList.length) {
+        container.innerHTML = '<p style="color: var(--text-muted); grid-column: 1 / -1;">В очереди ничего нет. Все фото рассмотрены!</p>';
+        return;
       }
 
-      try {
-        const res = await fetch('data/articles.json');
-        loadedArticles = await res.json();
-        if (loadedArticles && loadedArticles.length > 0) {
-          renderArticles(loadedArticles);
-        }
-      } catch (e) {}
-    }
-
-    function renderArticles(articles) {
-      document.getElementById('articles-section').style.display = 'block';
-      const container = document.getElementById('articles-list');
-      container.innerHTML = articles.map(a => `
-        <div class="article-card ${a.featured ? 'featured' : ''}">
-          <div>
-            <div class="article-header">
-              <span class="article-tag">${a.tag}</span>
-              <span style="color: var(--text-muted);">${a.date}</span>
-            </div>
-            <div class="article-title">${a.title}</div>
-            <div class="article-content">${a.content}</div>
-          </div>
-          <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px;">
-            <span style="font-size: 11px; color: var(--text-muted);">Автор: ${a.author}</span>
-            <button class="nav-btn" style="padding: 2px 8px; font-size: 11px;" onclick="openArticleEditModal('${a.id}')">✏️ Править</button>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function renderGallery(cards) {
-      const container = document.getElementById('gallery');
-      container.innerHTML = cards.map(c => {
-        const imgPath = resolveImagePath(c);
-        const cardKey = c.id || c.file || c.filename;
+      container.innerHTML = pendingList.map(item => {
+        const fn = extractFilename(item);
+        const imgPath = resolveImagePath(item, 'pending/');
+        const cx = item.crop_x ?? 50;
+        const cy = item.crop_y ?? 50;
 
         return `
-          <div class="media-card" onclick="openModal('${cardKey}')">
-            <div class="media-thumb-box">
-              <img src="${imgPath}" loading="lazy" style="object-position: ${c.crop_x ?? 50}% ${c.crop_y ?? 50}%;">
-              <div class="media-badges">
-                <span class="badge-score">${c.score ?? 5}/10</span>
-                <span class="badge-tag">${c.tag ?? 'ФОТО'}</span>
+          <div class="photo-card" onclick="openPhotoModal('${fn}', 'pending')">
+            <div class="card-photo-box">
+              <img src="${imgPath}" style="object-position: ${cx}% ${cy}%;">
+              <div class="card-badges-top">
+                <span class="score-badge">${item.score ?? 5}/10</span>
+                <span class="tag-badge">${item.tag ?? 'КАДР'}</span>
               </div>
             </div>
-            <div class="media-info">
-              <div class="media-title">${c.title || 'Без названия'}</div>
-              <div class="media-caption">${c.caption || ''}</div>
+            <div class="card-info">
+              <div>
+                <div class="card-title">${item.title || 'Без названия'}</div>
+                <div class="card-caption">${item.caption || ''}</div>
+              </div>
+              <div class="card-actions" onclick="event.stopPropagation()">
+                <button class="btn btn-red" onclick="rejectPending('${fn}')">✖ Отклонить [D]</button>
+                <button class="btn btn-green" onclick="approvePendingDirect('${fn}')">✔ Одобрить [A]</button>
+              </div>
             </div>
           </div>
         `;
       }).join('');
     }
 
-    // --- МОДАЛЬНОЕ ОКНО ФОТО ---
-    function openModal(key) {
-      activeCard = cardsData.find(c => c.id === key || c.file === key || c.filename === key);
-      if (!activeCard) return;
-
-      document.getElementById('modal-img').src = resolveImagePath(activeCard);
-      document.getElementById('modal-title').innerText = activeCard.title || '';
-      document.getElementById('modal-caption').innerText = activeCard.caption || '';
-      document.getElementById('modal-tag').innerText = activeCard.tag || 'ФОТО';
-      document.getElementById('modal-score').innerText = (activeCard.score ? activeCard.score + '/10' : '');
-
-      disableInlineCardEdit();
-      document.getElementById('card-modal').style.display = 'flex';
+    async function rejectPending(filename) {
+      const res = await fetch('/api/reject', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename })
+      });
+      if (res.ok) {
+        showToast(`Кадр ${filename} отправлен в брак`);
+        await loadPending();
+      }
     }
 
-    function closeModal() {
-      document.getElementById('card-modal').style.display = 'none';
-      disableInlineCardEdit();
-      activeCard = null;
+    async function approvePendingDirect(filename) {
+      const item = pendingList.find(x => extractFilename(x) === filename);
+      if (!item) return;
+
+      const payload = {
+        filename: filename,
+        title: item.title || '',
+        tag: item.tag || 'ФОТО',
+        caption: item.caption || '',
+        score: item.score ?? 5,
+        crop_x: item.crop_x ?? 50,
+        crop_y: item.crop_y ?? 50
+      };
+
+      const res = await fetch('/api/approve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        showToast('Карточка одобрена и отправлена на сайт!');
+        await Promise.all([loadPending(), loadPublished()]);
+      }
     }
 
-    function enableInlineCardEdit() {
-      if (!activeCard) return;
-      document.getElementById('inline-card-title').value = activeCard.title || '';
-      document.getElementById('inline-card-tag').value = activeCard.tag || '';
-      document.getElementById('inline-card-caption').value = activeCard.caption || '';
+    async function loadRequests() {
+      try {
+        const res = await fetch('/api/requests');
+        requestsList = await res.json();
+        
+        // Считаем заявки для бейджей
+        const photoReqs = requestsList.filter(r => r.type === 'suggest_photo' || r.type === 'edit' || r.type === 'delete');
+        const artReqs = requestsList.filter(r => r.type === 'suggest_article' || r.type === 'article_edit');
 
-      document.getElementById('modal-view-mode').style.display = 'none';
-      document.getElementById('modal-edit-mode').style.display = 'flex';
+        document.getElementById('badge-photo-req').innerText = photoReqs.length;
+        document.getElementById('badge-art-req').innerText = artReqs.length;
+
+        renderPhotoRequests(photoReqs);
+        renderArticleRequests(artReqs);
+      } catch (e) {
+        console.error('Ошибка загрузки заявок:', e);
+      }
     }
 
-    function disableInlineCardEdit() {
-      document.getElementById('modal-edit-mode').style.display = 'none';
-      document.getElementById('modal-view-mode').style.display = 'flex';
-    }
-
-    async function submitInlineCardEdit() {
-      if (!activeCard) return;
-      const newTitle = document.getElementById('inline-card-title').value.trim();
-      const newTag = document.getElementById('inline-card-tag').value.trim();
-      const newCaption = document.getElementById('inline-card-caption').value.trim();
-
-      if (!newTitle) {
-        alert('Укажите заголовок карточки');
+    function renderPhotoRequests(reqs) {
+      const container = document.getElementById('photo-requests-grid');
+      if (!reqs.length) {
+        container.innerHTML = '<p style="color: var(--text-muted); grid-column: 1 / -1;">Заявок по фото пока нет.</p>';
         return;
       }
 
-      const ok = await sendToCloudBuffer({
-        type: 'edit',
-        filename: activeCard.file || activeCard.filename,
-        title: newTitle,
-        tag: newTag,
-        caption: newCaption,
-        current_crop_x: activeCard.crop_x ?? 50,
-        current_crop_y: activeCard.crop_y ?? 50
-      });
+      container.innerHTML = reqs.map(r => {
+        const isDelete = r.type === 'delete';
+        const isSuggest = r.type === 'suggest_photo';
+        const fn = extractFilename(r);
+        const imgPath = isSuggest && r.photo_url ? r.photo_url : resolveImagePath(r, 'images/');
+        const cx = r.current_crop_x ?? 50;
+        const cy = r.current_crop_y ?? 50;
 
-      if (ok) {
-        alert('Заявка на правку отправлена в штаб!');
-        activeCard.title = newTitle;
-        activeCard.tag = newTag;
-        activeCard.caption = newCaption;
-        document.getElementById('modal-title').innerText = newTitle;
-        document.getElementById('modal-tag').innerText = newTag || 'ФОТО';
-        document.getElementById('modal-caption').innerText = newCaption;
-        disableInlineCardEdit();
+        return `
+          <div class="photo-card" style="border-left: 5px solid ${isDelete ? 'var(--accent-red)' : 'var(--accent-purple)'};" onclick="openPhotoModal('${r.id}', 'request')">
+            <div class="card-photo-box">
+              <img src="${imgPath}" onerror="this.src='symbol.png'" style="object-position: ${cx}% ${cy}%;">
+              <div class="card-badges-top">
+                <span class="score-badge" style="border-color:${isDelete ? 'var(--accent-red)' : 'var(--accent-purple)'}; color:#fff;">
+                  ${isDelete ? 'УДАЛЕНИЕ' : (isSuggest ? 'НОВОЕ ФОТО' : 'ПРАВКА')}
+                </span>
+                <span class="tag-badge">${r.tag ?? 'ПРЕДЛОЖКА'}</span>
+              </div>
+            </div>
+            <div class="card-info">
+              <div>
+                <div class="card-title">${r.title || 'Без названия'}</div>
+                <div class="card-caption">${r.caption || (isDelete ? 'Запрос на удаление карточки' : '')}</div>
+                ${r.photo_url ? `<div style="margin-top:6px; font-size:12px;"><a href="${r.photo_url}" target="_blank" style="color:var(--accent-blue); text-decoration:underline;" onclick="event.stopPropagation()">Открыть оригинал ↗</a></div>` : ''}
+              </div>
+              <div class="card-actions" onclick="event.stopPropagation()">
+                <button class="btn btn-red" onclick="resolveRequest('${r.id}')">✖ Отклонить</button>
+                ${isDelete
+                  ? `<button class="btn btn-red" onclick="executeDeleteCard('${fn}', '${r.id}')">Удалить с сайта</button>`
+                  : `<button class="btn btn-green" onclick="openPhotoModal('${r.id}', 'request')">✔ Настроить и в состав</button>`}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function resolveRequest(id) {
+      const res = await fetch('/api/resolve-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+      if (res.ok) {
+        showToast('Заявка закрыта');
+        await loadRequests();
       }
     }
 
-    async function requestDelete() {
-      if (!activeCard) return;
-      if (!confirm('Отправить запрос на удаление этой карточки?')) return;
-
-      const ok = await sendToCloudBuffer({
-        type: 'delete',
-        filename: activeCard.file || activeCard.filename,
-        title: activeCard.title
+    async function executeDeleteCard(filename, requestId) {
+      const res = await fetch('/api/delete-card', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename, request_id: requestId })
       });
-
-      if (ok) alert('Запрос на удаление отправлен!');
-      closeModal();
+      if (res.ok) {
+        showToast(`Карточка ${filename} удалена с сайта`);
+        await Promise.all([loadRequests(), loadPublished()]);
+      }
     }
 
-    // --- ПРАВКА СТАТЬИ ---
-    function openArticleEditModal(id) {
-      const art = loadedArticles.find(a => a.id === id);
+    async function loadArticles() {
+      try {
+        const res = await fetch('/api/articles');
+        articlesList = await res.json();
+        renderArticlesWindow();
+      } catch (e) {
+        console.error('Ошибка загрузки статей:', e);
+      }
+    }
+
+    function renderArticleRequests(reqs) {
+      renderArticlesWindow(reqs);
+    }
+
+    function renderArticlesWindow(customReqs = null) {
+      const container = document.getElementById('articles-requests-grid');
+      const reqs = customReqs || requestsList.filter(r => r.type === 'suggest_article' || r.type === 'article_edit');
+
+      let html = '';
+
+      // Сначала отображаем заявки от пользователей с яркой плашкой
+      if (reqs && reqs.length > 0) {
+        html += reqs.map(r => `
+          <div class="article-box" style="border: 2px dashed var(--accent-gold); background: rgba(250, 204, 21, 0.08);" onclick="openArticleModalFromRequest('${r.id}')">
+            <div>
+              <div class="art-top">
+                <span class="art-badge" style="background: var(--accent-gold); color: #000;">★ ПРЕДЛОЖКА ОТ ЧИТАТЕЛЯ</span>
+                <span style="font-size: 11px; color: var(--text-muted);">${r.tag || 'ВЕСТНИК'}</span>
+              </div>
+              <div class="art-heading">${r.title}</div>
+              <div class="art-body">${r.content}</div>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.1);" onclick="event.stopPropagation()">
+              <button class="btn btn-red" style="padding:4px 8px; font-size:11px;" onclick="resolveRequest('${r.id}')">Отклонить</button>
+              <button class="btn btn-green" style="padding:4px 10px; font-size:11px;" onclick="openArticleModalFromRequest('${r.id}')">Проверить и опубликовать</button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Далее все статьи вестника в оформлении как на сайте
+      if (articlesList.length > 0) {
+        html += articlesList.map(a => {
+          const col = a.color || (a.featured ? '#facc15' : 'var(--accent-gold)');
+          return `
+            <div class="article-box ${a.featured ? 'featured' : ''}" style="--highlight-color: ${col};" onclick="openArticleModal('${a.id}')">
+              <div>
+                <div class="art-top">
+                  <span class="art-badge">${a.featured ? '★ ' : ''}${a.tag}</span>
+                  <span style="font-size: 11px; color: var(--text-muted);">${a.date || ''} | ${a.author || 'Редакция'}</span>
+                </div>
+                <div class="art-heading" style="color: ${a.featured ? col : '#fff'};">${a.title}</div>
+                <div class="art-body">${a.content}</div>
+              </div>
+              <div style="display:flex; justify-content:flex-end; gap:6px; margin-top:12px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.06);" onclick="event.stopPropagation()">
+                <button class="btn btn-gray" style="padding:3px 8px; font-size:11px;" onclick="openArticleModal('${a.id}')">✏️ Править</button>
+                <button class="btn btn-red" style="padding:3px 8px; font-size:11px;" onclick="deleteArticle('${a.id}')">🗑️</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      if (!html) {
+        html = '<p style="color: var(--text-muted); grid-column: 1 / -1;">Статей пока нет.</p>';
+      }
+
+      container.innerHTML = html;
+    }
+
+    async function loadPublished() {
+      try {
+        const res = await fetch('/api/data');
+        publishedList = await res.json();
+        document.getElementById('badge-live').innerText = publishedList.length;
+        if (currentWindow === 'live_site') {
+          renderLiveSite();
+        }
+      } catch (e) {
+        console.error('Ошибка загрузки опубликованных карточек:', e);
+      }
+    }
+
+    function renderLiveSite() {
+      // 1. Статьи в лайв-режиме
+      const artContainer = document.getElementById('live-articles-grid');
+      if (!articlesList.length) {
+        artContainer.innerHTML = '<p style="color:var(--text-muted);">Статей пока нет.</p>';
+      } else {
+        artContainer.innerHTML = articlesList.map(a => {
+          const col = a.color || (a.featured ? '#facc15' : 'var(--accent-gold)');
+          return `
+            <div class="article-box ${a.featured ? 'featured' : ''}" style="--highlight-color: ${col};" onclick="openArticleModal('${a.id}')">
+              <div>
+                <div class="art-top">
+                  <span class="art-badge">${a.featured ? '★ ' : ''}${a.tag}</span>
+                  <span style="font-size:11px; color:var(--text-muted);">${a.date || ''}</span>
+                </div>
+                <div class="art-heading" style="color:${a.featured ? col : '#fff'};">${a.title}</div>
+                <div class="art-body">${a.content}</div>
+              </div>
+              <div style="margin-top:10px; padding-top:6px; border-top:1px solid rgba(255,255,255,0.06); font-size:11px; color:var(--text-muted);">
+                ⚡ Кликните для мгновенного редактирования
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // 2. Фотографии в лайв-режиме
+      const photoContainer = document.getElementById('live-photos-grid');
+      if (!publishedList.length) {
+        photoContainer.innerHTML = '<p style="color:var(--text-muted); grid-column: 1 / -1;">Фотографий в составе пока нет.</p>';
+      } else {
+        photoContainer.innerHTML = publishedList.map(c => {
+          const fn = extractFilename(c);
+          const imgPath = resolveImagePath(c, 'images/');
+          const cx = c.crop_x ?? 50;
+          const cy = c.crop_y ?? 50;
+
+          return `
+            <div class="photo-card" onclick="openPhotoModal('${fn}', 'live')">
+              <div class="card-photo-box">
+                <img src="${imgPath}" style="object-position: ${cx}% ${cy}%;">
+                <div class="card-badges-top">
+                  <span class="score-badge">${c.score ?? 5}/10</span>
+                  <span class="tag-badge">${c.tag ?? 'ОСНОВА'}</span>
+                </div>
+              </div>
+              <div class="card-info">
+                <div>
+                  <div class="card-title">${c.title || 'Без названия'}</div>
+                  <div class="card-caption">${c.caption || ''}</div>
+                </div>
+                <div style="font-size:11px; color:var(--accent-gold); margin-top:4px;">
+                  ⚡ Кликните для мгновенной правки фокуса и текста
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    function openPhotoModal(identifier, mode) {
+      photoModalMode = mode;
+      let target = null;
+      let imgSrc = '';
+
+      if (mode === 'pending') {
+        target = pendingList.find(x => extractFilename(x) === identifier);
+        imgSrc = resolveImagePath(target, 'pending/');
+        document.getElementById('photo-modal-btn-delete').style.display = 'none';
+        document.getElementById('photo-modal-btn-confirm').innerText = '✔ Одобрить и опубликовать';
+      } else if (mode === 'request') {
+        target = requestsList.find(r => r.id === identifier);
+        imgSrc = target.photo_url || resolveImagePath(target, 'images/');
+        document.getElementById('photo-modal-btn-delete').style.display = 'none';
+        document.getElementById('photo-modal-btn-confirm').innerText = '✔ Принять в состав';
+      } else if (mode === 'live') {
+        target = publishedList.find(c => extractFilename(c) === identifier);
+        imgSrc = resolveImagePath(target, 'images/');
+        document.getElementById('photo-modal-btn-delete').style.display = 'block';
+        document.getElementById('photo-modal-btn-confirm').innerText = '💾 Сохранить изменения на сайте';
+      }
+
+      if (!target) return;
+      currentPhotoTarget = { ...target, _identifier: identifier };
+
+      currentCrop.x = target.crop_x ?? target.current_crop_x ?? 50;
+      currentCrop.y = target.crop_y ?? target.current_crop_y ?? 50;
+
+      const srcImg = document.getElementById('crop-img-src');
+      const prevImg = document.getElementById('crop-img-prev');
+      srcImg.src = imgSrc;
+      prevImg.src = imgSrc;
+
+      document.getElementById('photo-field-title').value = target.title || '';
+      document.getElementById('photo-field-tag').value = target.tag || 'ОСНОВА';
+      document.getElementById('photo-field-caption').value = target.caption || '';
+
+      updateCropVisuals();
+      document.getElementById('photo-modal').style.display = 'flex';
+
+      document.getElementById('photo-modal-btn-confirm').onclick = async () => {
+        await submitPhotoModal();
+      };
+
+      document.getElementById('photo-modal-btn-delete').onclick = async () => {
+        if (mode === 'live') {
+          const fn = extractFilename(currentPhotoTarget);
+          await executeDeleteCard(fn, null);
+          closeModal('photo-modal');
+        }
+      };
+    }
+
+    function updateCropVisuals() {
+      document.getElementById('crop-dot').style.left = `${currentCrop.x}%`;
+      document.getElementById('crop-dot').style.top = `${currentCrop.y}%`;
+      document.getElementById('val-cx').innerText = Math.round(currentCrop.x);
+      document.getElementById('val-cy').innerText = Math.round(currentCrop.y);
+
+      document.getElementById('crop-img-prev').style.objectPosition = `${currentCrop.x}% ${currentCrop.y}%`;
+    }
+
+    function setupCropPickerEvents() {
+      document.getElementById('crop-picker').addEventListener('click', (e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+        const y = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
+
+        currentCrop.x = x;
+        currentCrop.y = y;
+        updateCropVisuals();
+      });
+    }
+
+    async function submitPhotoModal() {
+      const title = document.getElementById('photo-field-title').value.trim();
+      const tag = document.getElementById('photo-field-tag').value.trim();
+      const caption = document.getElementById('photo-field-caption').value.trim();
+      const cx = Math.round(currentCrop.x);
+      const cy = Math.round(currentCrop.y);
+
+      if (photoModalMode === 'pending') {
+        const fn = extractFilename(currentPhotoTarget);
+        const res = await fetch('/api/approve', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            filename: fn,
+            title, tag, caption,
+            crop_x: cx, crop_y: cy
+          })
+        });
+        if (res.ok) {
+          showToast('Карточка успешно одобрена и добавлена на сайт!');
+          closeModal('photo-modal');
+          await Promise.all([loadPending(), loadPublished()]);
+        }
+      } else if (photoModalMode === 'request') {
+        const fn = extractFilename(currentPhotoTarget);
+        const res = await fetch('/api/update-card', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            filename: fn,
+            title, tag, caption,
+            crop_x: cx, crop_y: cy,
+            request_id: currentPhotoTarget.id || null
+          })
+        });
+        if (res.ok) {
+          showToast('Заявка по фото принята и карточка обновлена!');
+          closeModal('photo-modal');
+          await Promise.all([loadRequests(), loadPublished()]);
+        }
+      } else if (photoModalMode === 'live') {
+        const fn = extractFilename(currentPhotoTarget);
+        const res = await fetch('/api/update-card', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            filename: fn,
+            title, tag, caption,
+            crop_x: cx, crop_y: cy
+          })
+        });
+        if (res.ok) {
+          showToast('Изменения мгновенно сохранены на сайте!');
+          closeModal('photo-modal');
+          await loadPublished();
+        }
+      }
+    }
+
+    function openNewArticleModal() {
+      document.getElementById('art-edit-id').value = '';
+      document.getElementById('art-edit-title').value = '';
+      document.getElementById('art-edit-tag').value = 'ВЕСТНИК';
+      document.getElementById('art-edit-author').value = 'Редакция';
+      document.getElementById('art-edit-content').value = '';
+      document.getElementById('art-edit-featured').checked = false;
+      document.getElementById('art-modal-heading').innerText = 'Создание новой статьи';
+      document.getElementById('art-modal-btn-delete').style.display = 'none';
+
+      selectColor('#facc15');
+      document.getElementById('article-modal').style.display = 'flex';
+    }
+
+    function openArticleModal(id) {
+      const art = articlesList.find(a => a.id === id);
       if (!art) return;
 
-      document.getElementById('edit-art-id').value = art.id;
-      document.getElementById('edit-art-title').value = art.title || '';
-      document.getElementById('edit-art-tag').value = art.tag || '';
-      document.getElementById('edit-art-content').value = art.content || '';
+      document.getElementById('art-edit-id').value = art.id;
+      document.getElementById('art-edit-title').value = art.title || '';
+      document.getElementById('art-edit-tag').value = art.tag || 'ВЕСТНИК';
+      document.getElementById('art-edit-author').value = art.author || 'Редакция';
+      document.getElementById('art-edit-content').value = art.content || '';
+      document.getElementById('art-edit-featured').checked = !!art.featured;
+      document.getElementById('art-modal-heading').innerText = 'Редактирование статьи';
+      document.getElementById('art-modal-btn-delete').style.display = 'block';
 
-      document.getElementById('article-edit-modal').style.display = 'flex';
+      document.getElementById('art-modal-btn-delete').onclick = async () => {
+        await deleteArticle(art.id);
+        closeModal('article-modal');
+      };
+
+      selectColor(art.color || '#facc15');
+      document.getElementById('article-modal').style.display = 'flex';
     }
 
-    function closeArticleEditModal() {
-      document.getElementById('article-edit-modal').style.display = 'none';
+    function openArticleModalFromRequest(requestId) {
+      const req = requestsList.find(r => r.id === requestId);
+      if (!req) return;
+
+      document.getElementById('art-edit-id').value = req.article_id || '';
+      document.getElementById('art-edit-title').value = req.title || '';
+      document.getElementById('art-edit-tag').value = req.tag || 'ВЕСТНИК';
+      document.getElementById('art-edit-author').value = 'Читатель клуба';
+      document.getElementById('art-edit-content').value = req.content || '';
+      document.getElementById('art-edit-featured').checked = false;
+      document.getElementById('art-modal-heading').innerText = 'Публикация статьи из предложки';
+      document.getElementById('art-modal-btn-delete').style.display = 'none';
+
+      // Привязываем ID заявки для закрытия при сохранении
+      document.getElementById('article-modal').dataset.requestId = requestId;
+
+      selectColor('#facc15');
+      document.getElementById('article-modal').style.display = 'flex';
     }
 
-    async function submitArticleEdit() {
-      const id = document.getElementById('edit-art-id').value;
-      const title = document.getElementById('edit-art-title').value.trim();
-      const tag = document.getElementById('edit-art-tag').value.trim();
-      const content = document.getElementById('edit-art-content').value.trim();
+    function selectColor(hex, el = null) {
+      selectedArticleColor = hex;
+      document.getElementById('art-edit-color').value = hex;
+      document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+      if (el) {
+        el.classList.add('selected');
+      } else {
+        const matching = Array.from(document.querySelectorAll('.color-swatch')).find(s => s.style.backgroundColor === hex);
+        if (matching) matching.classList.add('selected');
+      }
+    }
+
+    function syncCustomColor(hex) {
+      selectedArticleColor = hex;
+      document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+    }
+
+    async function saveArticleFromModal() {
+      const id = document.getElementById('art-edit-id').value || null;
+      const title = document.getElementById('art-edit-title').value.trim();
+      const tag = document.getElementById('art-edit-tag').value.trim();
+      const author = document.getElementById('art-edit-author').value.trim();
+      const content = document.getElementById('art-edit-content').value.trim();
+      const featured = document.getElementById('art-edit-featured').checked;
+      const requestId = document.getElementById('article-modal').dataset.requestId || null;
 
       if (!title || !content) {
-        alert('Заполните заголовок и текст статьи');
+        showToast('Заголовок и текст статьи обязательны!');
         return;
       }
 
-      const ok = await sendToCloudBuffer({
-        type: 'article_edit',
-        article_id: id,
+      const payload = {
+        id: id,
         title: title,
-        tag: tag,
-        content: content
+        tag: tag || 'ВЕСТНИК',
+        author: author || 'Редакция',
+        content: content,
+        featured: featured,
+        color: selectedArticleColor,
+        request_id: requestId
+      };
+
+      const res = await fetch('/api/articles/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
 
-      if (ok) {
-        alert('Правка статьи отправлена в штаб модерации!');
-        closeArticleEditModal();
+      if (res.ok) {
+        showToast('Статья сохранена и опубликована!');
+        closeModal('article-modal');
+        document.getElementById('article-modal').dataset.requestId = '';
+        await Promise.all([loadArticles(), loadRequests()]);
+        if (currentWindow === 'live_site') renderLiveSite();
       }
     }
 
-    // --- ПРЕДЛОЖКА ---
-    function openSuggestModal() {
-      document.getElementById('suggest-modal').style.display = 'flex';
-      switchSuggestType('article');
-    }
-
-    function closeSuggestModal() {
-      document.getElementById('suggest-modal').style.display = 'none';
-    }
-
-    function switchSuggestType(type) {
-      currentSuggestType = type;
-      const btnArt = document.getElementById('btn-type-art');
-      const btnPhoto = document.getElementById('btn-type-photo');
-      const fieldsArt = document.getElementById('form-article-fields');
-      const fieldsPhoto = document.getElementById('form-photo-fields');
-
-      if (type === 'article') {
-        btnArt.classList.add('active');
-        btnPhoto.classList.remove('active');
-        fieldsArt.style.display = 'block';
-        fieldsPhoto.style.display = 'none';
-      } else {
-        btnPhoto.classList.add('active');
-        btnArt.classList.remove('active');
-        fieldsArt.style.display = 'none';
-        fieldsPhoto.style.display = 'block';
+    async function deleteArticle(id) {
+      const res = await fetch('/api/articles/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+      if (res.ok) {
+        showToast('Статья удалена');
+        await loadArticles();
+        if (currentWindow === 'live_site') renderLiveSite();
       }
     }
 
-    async function sendSuggest() {
-      if (currentSuggestType === 'article') {
-        const title = document.getElementById('sug-art-title').value.trim();
-        const tag = document.getElementById('sug-art-tag').value.trim();
-        const content = document.getElementById('sug-art-content').value.trim();
-
-        if (!title || !content) {
-          alert('Укажите название и текст статьи');
-          return;
-        }
-
-        const ok = await sendToCloudBuffer({
-          type: 'suggest_article',
-          title: title,
-          tag: tag || 'ВЕСТНИК',
-          content: content
-        });
-
-        if (ok) {
-          alert('Статья отправлена в штаб модерации!');
-          document.getElementById('sug-art-title').value = '';
-          document.getElementById('sug-art-tag').value = '';
-          document.getElementById('sug-art-content').value = '';
-          closeSuggestModal();
-        }
-      } else {
-        const title = document.getElementById('sug-photo-title').value.trim();
-        const tag = document.getElementById('sug-photo-tag').value.trim();
-        const caption = document.getElementById('sug-photo-caption').value.trim();
-        const url = document.getElementById('sug-photo-url').value.trim();
-
-        if (!title || !url) {
-          alert('Укажите название кадра и ссылку на фото');
-          return;
-        }
-
-        const ok = await sendToCloudBuffer({
-          type: 'suggest_photo',
-          title: title,
-          tag: tag || 'ОСНОВА',
-          caption: caption,
-          photo_url: url
-        });
-
-        if (ok) {
-          alert('Фотография отправлена в штаб модерации!');
-          document.getElementById('sug-photo-title').value = '';
-          document.getElementById('sug-photo-tag').value = '';
-          document.getElementById('sug-photo-caption').value = '';
-          document.getElementById('sug-photo-url').value = '';
-          closeSuggestModal();
-        }
-      }
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+      if (modalId === 'photo-modal') currentPhotoTarget = null;
     }
 
-    async function sendToCloudBuffer(payload) {
-      try {
-        const getRes = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
-          headers: { 'X-Access-Key': JSONBIN_ACCESS_KEY }
-        });
-        const json = await getRes.json();
-        let queue = json.record?.queue || [];
-
-        queue.push({
-          id: 'req_' + Date.now(),
-          timestamp: new Date().toISOString(),
-          ...payload
-        });
-
-        await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Access-Key': JSONBIN_ACCESS_KEY
-          },
-          body: JSON.stringify({ queue })
-        });
-        return true;
-      } catch (err) {
-        console.error("Ошибка буфера JSONBin:", err);
-        return false;
-      }
-    }
-
-    // --- ЗАКРЫТИЕ ПО КЛИКУ МИМО ОКНА (BACKDROP) ---
-    document.getElementById('card-modal').addEventListener('click', (e) => {
-      if (e.target.id === 'card-modal') closeModal();
+    document.querySelectorAll('.modal-backdrop').forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          closeModal(modal.id);
+        }
+      });
     });
-
-    document.getElementById('suggest-modal').addEventListener('click', (e) => {
-      if (e.target.id === 'suggest-modal') closeSuggestModal();
-    });
-
-    document.getElementById('article-edit-modal').addEventListener('click', (e) => {
-      if (e.target.id === 'article-edit-modal') closeArticleEditModal();
-    });
-
-    document.getElementById('slot-modal').addEventListener('click', (e) => {
-      if (e.target.id === 'slot-modal') closeSlot();
-    });
-
-    // --- СЛОТ SUGAR RUSH ---
-    const ICONS = ['🍬', '🍭', '🍇', '🍉', '⭐', '🐻', '🚀'];
-    let grid = Array(49).fill('');
-    let spots = Array(49).fill(0);
-    let balance = 1000;
-    let isSpinning = false;
-
-    function openSlot() { document.getElementById('slot-modal').style.display = 'flex'; initBoard(); }
-    function closeSlot() { document.getElementById('slot-modal').style.display = 'none'; }
-
-    function initBoard() {
-      const b = document.getElementById('slot-board');
-      b.innerHTML = '';
-      for (let i = 0; i < 49; i++) {
-        grid[i] = ICONS[Math.floor(Math.random() * 6)];
-        const cell = document.createElement('div');
-        cell.className = 'slot-cell';
-        cell.id = 'cell-' + i;
-        cell.innerText = grid[i];
-        b.appendChild(cell);
-      }
-    }
-
-    function renderBoard() {
-      for (let i = 0; i < 49; i++) {
-        const c = document.getElementById('cell-' + i);
-        c.innerText = grid[i];
-        const oldMult = c.querySelector('.cell-mult');
-        if (oldMult) oldMult.remove();
-        if (spots[i] > 1) {
-          const m = document.createElement('span');
-          m.className = 'cell-mult';
-          m.innerText = 'x' + spots[i];
-          c.appendChild(m);
-        }
-      }
-    }
-
-    async function spin() {
-      if (isSpinning || balance < 20) return;
-      isSpinning = true;
-      balance -= 20;
-      document.getElementById('slot-balance').innerText = balance;
-      document.getElementById('slot-win').innerText = 0;
-
-      for (let i = 0; i < 49; i++) grid[i] = ICONS[Math.floor(Math.random() * 6)];
-      renderBoard();
-      await processClusters();
-      isSpinning = false;
-    }
-
-    async function buyBonus() {
-      if (isSpinning || balance < 2000) return;
-      balance -= 2000;
-      document.getElementById('slot-balance').innerText = balance;
-      alert('Бонусный раунд запущен!');
-      await spin();
-    }
-
-    function getCluster(startIndex, visited) {
-      const sym = grid[startIndex];
-      if (!sym || sym === '🚀') return [];
-      const cluster = [];
-      const queue = [startIndex];
-      visited[startIndex] = true;
-
-      while (queue.length) {
-        const idx = queue.shift();
-        cluster.push(idx);
-        const r = Math.floor(idx / 7);
-        const c = idx % 7;
-        const neighbors = [];
-        if (r > 0) neighbors.push(idx - 7);
-        if (r < 6) neighbors.push(idx + 7);
-        if (c > 0) neighbors.push(idx - 1);
-        if (c < 6) neighbors.push(idx + 1);
-
-        for (const n of neighbors) {
-          if (!visited[n] && grid[n] === sym) {
-            visited[n] = true;
-            queue.push(n);
-          }
-        }
-      }
-      return cluster;
-    }
-
-    async function processClusters() {
-      let winRound = 0;
-      let hasWin = true;
-
-      while (hasWin) {
-        hasWin = false;
-        const visited = Array(49).fill(false);
-        const toExplode = new Set();
-
-        for (let i = 0; i < 49; i++) {
-          if (!visited[i]) {
-            const cluster = getCluster(i, visited);
-            if (cluster.length >= 5) {
-              hasWin = true;
-              cluster.forEach(idx => toExplode.add(idx));
-              let multSum = 0;
-              cluster.forEach(idx => {
-                multSum += (spots[idx] > 1 ? spots[idx] : 1);
-              });
-              winRound += cluster.length * 4 * multSum;
-            }
-          }
-        }
-
-        if (hasWin) {
-          toExplode.forEach(idx => {
-            spots[idx] = spots[idx] === 0 ? 2 : Math.min(128, spots[idx] * 2);
-            grid[idx] = '';
-          });
-          renderBoard();
-          await new Promise(r => setTimeout(r, 400));
-
-          for (let col = 0; col < 7; col++) {
-            let emptyRow = 6;
-            for (let row = 6; row >= 0; row--) {
-              const idx = row * 7 + col;
-              if (grid[idx] !== '') {
-                grid[emptyRow * 7 + col] = grid[idx];
-                if (emptyRow !== row) grid[idx] = '';
-                emptyRow--;
-              }
-            }
-            while (emptyRow >= 0) {
-              grid[emptyRow * 7 + col] = ICONS[Math.floor(Math.random() * 6)];
-              emptyRow--;
-            }
-          }
-          renderBoard();
-          await new Promise(r => setTimeout(r, 300));
-        }
-      }
-
-      balance += winRound;
-      document.getElementById('slot-win').innerText = winRound;
-      document.getElementById('slot-balance').innerText = balance;
-    }
 
     window.addEventListener('keydown', (e) => {
+      // Закрытие окон по Esc
       if (e.key === 'Escape') {
-        closeModal();
-        closeSuggestModal();
-        closeArticleEditModal();
-        closeSlot();
+        closeModal('photo-modal');
+        closeModal('article-modal');
+        return;
+      }
+
+      // Если открыта модалка фото, Enter подтверждает
+      if (document.getElementById('photo-modal').style.display === 'flex') {
+        if (e.key === 'Enter' && e.ctrlKey) {
+          document.getElementById('photo-modal-btn-confirm').click();
+        }
+        return;
+      }
+
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+      // Хоткеи в окне Pending: A - одобрить, D - в брак
+      if (currentWindow === 'pending' && pendingList.length > 0) {
+        const topItem = pendingList[0];
+        const fn = extractFilename(topItem);
+        if (e.key === 'a' || e.key === 'A' || e.key === 'ф' || e.key === 'Ф') {
+          approvePendingDirect(fn);
+        } else if (e.key === 'd' || e.key === 'D' || e.key === 'в' || e.key === 'В') {
+          rejectPending(fn);
+        }
       }
     });
 
-    loadData();
+    init();
   </script>
 </body>
 </html>
