@@ -7,7 +7,7 @@ import threading
 from pathlib import Path
 from typing import Any, Dict, List
 from dotenv import load_dotenv
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import requests
 
@@ -21,6 +21,7 @@ DATA_DIR.mkdir(parents=True, exist_ok=True)
 DATA_FILE = DATA_DIR / "data.json"
 PENDING_FILE = DATA_DIR / "pending.json"
 REQUESTS_FILE = DATA_DIR / "requests.json"
+ARTICLES_FILE = DATA_DIR / "articles.json"
 
 PENDING_DIR = BASE_DIR / "pending"
 IMAGES_DIR = BASE_DIR / "images"
@@ -141,6 +142,9 @@ class AdminRequestHandler(SimpleHTTPRequestHandler):
         if parsed.path == "/api/requests":
             return self.send_json(read_json_file(REQUESTS_FILE))
 
+        if parsed.path == "/api/articles":
+            return self.send_json(read_json_file(ARTICLES_FILE))
+
         return super().do_GET()
 
     def do_POST(self):
@@ -203,12 +207,112 @@ class AdminRequestHandler(SimpleHTTPRequestHandler):
 
             return self.send_json({"status": "error", "message": "Элемент не найден"}, 404)
 
+        if parsed.path == "/api/update-card":
+            filename = body.get("filename")
+            data_items = read_json_file(DATA_FILE)
+            updated = False
+
+            for item in data_items:
+                if item.get("filename") == filename:
+                    if "title" in body:
+                        item["title"] = body["title"]
+                    if "tag" in body:
+                        item["tag"] = body["tag"]
+                    if "caption" in body:
+                        item["caption"] = body["caption"]
+                    if "crop_x" in body:
+                        item["crop_x"] = body["crop_x"]
+                    if "crop_y" in body:
+                        item["crop_y"] = body["crop_y"]
+                    updated = True
+                    break
+
+            if updated:
+                write_json_file(DATA_FILE, data_items)
+
+                req_id = body.get("request_id")
+                if req_id:
+                    reqs = read_json_file(REQUESTS_FILE)
+                    reqs = [r for r in reqs if r.get("id") != req_id]
+                    write_json_file(REQUESTS_FILE, reqs)
+
+                return self.send_json({"status": "success", "message": "Карточка обновлена"})
+
+            return self.send_json({"status": "error", "message": "Карточка не найдена в data.json"}, 404)
+
+        if parsed.path == "/api/delete-card":
+            filename = body.get("filename")
+            data_items = read_json_file(DATA_FILE)
+            item = next((x for x in data_items if x.get("filename") == filename), None)
+
+            if item:
+                data_items = [x for x in data_items if x.get("filename") != filename]
+                write_json_file(DATA_FILE, data_items)
+
+                src = IMAGES_DIR / filename
+                dst = DELETED_DIR / filename
+                if src.exists():
+                    shutil.move(src, dst)
+
+                req_id = body.get("request_id")
+                if req_id:
+                    reqs = read_json_file(REQUESTS_FILE)
+                    reqs = [r for r in reqs if r.get("id") != req_id]
+                    write_json_file(REQUESTS_FILE, reqs)
+
+                return self.send_json({"status": "success", "message": "Карточка удалена с сайта"})
+
+            return self.send_json({"status": "error", "message": "Карточка не найдена"}, 404)
+
         if parsed.path == "/api/resolve-request":
             req_id = body.get("id")
             requests_items = read_json_file(REQUESTS_FILE)
             requests_items = [x for x in requests_items if x.get("id") != req_id]
             write_json_file(REQUESTS_FILE, requests_items)
             return self.send_json({"status": "success"})
+
+        if parsed.path == "/api/articles/save":
+            art_id = body.get("id")
+            title = body.get("title", "").strip()
+            content = body.get("content", "").strip()
+            tag = body.get("tag", "ВЕСТНИК").strip()
+            author = body.get("author", "Редакция").strip()
+            date_str = body.get("date", time.strftime("%d.%m.%Y"))
+
+            if not title or not content:
+                return self.send_json({"status": "error", "message": "Заголовок и текст обязательны"}, 400)
+
+            articles = read_json_file(ARTICLES_FILE)
+
+            if art_id:
+                for art in articles:
+                    if art.get("id") == art_id:
+                        art["title"] = title
+                        art["content"] = content
+                        art["tag"] = tag
+                        art["author"] = author
+                        art["date"] = date_str
+                        break
+            else:
+                new_art = {
+                    "id": f"art_{int(time.time())}",
+                    "title": title,
+                    "date": date_str,
+                    "tag": tag,
+                    "content": content,
+                    "author": author
+                }
+                articles.insert(0, new_art)
+
+            write_json_file(ARTICLES_FILE, articles)
+            return self.send_json({"status": "success", "message": "Статья сохранена"})
+
+        if parsed.path == "/api/articles/delete":
+            art_id = body.get("id")
+            articles = read_json_file(ARTICLES_FILE)
+            articles = [a for a in articles if a.get("id") != art_id]
+            write_json_file(ARTICLES_FILE, articles)
+            return self.send_json({"status": "success", "message": "Статья удалена"})
 
         return self.send_json({"status": "error", "message": "Неизвестный эндпоинт"}, 404)
 

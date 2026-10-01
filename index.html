@@ -3,1339 +3,763 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ФК ГазМяс — Официальный сайт клуба</title>
+  <title>ФК «ГазМяс» – Официальный вестник и архив</title>
   <link rel="icon" type="image/png" href="symbol.png">
-  <link rel="apple-touch-icon" href="symbol.png">
   <style>
     :root {
-      --gm-red: #c90000;
-      --gm-red-dark: #800000;
-      --gm-gold: #ffd700;
-      --gm-black: #0c0d10;
-      --gm-panel: #16181f;
-      --gm-border: #2a2e3d;
-      --gm-text: #f0f2f5;
-      --gm-muted: #8c93a8;
-      --gm-green: #10b981;
+      --bg: #090a0f;
+      --card-bg: #141721;
+      --border: #232838;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent: #3b82f6;
+      --accent-red: #ef4444;
+      --accent-gold: #f59e0b;
+      --accent-green: #10b981;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
-    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
     body {
-      background: var(--gm-black);
-      color: var(--gm-text);
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      background-image: radial-gradient(circle at 50% 0%, rgba(201, 0, 0, 0.15) 0%, transparent 60%);
     }
 
-    /* Шапка клуба */
     header {
-      background: linear-gradient(180deg, #1f0202 0%, var(--gm-panel) 100%);
-      border-bottom: 3px solid var(--gm-gold);
-      padding: 0.8rem 2rem;
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
-    }
-
-    .header-inner {
-      max-width: 1400px;
-      margin: 0 auto;
+      background: #0f121d;
+      border-bottom: 1px solid var(--border);
+      padding: 16px 32px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
 
-    .club-brand {
+    .brand {
       display: flex;
       align-items: center;
       gap: 12px;
-    }
-
-    .club-crest {
-      width: 44px;
-      height: 44px;
-      background: linear-gradient(135deg, var(--gm-red) 50%, var(--gm-gold) 50%);
-      border-radius: 50%;
-      border: 2px solid #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      font-size: 1.1rem;
-      color: #fff;
-      text-shadow: 1px 1px 2px #000;
-      box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
-    }
-
-    .club-title { display: flex; flex-direction: column; }
-    .club-name { font-size: 1.35rem; font-weight: 900; letter-spacing: 1.5px; color: #fff; text-transform: uppercase; }
-    .club-name span { color: var(--gm-gold); }
-    .club-motto { font-size: 0.75rem; color: var(--gm-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-
-    .nav-actions { display: flex; gap: 0.75rem; align-items: center; }
-
-    .btn-club {
-      background: var(--gm-red);
-      color: #fff;
-      border: 1px solid var(--gm-gold);
-      padding: 0.55rem 1.1rem;
-      border-radius: 6px;
+      font-size: 20px;
       font-weight: 800;
-      font-size: 0.8rem;
-      text-transform: uppercase;
       letter-spacing: 0.5px;
+    }
+
+    .brand img {
+      width: 32px;
+      height: 32px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 16px;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 16px;
+      border-radius: 6px;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 2px 8px rgba(201, 0, 0, 0.4);
+      font-weight: 600;
+      font-size: 14px;
       transition: all 0.2s;
     }
-    .btn-club:hover { background: #e60000; transform: translateY(-1px); }
 
-    .btn-sugar {
-      background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
-      border-color: #f472b6;
-      box-shadow: 0 2px 8px rgba(236, 72, 153, 0.4);
+    .nav-btn:hover {
+      background: var(--card-bg);
+      border-color: var(--accent);
     }
 
-    /* БЛОК НОВОСТЕЙ И СТАТЕЙ КЛУБА */
-    .news-section {
+    main {
+      flex: 1;
       max-width: 1400px;
-      margin: 1.5rem auto 0;
-      padding: 0 2rem;
       width: 100%;
+      margin: 0 auto;
+      padding: 32px 20px;
     }
 
     .section-title {
-      font-size: 1.1rem;
-      font-weight: 900;
-      color: var(--gm-gold);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 0.8rem;
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 20px;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .news-grid {
+    /* Статьи */
+    .articles-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 1.2rem;
+      gap: 20px;
+      margin-bottom: 48px;
     }
 
-    .news-card {
-      background: var(--gm-panel);
-      border: 1px solid var(--gm-border);
-      border-radius: 8px;
-      padding: 1.2rem;
+    .article-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
-      position: relative;
-      overflow: hidden;
+      justify-content: space-between;
     }
 
-    .news-card.featured {
-      border-left: 4px solid var(--gm-red);
-      background: linear-gradient(90deg, rgba(201, 0, 0, 0.1) 0%, var(--gm-panel) 100%);
+    .article-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 12px;
     }
 
-    .news-card.sugar-news { border-left: 4px solid #ec4899; }
-    .news-card.dibuny-news { border-left: 4px solid #0284c7; }
-
-    .news-badge {
-      align-self: flex-start;
-      font-size: 0.65rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      padding: 0.2rem 0.5rem;
+    .article-tag {
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--accent);
+      padding: 2px 8px;
       border-radius: 4px;
-      color: #fff;
-    }
-    .badge-red { background: var(--gm-red); }
-    .badge-pink { background: #db2777; }
-    .badge-blue { background: #0284c7; }
-
-    .news-heading { font-size: 1.05rem; font-weight: 800; color: #fff; line-height: 1.3; }
-    .news-desc { font-size: 0.85rem; color: var(--gm-muted); line-height: 1.4; }
-
-    /* Табло / фильтры */
-    .club-board {
-      max-width: 1400px;
-      margin: 1.5rem auto 0;
-      padding: 0 2rem;
-      width: 100%;
+      font-weight: 700;
     }
 
-    .board-card {
-      background: var(--gm-panel);
-      border: 1px solid var(--gm-border);
-      border-radius: 8px;
-      padding: 0.8rem 1.2rem;
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      align-items: center;
+    .article-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 10px;
     }
 
-    .board-stat {
-      display: flex;
-      flex-direction: column;
-      padding-right: 1.2rem;
-      border-right: 1px solid var(--gm-border);
+    .article-content {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.5;
+      white-space: pre-wrap;
     }
 
-    .stat-label { font-size: 0.65rem; text-transform: uppercase; color: var(--gm-muted); font-weight: 700; }
-    .stat-value { font-size: 1.3rem; font-weight: 900; color: var(--gm-gold); }
-
-    .search-input {
-      flex: 1;
-      min-width: 220px;
-      background: #0d0e12;
-      border: 1px solid var(--gm-border);
-      color: #fff;
-      padding: 0.65rem 1rem;
-      border-radius: 6px;
-      font-size: 0.9rem;
-    }
-    .search-input:focus { outline: none; border-color: var(--gm-gold); }
-
-    /* Сетка игроков */
-    main {
-      flex: 1;
-      max-width: 1400px;
-      margin: 1.5rem auto;
-      padding: 0 2rem 3rem;
-      width: 100%;
-    }
-
-    .squad-grid {
+    /* Галерея карточек */
+    .gallery-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
     }
 
-    .player-card {
-      background: var(--gm-panel);
-      border: 1px solid var(--gm-border);
-      border-radius: 8px;
+    .media-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
       overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s;
       display: flex;
       flex-direction: column;
-      transition: all 0.2s;
     }
-    .player-card:hover { border-color: var(--gm-gold); transform: translateY(-3px); }
 
-    .card-photo-wrap {
+    .media-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+    }
+
+    .media-thumb-box {
       width: 100%;
-      height: 230px;
+      height: 220px;
       background: #000;
       position: relative;
       overflow: hidden;
     }
-    .card-photo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-    .position-badge {
-      position: absolute;
-      top: 8px;
-      left: 8px;
-      background: rgba(12, 13, 16, 0.85);
-      border: 1px solid var(--gm-gold);
-      color: var(--gm-gold);
-      font-size: 0.7rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
+    .media-thumb-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 
-    .tag-badge {
+    .media-badges {
       position: absolute;
-      top: 8px;
-      right: 8px;
-      background: rgba(201, 0, 0, 0.85);
-      color: #fff;
-      font-size: 0.7rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      padding: 0.2rem 0.6rem;
-      border-radius: 4px;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
     }
-    .tag-badge.alt { background: rgba(14, 116, 144, 0.85); }
 
-    .card-body {
-      padding: 1rem;
+    .badge-score {
+      background: rgba(0, 0, 0, 0.8);
+      color: var(--accent-gold);
+      border: 1px solid var(--accent-gold);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .badge-tag {
+      background: rgba(0, 0, 0, 0.8);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .media-info {
+      padding: 16px;
+      flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 0.4rem;
-      flex: 1;
     }
 
-    .card-title { font-size: 1rem; font-weight: 900; color: #fff; line-height: 1.3; }
-    .card-caption { font-size: 0.85rem; color: var(--gm-muted); line-height: 1.4; flex: 1; }
-
-    .card-actions {
-      display: flex;
-      border-top: 1px solid var(--gm-border);
-      background: rgba(0, 0, 0, 0.25);
+    .media-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 6px;
     }
 
-    .btn-card-action {
-      flex: 1;
-      padding: 0.6rem;
-      border: none;
-      background: transparent;
-      color: var(--gm-muted);
-      font-size: 0.75rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      cursor: pointer;
+    .media-caption {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
-    .btn-card-action:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
-    .btn-card-action.del:hover { color: #f87171; background: rgba(218, 54, 51, 0.15); }
-    .btn-card-action.edit:hover { color: var(--gm-gold); background: rgba(255, 215, 0, 0.1); }
 
-    /* Модалки предложки и правок */
-    .user-modal-overlay {
+    /* Модальное окно просмотра */
+    .modal-backdrop {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(8px);
-      z-index: 100;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 1000;
       align-items: center;
       justify-content: center;
-      padding: 1rem;
+      padding: 20px;
     }
 
-    .user-modal {
-      background: var(--gm-panel);
-      border: 1px solid var(--gm-gold);
-      border-radius: 8px;
+    .modal-box {
+      display: flex;
       width: 100%;
-      max-width: 480px;
-      padding: 1.5rem;
+      max-width: 1150px;
+      height: 85vh;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .modal-photo-col {
+      flex: 2;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .modal-photo-col img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .modal-sidebar-col {
+      flex: 1;
+      min-width: 320px;
+      max-width: 400px;
+      padding: 28px;
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      justify-content: space-between;
+      border-left: 1px solid var(--border);
+      background: #11141e;
     }
 
-    .user-modal h3 {
-      color: var(--gm-gold);
-      font-size: 1.1rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      border-bottom: 1px solid var(--gm-border);
-      padding-bottom: 0.5rem;
-    }
-
-    .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
-    .form-group label { font-size: 0.7rem; text-transform: uppercase; color: var(--gm-muted); font-weight: 700; }
-    .form-group input, .form-group textarea {
-      background: #0d0e12;
-      border: 1px solid var(--gm-border);
-      color: #fff;
-      padding: 0.65rem;
+    .btn-action {
+      width: 100%;
+      padding: 10px;
       border-radius: 6px;
-      font-size: 0.9rem;
-    }
-    .form-group textarea { min-height: 80px; resize: vertical; }
-
-    .user-modal-btns { display: flex; gap: 0.8rem; margin-top: 0.5rem; }
-    .user-modal-btns button {
-      flex: 1;
-      padding: 0.75rem;
-      border-radius: 6px;
-      font-weight: 800;
+      font-size: 14px;
+      font-weight: 700;
       cursor: pointer;
       border: none;
-      text-transform: uppercase;
-      font-size: 0.8rem;
+      transition: opacity 0.2s;
     }
 
-    .btn-modal-cancel { background: #21262d; color: #c9d1d9; }
-    .btn-modal-submit { background: var(--gm-red); color: #fff; border: 1px solid var(--gm-gold); }
-    .empty-state { text-align: center; padding: 4rem 1rem; color: var(--gm-muted); }
+    .btn-action:hover { opacity: 0.9; }
 
-    /* ==========================================
-       SUGAR RUSH (7x7 CLUSTER SLOTS & MULTIPLIERS)
-       ========================================== */
-    .casino-modal-overlay {
+    /* Слот Sugar Rush */
+    #slot-modal {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.92);
-      backdrop-filter: blur(10px);
-      z-index: 120;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 1000;
       align-items: center;
       justify-content: center;
-      padding: 0.8rem;
     }
 
-    .casino-card {
-      background: radial-gradient(circle at 50% 10%, #340c29 0%, #120311 100%);
-      border: 2px solid #f472b6;
-      border-radius: 16px;
-      width: 100%;
-      max-width: 640px;
-      padding: 1.2rem;
-      box-shadow: 0 0 35px rgba(236, 72, 153, 0.5);
-      position: relative;
-      text-align: center;
+    .slot-container {
+      background: #1e1338;
+      border: 2px solid #a855f7;
+      border-radius: 12px;
+      padding: 20px;
+      width: 95%;
+      max-width: 620px;
       display: flex;
       flex-direction: column;
-      gap: 0.7rem;
-    }
-
-    .casino-header {
-      font-size: 1.4rem;
-      font-weight: 900;
-      color: #f472b6;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      text-shadow: 0 0 10px rgba(244, 114, 182, 0.7);
-    }
-
-    .casino-balance-bar {
-      display: flex;
-      justify-content: space-around;
       align-items: center;
-      font-size: 0.9rem;
-      font-weight: 800;
-      color: #ffd700;
-      background: rgba(0, 0, 0, 0.4);
-      padding: 0.4rem 0.8rem;
-      border-radius: 8px;
-      border: 1px solid rgba(244, 114, 182, 0.2);
-    }
-
-    .bet-ctrl-btn {
-      background: #be185d;
       color: #fff;
-      border: 1px solid #f472b6;
-      border-radius: 4px;
-      width: 26px;
-      height: 26px;
-      font-weight: 900;
-      cursor: pointer;
     }
-    .bet-ctrl-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    /* СЕТКА 7х7 */
-    .grid-container {
+    .slot-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      grid-template-rows: repeat(7, 1fr);
       gap: 4px;
-      background: #1a0416;
-      padding: 6px;
-      border-radius: 10px;
-      border: 2px solid rgba(236, 72, 153, 0.4);
-      box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
-      aspect-ratio: 1 / 1;
+      background: #110926;
+      padding: 8px;
+      border-radius: 8px;
       width: 100%;
-      max-width: 440px;
-      margin: 0 auto;
+      aspect-ratio: 1/1;
+      max-width: 480px;
+      margin: 12px 0;
     }
 
     .slot-cell {
-      position: relative;
-      background: #240720;
+      background: #2b1854;
       border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.8rem;
+      font-size: 24px;
+      position: relative;
       user-select: none;
-      transition: transform 0.15s ease, background-color 0.2s ease;
     }
 
-    .slot-cell.marked {
-      background: #470e3d;
-      box-shadow: inset 0 0 6px #ec4899;
-    }
-
-    .slot-cell .cell-multi {
+    .cell-mult {
       position: absolute;
-      top: 1px;
-      left: 1px;
-      background: rgba(255, 215, 0, 0.9);
-      color: #000;
-      font-size: 0.65rem;
-      font-weight: 900;
-      padding: 1px 3px;
-      border-radius: 3px;
-      line-height: 1;
-      pointer-events: none;
-      box-shadow: 0 0 4px #ffd700;
-    }
-
-    .slot-cell.exploding {
-      animation: explodePop 0.35s ease forwards;
-    }
-
-    @keyframes explodePop {
-      0% { transform: scale(1); filter: brightness(1); }
-      50% { transform: scale(1.3); filter: brightness(2) drop-shadow(0 0 8px #ffd700); }
-      100% { transform: scale(0); opacity: 0; }
-    }
-
-    .casino-status {
-      min-height: 24px;
-      font-weight: 800;
-      font-size: 0.85rem;
-      color: #f9a8d4;
-    }
-
-    .casino-actions {
-      display: flex;
-      gap: 0.6rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .btn-spin-sugar {
-      background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+      top: 2px;
+      right: 2px;
+      background: #ef4444;
       color: #fff;
-      border: 2px solid #ffd700;
-      padding: 0.65rem 1.6rem;
-      font-size: 1rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      border-radius: 8px;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(236, 72, 153, 0.5);
-      flex: 1;
-      min-width: 140px;
-    }
-
-    .btn-spin-sugar:hover:not(:disabled) {
-      transform: scale(1.02);
-      box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
-    }
-
-    .btn-spin-sugar:disabled { opacity: 0.6; cursor: not-allowed; }
-
-    .btn-buy-bonus {
-      background: linear-gradient(135deg, #e11d48 0%, #9f1239 100%);
-      color: #ffd700;
-      border: 2px solid #f43f5e;
-      padding: 0.65rem 1.2rem;
-      font-size: 0.85rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      border-radius: 8px;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(225, 29, 72, 0.5);
-    }
-    .btn-buy-bonus:hover:not(:disabled) { transform: scale(1.02); }
-    .btn-buy-bonus:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    .free-spins-indicator {
-      display: none;
-      background: #be185d;
-      color: #ffd700;
-      padding: 0.3rem 0.8rem;
-      border-radius: 6px;
-      font-weight: 900;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      box-shadow: 0 0 10px #f472b6;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 1px 4px;
+      border-radius: 3px;
     }
   </style>
 </head>
 <body>
 
-  <!-- Шапка -->
   <header>
-    <div class="header-inner">
-      <div class="club-brand">
-        <div class="club-crest">ГМ</div>
-        <div class="club-title">
-          <div class="club-name">ФК <span>ГазМяс</span></div>
-          <div class="club-motto">Мы мясо, мы газ, мы победим хоть раз</div>
-        </div>
-      </div>
-      <div class="nav-actions">
-        <button class="btn-club" onclick="openIdeaModal()">💡 В предложку</button>
-        <button class="btn-club btn-sugar" onclick="openSugarRush()">🍭 Sugar Rush 7x7</button>
-      </div>
+    <div class="brand">
+      <img src="symbol.png" alt="Герб">
+      <span>ФК «ГазМяс»</span>
+    </div>
+    <div class="nav-links">
+      <button class="nav-btn" onclick="openSlot()">🍭 Sugar Rush 7x7</button>
+      <button class="nav-btn" onclick="openSuggestModal()">➕ В предложку</button>
     </div>
   </header>
 
-  <!-- БЛОК ГЛАВНЫХ НОВОСТЕЙ И СТАТЕЙ КЛУБА -->
-  <section class="news-section">
-    <div class="section-title">📰 Вестник ГазМяса / Главные события</div>
-    <div class="news-grid">
-      
-      <div class="news-card featured" style="grid-column: 1 / -1; border-left: 6px solid var(--gm-gold); background: linear-gradient(90deg, rgba(201, 0, 0, 0.25) 0%, var(--gm-panel) 100%);">
-        <span class="news-badge badge-red" style="background: var(--gm-gold); color: #000; font-weight: 900;">★ Главный приказ руководства</span>
-        <div class="news-heading" style="font-size: 1.25rem; color: var(--gm-gold); margin-top: 4px;">«Друг о друге не забывайте, газмяс не смейте развалить мне опездолы. Встречайтесь время от времени»</div>
-        <div class="news-desc" style="font-size: 0.95rem; color: #fff; margin-top: 6px;">
-          Перед отлётом из Пулково Директор клуба Платон Нодь оставил фундаментальный манифест всему личному составу. Менеджер Артём Визиров заверил совет директоров: «Это уж мы не проебем, товарищ начальник». Команда держит строй и готовится к зимнему камбэку.
-        </div>
-      </div>
-
-      <div class="news-card featured">
-        <span class="news-badge badge-red">Тактика матча</span>
-        <div class="news-heading">«Гоша, мы не пойдём в 666»: Запрет на сомнительные маршруты</div>
-        <div class="news-desc">Дирекция утвердила запрет на сомнительные вписки и маршруты. Команда сосредоточена на сборе средств для последующего их вложения в шугар рашик.</div>
-      </div>
-
-      <div class="news-card sugar-news">
-        <span class="news-badge badge-pink">Теория лудки</span>
-        <div class="news-heading">Концы бурмалдцы: путь к заносу</div>
-        <div class="news-desc">99% нападающих останавливаются ровно за шаг до супер скаттера. После ночной сессии покупка бонусок взята под строгий клубный контроль.</div>
-      </div>
-
-      <div class="news-card dibuny-news">
-        <span class="news-badge badge-blue">Хроники Дибунов</span>
-        <div class="news-heading">«Нихуя Дибуны отстроили»: Отчёт со станции</div>
-        <div class="news-desc">Дачные сборы, ворованный кислый крыжовник и регулярный прикорм местных сторожевых собачек дали свои плоды перед дерби.</div>
-      </div>
-
-      <div class="news-card">
-        <span class="news-badge badge-red">Районный вайб</span>
-        <div class="news-heading">«Привет, Базанов»: Перерождение в пермских пацанов</div>
-        <div class="news-desc">После ночного просмотра 40 серий подряд совет директоров выясняет: снится ли Серёге, что он участковый, или участковому снится Серёга.</div>
-      </div>
-
-      <div class="news-card">
-        <span class="news-badge badge-red">Локации</span>
-        <div class="news-heading">Карл Фридрих: Профессиональный литр за 850</div>
-        <div class="news-desc">Инспекция Крестовского острова доказала: на хорошую кружку пива косаря хватает с головой, даже если счета в банке заблокированы.</div>
-      </div>
-
-      <div class="news-card">
-        <span class="news-badge badge-blue">Образование</span>
-        <div class="news-heading">«Per aspera ad astra fututio»: Лекции юрфака</div>
-        <div class="news-desc">Пока технари потеют над формулами стандартного отклонения, гуманитарное крыло доказывает, что за формулами нет души.</div>
-      </div>
-
-      <div class="news-card">
-        <span class="news-badge badge-red">ЧП на Петроградке</span>
-        <div class="news-heading">«Я установила ебаный Линукс на Мак»</div>
-        <div class="news-desc">Ночные страдания с операционной системой и парами к восьми утра повергли клубную поддержку в состояние культурного шока.</div>
-      </div>
-
-      <div class="news-card">
-        <span class="news-badge badge-red">Штаб-квартира</span>
-        <div class="news-heading">Гараж на Гороховой: Оплот традиций</div>
-        <div class="news-desc">Культовая точка сбора после доты и пар. Сосиска в тесте и верность традициям — фундамент побед ФК ГазМяс.</div>
-      </div>
-
-      <div class="news-card sugar-news">
-        <span class="news-badge badge-pink">Прогрев века</span>
-        <div class="news-heading">Канье Уэст в Питере: Гои греются до октября</div>
-        <div class="news-desc">Редакция «Ценной бумаги» подтверждает: сериал не закончится, пока билеты на арену не обменяют на концерт Базанова.</div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- Табло статистики и поиск -->
-  <div class="club-board">
-    <div class="board-card">
-      <div class="board-stat">
-        <span class="stat-label">В заявке</span>
-        <span class="stat-value" id="squadCount">0</span>
-      </div>
-      <input type="text" id="searchInput" class="search-input" placeholder="Поиск по имени, панчлайну или событию..." oninput="handleSearch()">
-      <input type="text" id="tagFilterInput" class="search-input" style="max-width: 260px;" placeholder="Фильтр по тегу (Основа, Дибуны...)" oninput="handleSearch()">
-    </div>
-  </div>
-
-  <!-- Витрина кадров -->
   <main>
-    <div id="squadGrid" class="squad-grid"></div>
-    <div id="emptySquad" class="empty-state" style="display: none;">Кадры не найдены</div>
+    <!-- Вестник -->
+    <div id="articles-section" style="display: none;">
+      <div class="section-title">📰 Вестник Клуба</div>
+      <div id="articles-list" class="articles-grid"></div>
+    </div>
+
+    <!-- Галерея -->
+    <div class="section-title">📸 Основной состав</div>
+    <div id="gallery" class="gallery-grid"></div>
   </main>
 
-  <!-- ==========================================
-       МОДАЛЬНОЕ ОКНО: SUGAR RUSH КАЗИНО (7x7)
-       ========================================== -->
-  <div class="casino-modal-overlay" id="casinoModal" onclick="handleCasinoBackdrop(event)">
-    <div class="casino-card">
-      <button class="btn-card-action" style="position: absolute; top: 10px; right: 10px; font-size: 1.2rem; width: auto; color: #fff;" onclick="closeCasinoModal()">✕</button>
-      
-      <div class="casino-header">🍭 Sugar Rush 7x7 🍭</div>
-      
-      <div class="casino-balance-bar">
-        <div>Баланс: <span id="casinoBalance" style="color: #4ade80;">10000</span> ₽</div>
-        <div style="display: flex; align-items: center; gap: 6px;">
-          Ставка:
-          <button class="bet-ctrl-btn" id="btnBetMinus" onclick="changeBet(-1)">-</button>
-          <span id="casinoBet">100</span> ₽
-          <button class="bet-ctrl-btn" id="btnBetPlus" onclick="changeBet(1)">+</button>
+  <!-- Модальное окно просмотра карточки -->
+  <div id="card-modal" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-photo-col">
+        <img id="modal-img" src="" alt="Full photo">
+      </div>
+      <div class="modal-sidebar-col">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <span id="modal-tag" class="badge-tag"></span>
+            <span id="modal-score" class="badge-score"></span>
+          </div>
+          <h2 id="modal-title" style="margin-bottom: 12px; font-size: 20px;"></h2>
+          <p id="modal-caption" style="color: var(--text-muted); font-size: 14px; line-height: 1.5; white-space: pre-wrap;"></p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <button class="btn-action" style="background: var(--accent); color: #fff;" onclick="requestEdit()">✏️ Править описание</button>
+          <button class="btn-action" style="background: var(--accent-red); color: #fff;" onclick="requestDelete()">🗑️ Запрос на удаление</button>
+          <button class="btn-action" style="background: var(--border); color: #fff;" onclick="closeModal()">Закрыть</button>
         </div>
       </div>
+    </div>
+  </div>
 
-      <div class="free-spins-indicator" id="freeSpinsIndicator">
-        Фриспины: <span id="freeSpinsLeft">0</span>
-      </div>
-
-      <div class="grid-container" id="slotGrid"></div>
-
-      <div class="casino-status" id="casinoStatus">Кластеры от 5 символов. Повторные взрывы копят множители до x128!</div>
-
-      <div class="casino-actions">
-        <button class="btn-buy-bonus" id="btnBuyBonus" onclick="buyFreeSpins()">Купить бонуску (<span id="buyCost">10000</span> ₽)</button>
-        <button class="btn-spin-sugar" id="btnSpin" onclick="startSpin()">Крутить [Space]</button>
+  <!-- Модальное окно предложки -->
+  <div id="suggest-modal" class="modal-backdrop">
+    <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 24px; width: 100%; max-width: 480px;">
+      <h3 style="margin-bottom: 16px;">Предложить фото или новость</h3>
+      <input type="text" id="sug-title" placeholder="Заголовок..." style="width: 100%; padding: 10px; background: #0f121d; border: 1px solid var(--border); color: #fff; border-radius: 6px; margin-bottom: 12px;">
+      <textarea id="sug-text" rows="4" placeholder="Описание / контекст / ссылка на фото..." style="width: 100%; padding: 10px; background: #0f121d; border: 1px solid var(--border); color: #fff; border-radius: 6px; margin-bottom: 16px;"></textarea>
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button class="nav-btn" onclick="closeSuggestModal()">Отмена</button>
+        <button class="btn-action" style="background: var(--accent-green); color: #fff; width: auto; padding: 10px 20px;" onclick="sendSuggest()">Отправить</button>
       </div>
     </div>
   </div>
 
-  <!-- Модалка: Предложить идею -->
-  <div class="user-modal-overlay" id="ideaModal">
-    <div class="user-modal">
-      <h3>Заявка в тренерский штаб</h3>
-      <div class="form-group">
-        <label>Позывной / Ник</label>
-        <input type="text" id="ideaAuthor" placeholder="Например: Гоша из 666">
+  <!-- Слот Sugar Rush -->
+  <div id="slot-modal">
+    <div class="slot-container">
+      <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+        <h3 style="color: #f472b6;">🍭 Sugar Rush 7x7</h3>
+        <button class="nav-btn" onclick="closeSlot()">✕</button>
       </div>
-      <div class="form-group">
-        <label>Заголовок момента</label>
-        <input type="text" id="ideaTitle" placeholder="Короткий заголовок...">
+      <div style="display: flex; gap: 24px; margin-top: 10px; font-weight: 700;">
+        <div>Баланс: <span id="slot-balance" style="color: #4ade80;">1000</span></div>
+        <div>Выигрыш: <span id="slot-win" style="color: #facc15;">0</span></div>
       </div>
-      <div class="form-group">
-        <label>Панчлайн / История матча</label>
-        <textarea id="ideaCaption" placeholder="Опишите момент или цитату..."></textarea>
-      </div>
-      <div class="form-group">
-        <label>Ссылка на фото (URL)</label>
-        <input type="text" id="ideaImgUrl" placeholder="https://... (необязательно)">
-      </div>
-      <div class="user-modal-btns">
-        <button class="btn-modal-cancel" onclick="closeIdeaModal()">Отмена</button>
-        <button class="btn-modal-submit" onclick="submitNewIdea()">Отправить</button>
-      </div>
-    </div>
-  </div>
 
-  <!-- Модалка: Предложить правку -->
-  <div class="user-modal-overlay" id="editModal">
-    <div class="user-modal">
-      <h3>Правка протокола матча</h3>
-      <div class="form-group">
-        <label>Новый заголовок</label>
-        <input type="text" id="editTitle">
-      </div>
-      <div class="form-group">
-        <label>Новое описание / панчлайн</label>
-        <textarea id="editCaption"></textarea>
-      </div>
-      <div class="user-modal-btns">
-        <button class="btn-modal-cancel" onclick="closeEditModal()">Отмена</button>
-        <button class="btn-modal-submit" onclick="submitEditRequest()">Отправить правку</button>
+      <div id="slot-board" class="slot-grid"></div>
+
+      <div style="display: flex; gap: 10px; width: 100%; justify-content: center;">
+        <button id="btn-spin" class="btn-action" style="background: #ec4899; color: #fff; max-width: 160px;" onclick="spin()">КРУТИТЬ (20)</button>
+        <button id="btn-buy" class="btn-action" style="background: #8b5cf6; color: #fff; max-width: 180px;" onclick="buyBonus()">BUY BONUS (2000)</button>
       </div>
     </div>
   </div>
 
   <script>
-    const JSONBIN_BIN_ID = "6abbe438ffd5d160533c11f1"; 
-    const JSONBIN_MASTER_KEY = "$2a$10$VRoPiN8zdepg2AgC69BLZudokIxDgyL3LmDVPcv5HlHKRAalpZ5Vq"; 
+    // Конфигурация буфера JSONBin
+    const JSONBIN_BIN_ID = "6abbe438ffd5c4501258671d";
+    const JSONBIN_ACCESS_KEY = "$2a$10$VKrFmEhyEw6K8uXv1s3ZCeXqA4M/XzI1G8Xy7M7J0J.hH7c6Tq8O.";
 
-    let squadData = [];
-    let currentEditIndex = -1;
+    let activeCard = null;
+    let cardsData = [];
 
-    async function loadSquad() {
+    async function loadData() {
       try {
-        const res = await fetch("data/data.json?t=" + Date.now());
-        if (!res.ok) throw new Error("HTTP " + res.status);
-        squadData = await res.json();
-        document.getElementById("squadCount").textContent = squadData.length;
-        renderSquad(squadData);
-      } catch (err) {
-        document.getElementById("emptySquad").style.display = "block";
-        document.getElementById("emptySquad").textContent = "Протокол матча не загружен. Проверьте data.json.";
+        const res = await fetch('data/data.json');
+        cardsData = await res.json();
+        renderGallery(cardsData);
+      } catch (e) {
+        console.error("Ошибка загрузки data.json", e);
       }
+
+      try {
+        const res = await fetch('data/articles.json');
+        const articles = await res.json();
+        if (articles && articles.length > 0) {
+          renderArticles(articles);
+        }
+      } catch (e) {}
     }
 
-    function renderSquad(items) {
-      const grid = document.getElementById("squadGrid");
-      const empty = document.getElementById("emptySquad");
-
-      if (!items || items.length === 0) {
-        grid.innerHTML = "";
-        empty.style.display = "block";
-        return;
-      }
-
-      empty.style.display = "none";
-      grid.innerHTML = "";
-
-      items.forEach((item, index) => {
-        const card = document.createElement("div");
-        card.className = "player-card";
-        const photoPath = item.file || item.image || "";
-        const objPos = `${item.crop_x ?? 50}% ${item.crop_y ?? 50}%`;
-
-        card.innerHTML = `
-          <div class="card-photo-wrap">
-            <img src="${photoPath}" alt="${escapeHtml(item.title)}" loading="lazy" style="object-position: ${objPos};">
-            <div class="position-badge">ГазМяс</div>
-            <div class="tag-badge ${item.tag_class || ''}">${escapeHtml(item.tag || 'Основа')}</div>
+    function renderArticles(articles) {
+      document.getElementById('articles-section').style.display = 'block';
+      const container = document.getElementById('articles-list');
+      container.innerHTML = articles.map(a => `
+        <div class="article-card">
+          <div>
+            <div class="article-header">
+              <span class="article-tag">${a.tag}</span>
+              <span style="color: var(--text-muted);">${a.date}</span>
+            </div>
+            <div class="article-title">${a.title}</div>
+            <div class="article-content">${a.content}</div>
           </div>
-          <div class="card-body">
-            <div class="card-title">${escapeHtml(item.title)}</div>
-            <div class="card-caption">${escapeHtml(item.caption)}</div>
+          <div style="margin-top: 12px; font-size: 12px; color: var(--text-muted);">Автор: ${a.author}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderGallery(cards) {
+      const container = document.getElementById('gallery');
+      container.innerHTML = cards.map(c => `
+        <div class="media-card" onclick="openModal('${c.filename}')">
+          <div class="media-thumb-box">
+            <img src="images/${c.filename}" loading="lazy" style="object-position: ${c.crop_x ?? 50}% ${c.crop_y ?? 50}%;">
+            <div class="media-badges">
+              <span class="badge-score">${c.score ?? 5}/10</span>
+              <span class="badge-tag">${c.tag ?? 'ФОТО'}</span>
+            </div>
           </div>
-          <div class="card-actions">
-            <button class="btn-card-action edit" onclick="openEditModal(${index})">✎ Правка</button>
-            <button class="btn-card-action del" onclick="requestDelete(${index})">✕ На удаление</button>
+          <div class="media-info">
+            <div class="media-title">${c.title || 'Без названия'}</div>
+            <div class="media-caption">${c.caption || ''}</div>
           </div>
-        `;
-        grid.appendChild(card);
-      });
+        </div>
+      `).join('');
     }
 
-    function handleSearch() {
-      const q = document.getElementById("searchInput").value.toLowerCase().trim();
-      const tagQ = document.getElementById("tagFilterInput").value.toLowerCase().trim();
+    function openModal(filename) {
+      activeCard = cardsData.find(c => c.filename === filename);
+      if (!activeCard) return;
 
-      const filtered = squadData.filter(item => {
-        const matchText = (item.title || "").toLowerCase().includes(q) || (item.caption || "").toLowerCase().includes(q);
-        const matchTag = tagQ === "" || (item.tag || "").toLowerCase().includes(tagQ);
-        return matchText && matchTag;
-      });
+      document.getElementById('modal-img').src = 'images/' + activeCard.filename;
+      document.getElementById('modal-title').innerText = activeCard.title || '';
+      document.getElementById('modal-caption').innerText = activeCard.caption || '';
+      document.getElementById('modal-tag').innerText = activeCard.tag || 'ФОТО';
+      document.getElementById('modal-score').innerText = (activeCard.score ? activeCard.score + '/10' : '');
 
-      renderSquad(filtered);
+      document.getElementById('card-modal').style.display = 'flex';
     }
 
-    // ==========================================
-    // ТОЧНАЯ МЕХАНИКА SUGAR RUSH (7x7 GRID)
-    // ==========================================
-    const GRID_SIZE = 7;
-    const SYMBOLS = ["🍭", "🧡", "🍇", "⭐", "🔴", "🟣", "🟠"];
-    const SCATTER = "🚀"; // Scatter символ автомата с конфетами
-
-    // Таблица базовых множителей ставки от размера кластера (5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15+)
-    const PAYTABLE = {
-      "🍭": [1.0, 1.5, 1.75, 2.0, 2.5, 5.0, 7.5, 15.0, 35.0, 70.0, 150.0],
-      "🧡": [0.75, 1.0, 1.25, 1.5, 2.0, 4.0, 6.0, 12.5, 30.0, 60.0, 100.0],
-      "🍇": [0.5, 0.75, 1.0, 1.25, 1.5, 3.0, 4.5, 10.0, 20.0, 40.0, 60.0],
-      "⭐": [0.4, 0.5, 0.75, 1.0, 1.25, 2.0, 3.0, 5.0, 10.0, 20.0, 40.0],
-      "🔴": [0.3, 0.4, 0.5, 0.75, 1.0, 1.5, 2.5, 3.5, 8.0, 15.0, 30.0],
-      "🟣": [0.25, 0.3, 0.4, 0.5, 0.75, 1.25, 2.0, 3.0, 6.0, 12.0, 25.0],
-      "🟠": [0.2, 0.25, 0.3, 0.4, 0.5, 1.0, 1.5, 2.5, 5.0, 10.0, 20.0]
-    };
-
-    let balance = 10000;
-    const betSteps = [20, 50, 100, 200, 500, 1000];
-    let currentBetIdx = 2; // По умолчанию 100 ₽
-    let isSpinning = false;
-    let freeSpinsLeft = 0;
-    let isFreeSpinsMode = false;
-    let totalRoundWin = 0;
-
-    // Сетка: элементы { symbol: "🍭" }
-    let gridData = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(null));
-    // Пятна: { marked: bool, multiplier: 0, 2, 4, 8... 128 }
-    let spotData = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(null).map(() => ({ marked: false, multiplier: 0 })));
-
-    function initSlotGrid() {
-      const container = document.getElementById("slotGrid");
-      container.innerHTML = "";
-      for (let r = 0; r < GRID_SIZE; r++) {
-        for (let c = 0; c < GRID_SIZE; c++) {
-          const cell = document.createElement("div");
-          cell.className = "slot-cell";
-          cell.id = `cell_${r}_${c}`;
-          container.appendChild(cell);
-        }
-      }
-      fillRandomGrid();
-      renderGrid();
+    function closeModal() {
+      document.getElementById('card-modal').style.display = 'none';
+      activeCard = null;
     }
 
-    function fillRandomGrid() {
-      for (let r = 0; r < GRID_SIZE; r++) {
-        for (let c = 0; c < GRID_SIZE; c++) {
-          // Шанс скаттера около 2.5%
-          if (Math.random() < 0.025) {
-            gridData[r][c] = SCATTER;
-          } else {
-            gridData[r][c] = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
-          }
-        }
-      }
-    }
-
-    function renderGrid() {
-      for (let r = 0; r < GRID_SIZE; r++) {
-        for (let c = 0; c < GRID_SIZE; c++) {
-          const el = document.getElementById(`cell_${r}_${c}`);
-          el.className = "slot-cell";
-          el.textContent = gridData[r][c] || "";
-          
-          const spot = spotData[r][c];
-          if (spot.marked) el.classList.add("marked");
-          if (spot.multiplier >= 2) {
-            const multiBadge = document.createElement("span");
-            multiBadge.className = "cell-multi";
-            multiBadge.textContent = `x${spot.multiplier}`;
-            el.appendChild(multiBadge);
-          }
-        }
-      }
-    }
-
-    function openSugarRush() {
-      document.getElementById("casinoModal").style.display = "flex";
-      updateUI();
-    }
-
-    function closeCasinoModal() {
-      if (isSpinning) return;
-      document.getElementById("casinoModal").style.display = "none";
-    }
-
-    function handleCasinoBackdrop(e) {
-      if (e.target.id === "casinoModal" && !isSpinning) closeCasinoModal();
-    }
-
-    function changeBet(dir) {
-      if (isSpinning || isFreeSpinsMode) return;
-      currentBetIdx = Math.max(0, Math.min(betSteps.length - 1, currentBetIdx + dir));
-      updateUI();
-    }
-
-    function updateUI() {
-      const bet = betSteps[currentBetIdx];
-      document.getElementById("casinoBalance").textContent = Math.round(balance);
-      document.getElementById("casinoBet").textContent = bet;
-      document.getElementById("buyCost").textContent = bet * 100;
-
-      document.getElementById("btnBetMinus").disabled = currentBetIdx === 0 || isSpinning || isFreeSpinsMode;
-      document.getElementById("btnBetPlus").disabled = currentBetIdx === betSteps.length - 1 || isSpinning || isFreeSpinsMode;
-      document.getElementById("btnBuyBonus").disabled = isSpinning || isFreeSpinsMode || balance < bet * 100;
-      document.getElementById("btnSpin").disabled = isSpinning;
-
-      const fsInd = document.getElementById("freeSpinsIndicator");
-      if (isFreeSpinsMode) {
-        fsInd.style.display = "block";
-        document.getElementById("freeSpinsLeft").textContent = freeSpinsLeft;
-      } else {
-        fsInd.style.display = "none";
-      }
-    }
-
-    async function startSpin() {
-      if (isSpinning) return;
-      const bet = betSteps[currentBetIdx];
-
-      if (!isFreeSpinsMode) {
-        if (balance < bet) {
-          document.getElementById("casinoStatus").textContent = "Недостаточно средств на балансе клуба!";
-          document.getElementById("casinoStatus").style.color = "#f87171";
-          return;
-        }
-        balance -= bet;
-        // Очищаем пятна множителей в начале обычного спина
-        resetSpots();
-      }
-
-      isSpinning = true;
-      updateUI();
-      document.getElementById("casinoStatus").style.color = "#f9a8d4";
-      document.getElementById("casinoStatus").textContent = isFreeSpinsMode ? `Фриспин! Осталось: ${freeSpinsLeft}` : "Спин начался...";
-
-      await dropNewSymbolsAnimation();
-      await processTumbleSequence();
-
-      if (isFreeSpinsMode) {
-        freeSpinsLeft--;
-        if (freeSpinsLeft <= 0) {
-          isFreeSpinsMode = false;
-          document.getElementById("casinoStatus").textContent = `Бонусный раунд завершен! Общий выигрыш: +${Math.round(totalRoundWin)} ₽`;
-          document.getElementById("casinoStatus").style.color = "#4ade80";
-          resetSpots();
-        } else {
-          updateUI();
-          setTimeout(startSpin, 700);
-          return;
-        }
-      }
-
-      isSpinning = false;
-      updateUI();
-    }
-
-    async function buyFreeSpins() {
-      if (isSpinning || isFreeSpinsMode) return;
-      const bet = betSteps[currentBetIdx];
-      const cost = bet * 100;
-
-      if (balance < cost) {
-        alert("Недостаточно средств для покупки бонуски!");
-        return;
-      }
-
-      balance -= cost;
-      resetSpots();
-      totalRoundWin = 0;
-      isFreeSpinsMode = true;
-
-      // Гарантируем 3-5 скаттеров при покупке
-      const scatters = [3, 3, 3, 4, 4, 5][Math.floor(Math.random() * 6)];
-      const spinsAwarded = { 3: 10, 4: 12, 5: 15, 6: 20, 7: 30 }[scatters];
-      freeSpinsLeft = spinsAwarded;
-
-      document.getElementById("casinoStatus").textContent = `ПОКУПКА БОНУСКИ! Выпало ${scatters} Скаттеров 🚀! Получено ${spinsAwarded} Фриспинов!`;
-      document.getElementById("casinoStatus").style.color = "#ffd700";
-
-      updateUI();
-      setTimeout(startSpin, 1200);
-    }
-
-    function resetSpots() {
-      for (let r = 0; r < GRID_SIZE; r++) {
-        for (let c = 0; c < GRID_SIZE; c++) {
-          spotData[r][c] = { marked: false, multiplier: 0 };
-        }
-      }
-      renderGrid();
-    }
-
-    async function dropNewSymbolsAnimation() {
-      fillRandomGrid();
-      renderGrid();
-      await sleep(250);
-    }
-
-    // Основной цикл каскадов Tumble
-    async function processTumbleSequence() {
-      const bet = betSteps[currentBetIdx];
-      let tumbleCount = 0;
-
-      while (true) {
-        const clusters = findWinningClusters();
-        const scattersCount = countScatters();
-
-        // Проверка активации или ретриггера фриспинов
-        if (scattersCount >= 3 && !isFreeSpinsMode) {
-          const awarded = { 3: 10, 4: 12, 5: 15, 6: 20, 7: 30 }[Math.min(7, scattersCount)] || 10;
-          freeSpinsLeft += awarded;
-          isFreeSpinsMode = true;
-          totalRoundWin = 0;
-          document.getElementById("casinoStatus").textContent = `🚀 БОНУСКА! Выпало ${scattersCount} Скаттеров! +${awarded} Фриспинов!`;
-          document.getElementById("casinoStatus").style.color = "#ffd700";
-          await sleep(1000);
-        }
-
-        if (clusters.length === 0) break;
-        tumbleCount++;
-
-        let tumbleWin = 0;
-
-        // Расчет выигрыша по кластерам и множителям
-        for (const cl of clusters) {
-          const sym = cl.symbol;
-          const size = cl.coords.length;
-          const payIdx = Math.min(size - 5, 10);
-          const baseMultiplier = PAYTABLE[sym][payIdx];
-          let clusterCash = baseMultiplier * bet;
-
-          // Суммируем спот-множители клеток
-          let spotMultiplierSum = 0;
-          cl.coords.forEach(([r, c]) => {
-            if (spotData[r][c].multiplier >= 2) {
-              spotMultiplierSum += spotData[r][c].multiplier;
-            }
-          });
-
-          if (spotMultiplierSum > 1) {
-            clusterCash *= spotMultiplierSum;
-          }
-
-          tumbleWin += clusterCash;
-
-          // Анимация взрыва и обновление пятен
-          cl.coords.forEach(([r, c]) => {
-            const el = document.getElementById(`cell_${r}_${c}`);
-            el.classList.add("exploding");
-
-            // Логика множителей клеток:
-            // 1-й взрыв: пятно (marked = true, multiplier = 0)
-            // 2-й взрыв: multiplier = 2
-            // далее удваивается: 4, 8, 16, 32, 64, 128
-            const spot = spotData[r][c];
-            if (!spot.marked) {
-              spot.marked = true;
-              spot.multiplier = 0;
-            } else if (spot.multiplier === 0) {
-              spot.multiplier = 2;
-            } else if (spot.multiplier < 128) {
-              spot.multiplier = Math.min(128, spot.multiplier * 2);
-            }
-          });
-        }
-
-        // Ограничение максимального выигрыша (5000x от ставки)
-        const maxWinCap = bet * 5000;
-        if (totalRoundWin + tumbleWin > maxWinCap) {
-          tumbleWin = maxWinCap - totalRoundWin;
-          document.getElementById("casinoStatus").textContent = "💥 ДОСТИГНУТ MAX WIN 5000X! Выплата произведена!";
-        }
-
-        totalRoundWin += tumbleWin;
-        balance += tumbleWin;
-        updateUI();
-
-        document.getElementById("casinoStatus").textContent = `Занос каскада: +${Math.round(tumbleWin)} ₽!`;
-        document.getElementById("casinoStatus").style.color = "#4ade80";
-
-        await sleep(400);
-
-        // Удаляем сыгравшие символы
-        clusters.forEach(cl => {
-          cl.coords.forEach(([r, c]) => {
-            gridData[r][c] = null;
-          });
-        });
-
-        // Падение существующих символов вниз и досыпка новых сверху
-        applyGravityAndRefill();
-        renderGrid();
-        await sleep(350);
-
-        if (totalRoundWin >= maxWinCap) break;
-      }
-    }
-
-    // Поиск кластеров (Flood Fill)
-    function findWinningClusters() {
-      const visited = Array(GRID_SIZE).fill(false).map(() => Array(GRID_SIZE).fill(false));
-      const clusters = [];
-
-      for (let r = 0; r < GRID_SIZE; r++) {
-        for (let c = 0; c < GRID_SIZE; c++) {
-          const sym = gridData[r][c];
-          if (!sym || sym === SCATTER || visited[r][c]) continue;
-
-          const group = [];
-          const queue = [[r, c]];
-          visited[r][c] = true;
-
-          while (queue.length > 0) {
-            const [cr, cc] = queue.pop();
-            group.push([cr, cc]);
-
-            const dirs = [[0, 1], [0, -1], [1, 0], [-1, 0]];
-            for (const [dr, dc] of dirs) {
-              const nr = cr + dr;
-              const nc = cc + dc;
-              if (nr >= 0 && nr < GRID_SIZE && nc >= 0 && nc < GRID_SIZE) {
-                if (!visited[nr][nc] && gridData[nr][nc] === sym) {
-                  visited[nr][nc] = true;
-                  queue.push([nr, nc]);
-                }
-              }
-            }
-          }
-
-          if (group.length >= 5) {
-            clusters.push({ symbol: sym, coords: group });
-          }
-        }
-      }
-      return clusters;
-    }
-
-    function countScatters() {
-      let cnt = 0;
-      for (let r = 0; r < GRID_SIZE; r++) {
-        for (let c = 0; c < GRID_SIZE; c++) {
-          if (gridData[r][c] === SCATTER) cnt++;
-        }
-      }
-      return cnt;
-    }
-
-    function applyGravityAndRefill() {
-      for (let c = 0; c < GRID_SIZE; c++) {
-        let emptyRow = GRID_SIZE - 1;
-        for (let r = GRID_SIZE - 1; r >= 0; r--) {
-          if (gridData[r][c] !== null) {
-            if (emptyRow !== r) {
-              gridData[emptyRow][c] = gridData[r][c];
-              gridData[r][c] = null;
-            }
-            emptyRow--;
-          }
-        }
-        // Заполняем пустоты сверху новыми символами
-        for (let r = emptyRow; r >= 0; r--) {
-          gridData[r][c] = Math.random() < 0.02 ? SCATTER : SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
-        }
-      }
-    }
-
-    function sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    // ==========================================
-    // СИНХРОНИЗАЦИЯ С ОБЛАКОМ JSONBIN
-    // ==========================================
-    async function pushToCloudQueue(newItem) {
-      let currentItems = [];
+    async function sendToCloudBuffer(payload) {
       try {
         const getRes = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
-          headers: { "X-Master-Key": JSONBIN_MASTER_KEY }
+          headers: { 'X-Access-Key': JSONBIN_ACCESS_KEY }
         });
-        if (getRes.ok) {
-          const data = await getRes.json();
-          if (Array.isArray(data.record)) {
-            currentItems = data.record;
-          } else if (data.record && Array.isArray(data.record.queue)) {
-            currentItems = data.record.queue;
-          }
-        }
-      } catch (e) {
-        currentItems = [];
+        const json = await getRes.json();
+        let queue = json.record?.queue || [];
+
+        queue.push({
+          id: 'req_' + Date.now(),
+          timestamp: new Date().toISOString(),
+          ...payload
+        });
+
+        await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Access-Key': JSONBIN_ACCESS_KEY
+          },
+          body: JSON.stringify({ queue })
+        });
+        return true;
+      } catch (err) {
+        console.error("Ошибка буфера JSONBin:", err);
+        return false;
       }
+    }
 
-      currentItems = currentItems.filter(item => !item.init);
-      currentItems.unshift(newItem);
+    async function requestEdit() {
+      if (!activeCard) return;
+      const newTitle = prompt('Новый заголовок:', activeCard.title);
+      if (newTitle === null) return;
+      const newCaption = prompt('Новое описание:', activeCard.caption);
+      if (newCaption === null) return;
 
-      const putRes = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Master-Key": JSONBIN_MASTER_KEY
-        },
-        body: JSON.stringify({ queue: currentItems })
+      const ok = await sendToCloudBuffer({
+        type: 'edit',
+        filename: activeCard.filename,
+        title: newTitle,
+        caption: newCaption,
+        current_crop_x: activeCard.crop_x ?? 50,
+        current_crop_y: activeCard.crop_y ?? 50
       });
 
-      if (!putRes.ok) throw new Error("Cloud write failed");
+      if (ok) alert('Заявка на правку отправлена модераторам!');
+      closeModal();
     }
 
-    function openIdeaModal() { document.getElementById("ideaModal").style.display = "flex"; }
-    function closeIdeaModal() { document.getElementById("ideaModal").style.display = "none"; }
+    async function requestDelete() {
+      if (!activeCard) return;
+      if (!confirm('Отправить запрос на удаление этой карточки?')) return;
 
-    async function submitNewIdea() {
-      const author = document.getElementById("ideaAuthor").value.trim();
-      const title = document.getElementById("ideaTitle").value.trim();
-      const caption = document.getElementById("ideaCaption").value.trim();
-      const imageUrl = document.getElementById("ideaImgUrl").value.trim();
+      const ok = await sendToCloudBuffer({
+        type: 'delete',
+        filename: activeCard.filename,
+        title: activeCard.title
+      });
 
-      if (!title || !caption) {
-        alert("Заполните заголовок и описание!");
-        return;
-      }
+      if (ok) alert('Запрос на удаление отправлен!');
+      closeModal();
+    }
 
-      const ideaItem = {
-        id: "idea_" + Date.now(),
-        time: new Date().toLocaleString("ru-RU"),
-        type: "idea",
-        author: author || "Болельщик",
+    function openSuggestModal() {
+      document.getElementById('suggest-modal').style.display = 'flex';
+    }
+
+    function closeSuggestModal() {
+      document.getElementById('suggest-modal').style.display = 'none';
+    }
+
+    async function sendSuggest() {
+      const title = document.getElementById('sug-title').value.trim();
+      const text = document.getElementById('sug-text').value.trim();
+      if (!title || !text) return alert('Заполните поля');
+
+      const ok = await sendToCloudBuffer({
+        type: 'suggest',
         title: title,
-        caption: caption,
-        image_url: imageUrl || "images/placeholder.jpg",
-        tag: "Предложка"
-      };
+        caption: text
+      });
 
-      try {
-        await pushToCloudQueue(ideaItem);
-        alert("Идея успешно передана в тренерский штаб ГазМяса!");
-        document.getElementById("ideaTitle").value = "";
-        document.getElementById("ideaCaption").value = "";
-        document.getElementById("ideaImgUrl").value = "";
-        closeIdeaModal();
-      } catch (e) {
-        alert("Сбой связи с базой. Попробуйте позже.");
+      if (ok) {
+        alert('Заявка отправлена в штаб!');
+        document.getElementById('sug-title').value = '';
+        document.getElementById('sug-text').value = '';
+        closeSuggestModal();
       }
     }
 
-    function openEditModal(index) {
-      currentEditIndex = index;
-      const item = squadData[index];
-      document.getElementById("editTitle").value = item.title;
-      document.getElementById("editCaption").value = item.caption;
-      document.getElementById("editModal").style.display = "flex";
-    }
+    // --- СЛОТ SUGAR RUSH 7x7 ---
+    const ICONS = ['🍬', '🍭', '🍇', '🍉', '⭐', '🐻', '🚀'];
+    let grid = Array(49).fill('');
+    let spots = Array(49).fill(0);
+    let balance = 1000;
+    let isSpinning = false;
 
-    function closeEditModal() {
-      document.getElementById("editModal").style.display = "none";
-      currentEditIndex = -1;
-    }
+    function openSlot() { document.getElementById('slot-modal').style.display = 'flex'; initBoard(); }
+    function closeSlot() { document.getElementById('slot-modal').style.display = 'none'; }
 
-    async function submitEditRequest() {
-      if (currentEditIndex < 0) return;
-      const item = squadData[currentEditIndex];
-      const newTitle = document.getElementById("editTitle").value.trim();
-      const newCaption = document.getElementById("editCaption").value.trim();
-
-      if (!newTitle) {
-        alert("Укажите заголовок!");
-        return;
-      }
-
-      const reqItem = {
-        id: "req_" + Date.now(),
-        time: new Date().toLocaleString("ru-RU"),
-        file: item.file || item.image,
-        type: "edit",
-        current_title: item.title,
-        current_caption: item.caption,
-        new_title: newTitle,
-        new_caption: newCaption
-      };
-
-      try {
-        await pushToCloudQueue(reqItem);
-        alert("Правка отправлена в тренерский штаб!");
-        closeEditModal();
-      } catch (e) {
-        alert("Сбой связи с облаком.");
+    function initBoard() {
+      const b = document.getElementById('slot-board');
+      b.innerHTML = '';
+      for (let i = 0; i < 49; i++) {
+        grid[i] = ICONS[Math.floor(Math.random() * 6)];
+        const cell = document.createElement('div');
+        cell.className = 'slot-cell';
+        cell.id = 'cell-' + i;
+        cell.innerText = grid[i];
+        b.appendChild(cell);
       }
     }
 
-    async function requestDelete(index) {
-      const item = squadData[index];
-      if (!confirm(`Отправить заявку тренеру на исключение кадра "${item.title}"?`)) return;
-
-      const reqItem = {
-        id: "req_" + Date.now(),
-        time: new Date().toLocaleString("ru-RU"),
-        file: item.file || item.image,
-        type: "delete",
-        current_title: item.title,
-        current_caption: item.caption
-      };
-
-      try {
-        await pushToCloudQueue(reqItem);
-        alert("Заявка на исключение передана тренеру!");
-      } catch (e) {
-        alert("Сбой связи с базой.");
-      }
-    }
-
-    function escapeHtml(str) {
-      return (str || "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    }
-
-    window.addEventListener("keydown", (e) => {
-      if (e.code === "Space" && document.getElementById("casinoModal").style.display === "flex") {
-        if (!["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) {
-          e.preventDefault();
-          startSpin();
+    function renderBoard() {
+      for (let i = 0; i < 49; i++) {
+        const c = document.getElementById('cell-' + i);
+        c.innerText = grid[i];
+        const oldMult = c.querySelector('.cell-mult');
+        if (oldMult) oldMult.remove();
+        if (spots[i] > 1) {
+          const m = document.createElement('span');
+          m.className = 'cell-mult';
+          m.innerText = 'x' + spots[i];
+          c.appendChild(m);
         }
       }
-    });
+    }
 
-    initSlotGrid();
-    loadSquad();
+    async function spin() {
+      if (isSpinning || balance < 20) return;
+      isSpinning = true;
+      balance -= 20;
+      document.getElementById('slot-balance').innerText = balance;
+      document.getElementById('slot-win').innerText = 0;
+
+      for (let i = 0; i < 49; i++) grid[i] = ICONS[Math.floor(Math.random() * 6)];
+      renderBoard();
+      await processClusters();
+      isSpinning = false;
+    }
+
+    async function buyBonus() {
+      if (isSpinning || balance < 2000) return;
+      balance -= 2000;
+      document.getElementById('slot-balance').innerText = balance;
+      alert('Бонусный раунд запущен! Множители спотов зафиксированы.');
+      await spin();
+    }
+
+    function getCluster(startIndex, visited) {
+      const sym = grid[startIndex];
+      if (!sym || sym === '🚀') return [];
+      const cluster = [];
+      const queue = [startIndex];
+      visited[startIndex] = true;
+
+      while (queue.length) {
+        const idx = queue.shift();
+        cluster.push(idx);
+        const r = Math.floor(idx / 7);
+        const c = idx % 7;
+        const neighbors = [];
+        if (r > 0) neighbors.push(idx - 7);
+        if (r < 6) neighbors.push(idx + 7);
+        if (c > 0) neighbors.push(idx - 1);
+        if (c < 6) neighbors.push(idx + 1);
+
+        for (const n of neighbors) {
+          if (!visited[n] && grid[n] === sym) {
+            visited[n] = true;
+            queue.push(n);
+          }
+        }
+      }
+      return cluster;
+    }
+
+    async function processClusters() {
+      let winRound = 0;
+      let hasWin = true;
+
+      while (hasWin) {
+        hasWin = false;
+        const visited = Array(49).fill(false);
+        const toExplode = new Set();
+
+        for (let i = 0; i < 49; i++) {
+          if (!visited[i]) {
+            const cluster = getCluster(i, visited);
+            if (cluster.length >= 5) {
+              hasWin = true;
+              cluster.forEach(idx => toExplode.add(idx));
+              let multSum = 0;
+              cluster.forEach(idx => {
+                multSum += (spots[idx] > 1 ? spots[idx] : 1);
+              });
+              winRound += cluster.length * 4 * multSum;
+            }
+          }
+        }
+
+        if (hasWin) {
+          toExplode.forEach(idx => {
+            spots[idx] = spots[idx] === 0 ? 2 : Math.min(128, spots[idx] * 2);
+            grid[idx] = '';
+          });
+          renderBoard();
+          await new Promise(r => setTimeout(r, 400));
+
+          // Падение символов (Tumble)
+          for (let col = 0; col < 7; col++) {
+            let emptyRow = 6;
+            for (let row = 6; row >= 0; row--) {
+              const idx = row * 7 + col;
+              if (grid[idx] !== '') {
+                grid[emptyRow * 7 + col] = grid[idx];
+                if (emptyRow !== row) grid[idx] = '';
+                emptyRow--;
+              }
+            }
+            while (emptyRow >= 0) {
+              grid[emptyRow * 7 + col] = ICONS[Math.floor(Math.random() * 6)];
+              emptyRow--;
+            }
+          }
+          renderBoard();
+          await new Promise(r => setTimeout(r, 300));
+        }
+      }
+
+      balance += winRound;
+      document.getElementById('slot-win').innerText = winRound;
+      document.getElementById('slot-balance').innerText = balance;
+    }
+
+    loadData();
   </script>
 </body>
 </html>
