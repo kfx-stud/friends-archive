@@ -98,7 +98,6 @@
       gap: 8px;
     }
 
-    /* Статьи */
     .articles-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -144,7 +143,6 @@
       white-space: pre-wrap;
     }
 
-    /* Галерея карточек */
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -235,7 +233,6 @@
       overflow: hidden;
     }
 
-    /* Модальное окно просмотра */
     .modal-backdrop {
       display: none;
       position: fixed;
@@ -298,7 +295,6 @@
 
     .btn-action:hover { opacity: 0.9; }
 
-    /* Слот Sugar Rush */
     #slot-modal {
       display: none;
       position: fixed;
@@ -373,18 +369,15 @@
   </header>
 
   <main>
-    <!-- Вестник -->
     <div id="articles-section" style="display: none;">
       <div class="section-title">📰 Вестник Клуба</div>
       <div id="articles-list" class="articles-grid"></div>
     </div>
 
-    <!-- Галерея -->
     <div class="section-title">📸 Основной состав</div>
     <div id="gallery" class="gallery-grid"></div>
   </main>
 
-  <!-- Модальное окно просмотра карточки -->
   <div id="card-modal" class="modal-backdrop">
     <div class="modal-box">
       <div class="modal-photo-col">
@@ -409,7 +402,6 @@
     </div>
   </div>
 
-  <!-- Модальное окно предложки -->
   <div id="suggest-modal" class="modal-backdrop">
     <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 24px; width: 100%; max-width: 480px;">
       <h3 style="margin-bottom: 16px;">Предложить фото или новость</h3>
@@ -422,7 +414,6 @@
     </div>
   </div>
 
-  <!-- Слот Sugar Rush -->
   <div id="slot-modal">
     <div class="slot-container">
       <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
@@ -444,12 +435,18 @@
   </div>
 
   <script>
-    // Конфигурация буфера JSONBin
     const JSONBIN_BIN_ID = "6abbe438ffd5c4501258671d";
     const JSONBIN_ACCESS_KEY = "$2a$10$VKrFmEhyEw6K8uXv1s3ZCeXqA4M/XzI1G8Xy7M7J0J.hH7c6Tq8O.";
 
     let activeCard = null;
     let cardsData = [];
+
+    function resolveImagePath(item) {
+      if (!item) return '';
+      const raw = item.file || item.filename || '';
+      if (!raw) return '';
+      return raw.startsWith('images/') ? raw : ('images/' + raw);
+    }
 
     async function loadData() {
       try {
@@ -489,28 +486,33 @@
 
     function renderGallery(cards) {
       const container = document.getElementById('gallery');
-      container.innerHTML = cards.map(c => `
-        <div class="media-card" onclick="openModal('${c.filename}')">
-          <div class="media-thumb-box">
-            <img src="images/${c.filename}" loading="lazy" style="object-position: ${c.crop_x ?? 50}% ${c.crop_y ?? 50}%;">
-            <div class="media-badges">
-              <span class="badge-score">${c.score ?? 5}/10</span>
-              <span class="badge-tag">${c.tag ?? 'ФОТО'}</span>
+      container.innerHTML = cards.map(c => {
+        const imgPath = resolveImagePath(c);
+        const cardKey = c.id || c.file || c.filename;
+
+        return `
+          <div class="media-card" onclick="openModal('${cardKey}')">
+            <div class="media-thumb-box">
+              <img src="${imgPath}" loading="lazy" style="object-position: ${c.crop_x ?? 50}% ${c.crop_y ?? 50}%;">
+              <div class="media-badges">
+                <span class="badge-score">${c.score ?? 5}/10</span>
+                <span class="badge-tag">${c.tag ?? 'ФОТО'}</span>
+              </div>
+            </div>
+            <div class="media-info">
+              <div class="media-title">${c.title || 'Без названия'}</div>
+              <div class="media-caption">${c.caption || ''}</div>
             </div>
           </div>
-          <div class="media-info">
-            <div class="media-title">${c.title || 'Без названия'}</div>
-            <div class="media-caption">${c.caption || ''}</div>
-          </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
-    function openModal(filename) {
-      activeCard = cardsData.find(c => c.filename === filename);
+    function openModal(key) {
+      activeCard = cardsData.find(c => c.id === key || c.file === key || c.filename === key);
       if (!activeCard) return;
 
-      document.getElementById('modal-img').src = 'images/' + activeCard.filename;
+      document.getElementById('modal-img').src = resolveImagePath(activeCard);
       document.getElementById('modal-title').innerText = activeCard.title || '';
       document.getElementById('modal-caption').innerText = activeCard.caption || '';
       document.getElementById('modal-tag').innerText = activeCard.tag || 'ФОТО';
@@ -562,7 +564,7 @@
 
       const ok = await sendToCloudBuffer({
         type: 'edit',
-        filename: activeCard.filename,
+        filename: activeCard.file || activeCard.filename,
         title: newTitle,
         caption: newCaption,
         current_crop_x: activeCard.crop_x ?? 50,
@@ -579,7 +581,7 @@
 
       const ok = await sendToCloudBuffer({
         type: 'delete',
-        filename: activeCard.filename,
+        filename: activeCard.file || activeCard.filename,
         title: activeCard.title
       });
 
@@ -614,7 +616,6 @@
       }
     }
 
-    // --- СЛОТ SUGAR RUSH 7x7 ---
     const ICONS = ['🍬', '🍭', '🍇', '🍉', '⭐', '🐻', '🚀'];
     let grid = Array(49).fill('');
     let spots = Array(49).fill(0);
@@ -733,7 +734,6 @@
           renderBoard();
           await new Promise(r => setTimeout(r, 400));
 
-          // Падение символов (Tumble)
           for (let col = 0; col < 7; col++) {
             let emptyRow = 6;
             for (let row = 6; row >= 0; row--) {
