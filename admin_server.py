@@ -6,7 +6,8 @@ import time
 import threading
 from pathlib import Path
 from typing import Any, Dict, List
-from urllib.parse import urlparse
+from dotenv import load_dotenv
+from urllib.parse import urlparse, parse_qs
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import requests
 
@@ -14,40 +15,64 @@ PORT = 8080
 BASE_DIR = Path(__file__).resolve().parent
 os.chdir(BASE_DIR)
 
-DATA_FILE = BASE_DIR / "data/data.json"
-PENDING_FILE = BASE_DIR / "data/pending.json"
-REQUESTS_FILE = BASE_DIR / "data/requests.json"
+DATA_DIR = BASE_DIR / "data"
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+DATA_FILE = DATA_DIR / "data.json"
+PENDING_FILE = DATA_DIR / "pending.json"
+REQUESTS_FILE = DATA_DIR / "requests.json"
 
 PENDING_DIR = BASE_DIR / "pending"
 IMAGES_DIR = BASE_DIR / "images"
 DELETED_DIR = BASE_DIR / "deleted"
 
-JSONBIN_BIN_ID = "6abbe438ffd5d160533c11f1"
-JSONBIN_MASTER_KEY = "$2a$10$VRoPiN8zdepg2AgC69BLZudokIxDgyL3LmDVPcv5HlHKRAalpZ5Vq"
+for directory in (PENDING_DIR, IMAGES_DIR, DELETED_DIR):
+    directory.mkdir(parents=True, exist_ok=True)
+
+load_dotenv()
+
+JSONBIN_BIN_ID = os.getenv("JSONBIN_BIN_ID")
+JSONBIN_API_KEY = os.getenv("JSONBIN_API_KEY")
+
+if not JSONBIN_BIN_ID or not JSONBIN_API_KEY:
+    print("[ПРЕДУПРЕЖДЕНИЕ] JSONBIN_BIN_ID или JSONBIN_API_KEY не заданы в .env")
+
 
 def read_json_file(path: Path) -> List[Dict[str, Any]]:
     if path.exists():
         try:
             with open(path, "r", encoding="utf-8") as f:
-                content = f.read().strip()
-                return json.loads(content) if content else []
+                content = json.load(f)
+                if isinstance(content, list):
+                    return content
+                if isinstance(content, dict):
+                    return content.get("items", [])
         except Exception as e:
-            print(f"[Ошибка чтения {path.name}]: {e}")
-            return []
+            print(f"[ОШИБКА] Чтение {path.name}: {e}")
     return []
 
-def write_json_file(path: Path, data: List[Dict[str, Any]]):
+
+def write_json_file(path: Path, data: List[Dict[str, Any]]) -> None:
     temp = path.with_suffix(".tmp")
-    with open(temp, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-    temp.replace(path)
+    try:
+        with open(temp, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        temp.replace(path)
+    except Exception as e:
+        print(f"[ОШИБКА] Запись {path.name}: {e}")
+        if temp.exists():
+            temp.unlink()
+
 
 def sync_cloud_buffer():
-    if not JSONBIN_BIN_ID:
+    if not JSONBIN_BIN_ID or not JSONBIN_API_KEY:
         return
 
     url = f"https://api.jsonbin.io/v3/b/{JSONBIN_BIN_ID}"
-    headers = {"X-Master-Key": JSONBIN_MASTER_KEY}
+    headers = {
+        "X-Master-Key": JSONBIN_API_KEY,
+        "Content-Type": "application/json"
+    }
 
     while True:
         try:
@@ -55,233 +80,151 @@ def sync_cloud_buffer():
             if res.status_code == 200:
                 record = res.json().get("record", {})
                 if isinstance(record, dict):
-                    data = record.get("queue", [])
+                    cloud_data = record.get("queue", [])
                 elif isinstance(record, list):
-                    data = record
+                    cloud_data = record
                 else:
-                    data = []
+                    cloud_data = []
 
-                data = [x for x in data if not x.get("init")]
+                new_requests = [x for x in cloud_data if not x.get("init")]
 
-                if len(data) > 0:
-                    print(f"[*] Получено новых заявок из облака: {len(data)}")
-                    pending = read_json_file(PENDING_FILE)
-                    reqs = read_json_file(REQUESTS_FILE)
+                if new_requests:
+                    local_requests = read_json_file(REQUESTS_FILE)
+                    existing_ids = {r.get("id") for r in local_requests if "id" in r}
 
-                    for item in data:
-                        if item.get("type") == "idea":
-                            pending_item = {
-                                "id": str(item.get("id")),
-                                "filename": "",
-                                "image": item.get("image_url") or "images/placeholder.jpg",
-                                "file": item.get("image_url") or "images/placeholder.jpg",
-                                "title": item.get("title"),
-                                "caption": item.get("caption"),
-                                "tag": item.get("tag", "Предложка"),
-                                "score": 10,
-                                "date": time.strftime("%Y-%m-%d"),
-                                "is_user_idea": True
-                            }
-                            if not any(str(x.get("id")) == pending_item["id"] for x in pending):
-                                pending.insert(0, pending_item)
-                        else:
-                            if not any(str(x.get("id")) == str(item.get("id")) for x in reqs):
-                                reqs.insert(0, item)
+                    added_count = 0
+                    for item in new_requests:
+                        if item.get("id") not in existing_ids:
+                            local_requests.append(item)
+                            added_count += 1
 
-                    write_json_file(PENDING_FILE, pending)
-                    write_json_file(REQUESTS_FILE, reqs)
+                    if added_count > 0:
+                        write_json_file(REQUESTS_FILE, local_requests)
+                        print(f"[JSONBin] Загружено новых заявок: {added_count}")
 
-                    requests.put(url, headers={**headers, "Content-Type": "application/json"}, json={"queue": []}, timeout=10)
-                    print("[✓] Облачный буфер перенесён в data/requests.json / data/pending.json")
-        except Exception:
-            pass
+                    requests.put(url, headers=headers, json={"queue": []}, timeout=10)
+        except Exception as e:
+            print(f"[JSONBin Sync] Ошибка опроса: {e}")
 
         time.sleep(25)
 
-cloud_thread = threading.Thread(target=sync_cloud_buffer, daemon=True)
-cloud_thread.start()
 
-class AdminAPIHandler(SimpleHTTPRequestHandler):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, directory=str(BASE_DIR), **kwargs)
-
+class AdminRequestHandler(SimpleHTTPRequestHandler):
     def end_headers(self):
-        self.send_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
-        self.send_header("Pragma", "no-cache")
-        self.send_header("Expires", "0")
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.send_header("Cache-Control", "no-store, no-cache, must-revalidate")
         super().end_headers()
 
     def do_OPTIONS(self):
-        self.send_response(200, "OK")
+        self.send_response(200)
         self.end_headers()
 
-    def send_json(self, status_code: int, data: Any):
-        self.send_response(status_code)
+    def send_json(self, data: Any, status: int = 200):
+        response_bytes = json.dumps(data, ensure_ascii=False).encode("utf-8")
+        self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(response_bytes)))
         self.end_headers()
-        self.wfile.write(json.dumps(data, ensure_ascii=False).encode("utf-8"))
+        self.wfile.write(response_bytes)
 
     def do_GET(self):
         parsed = urlparse(self.path)
-        path = parsed.path.rstrip("/")
 
-        if path in ("/api/pending", "data/pending.json"):
-            items = read_json_file(PENDING_FILE)
-            for item in items:
-                fn = item.get("filename") or ""
-                img = item.get("image") or item.get("file") or ""
-                clean_name = Path(fn or img).name
+        if parsed.path == "/api/pending":
+            return self.send_json(read_json_file(PENDING_FILE))
 
-                if clean_name:
-                    item["filename"] = clean_name
-                    item["image"] = f"pending/{clean_name}"
-                    item["file"] = f"pending/{clean_name}"
-            return self.send_json(200, items)
+        if parsed.path == "/api/data":
+            return self.send_json(read_json_file(DATA_FILE))
 
-        if path in ("/api/requests", "data/requests.json"):
-            return self.send_json(200, read_json_file(REQUESTS_FILE))
-
-        if path in ("", "/", "/admin"):
-            self.path = "/admin.html"
+        if parsed.path == "/api/requests":
+            return self.send_json(read_json_file(REQUESTS_FILE))
 
         return super().do_GET()
 
     def do_POST(self):
         parsed = urlparse(self.path)
-        path = parsed.path.rstrip("/")
         content_length = int(self.headers.get("Content-Length", 0))
-        body = self.rfile.read(content_length).decode("utf-8") if content_length > 0 else "{}"
-        
+        post_data = self.rfile.read(content_length)
+
         try:
-            payload = json.loads(body)
+            body = json.loads(post_data.decode("utf-8")) if post_data else {}
         except Exception:
-            return self.send_json(400, {"error": "Невалидный JSON"})
+            body = {}
 
-        if path == "/api/moderate":
-            action = payload.get("action")
-            item_id = str(payload.get("id") or "").strip()
+        if parsed.path == "/api/approve":
+            filename = body.get("filename")
+            crop_x = body.get("crop_x", 50)
+            crop_y = body.get("crop_y", 50)
+
             pending_items = read_json_file(PENDING_FILE)
-            data_items = read_json_file(DATA_FILE)
+            item = next((x for x in pending_items if x.get("filename") == filename), None)
 
-            target_idx = -1
-            for i, x in enumerate(pending_items):
-                if str(x.get("id", "")).strip() == item_id:
-                    target_idx = i
-                    break
+            if item:
+                pending_items = [x for x in pending_items if x.get("filename") != filename]
+                write_json_file(PENDING_FILE, pending_items)
 
-            if target_idx == -1:
-                return self.send_json(200, {"status": "already_handled"})
+                src = PENDING_DIR / filename
+                dst = IMAGES_DIR / filename
+                if src.exists():
+                    shutil.move(src, dst)
 
-            target = pending_items.pop(target_idx)
-            raw_fn = target.get("filename") or target.get("image") or target.get("file") or ""
-            clean_filename = Path(raw_fn).name
-            is_idea = target.get("is_user_idea", False)
+                for key in ("title", "caption", "tag", "score"):
+                    if key in body:
+                        item[key] = body[key]
 
-            if action == "approve":
-                if not is_idea and clean_filename:
-                    src_file = PENDING_DIR / clean_filename
-                    dest_file = IMAGES_DIR / clean_filename
-                    if src_file.exists():
-                        if dest_file.exists():
-                            dest_file.unlink()
-                        shutil.move(str(src_file), str(dest_file))
-                    image_path = f"images/{clean_filename}"
-                else:
-                    image_path = target.get("image") or target.get("file")
+                item["crop_x"] = crop_x
+                item["crop_y"] = crop_y
 
-                card = {
-                    "id": target.get("id"),
-                    "file": image_path,
-                    "title": payload.get("title") or target.get("title", "ФК ГазМяс"),
-                    "caption": payload.get("caption") or target.get("caption", ""),
-                    "tag": payload.get("tag") or target.get("tag", "Основа"),
-                    "tag_class": "alt" if len(data_items) % 2 == 0 else "",
-                    "score": target.get("score", 7),
-                    "crop_x": payload.get("crop_x", target.get("crop_x", 50)),
-                    "crop_y": payload.get("crop_y", target.get("crop_y", 50)),
-                    "date": target.get("date", time.strftime("%Y-%m-%d")),
-                    "sha256": target.get("sha256", "")
-                }
-                data_items.insert(0, card)
+                data_items = read_json_file(DATA_FILE)
+                data_items.insert(0, item)
                 write_json_file(DATA_FILE, data_items)
 
-            elif action == "reject":
-                if not is_idea and clean_filename:
-                    src_file = PENDING_DIR / clean_filename
-                    dest_file = DELETED_DIR / clean_filename
-                    if src_file.exists():
-                        if dest_file.exists():
-                            dest_file.unlink()
-                        shutil.move(str(src_file), str(dest_file))
+                return self.send_json({"status": "success", "message": "Одобрено в состав"})
 
-            write_json_file(PENDING_FILE, pending_items)
-            return self.send_json(200, {"status": "ok"})
+            return self.send_json({"status": "error", "message": "Элемент не найден"}, 404)
 
-        if path == "/api/handle_request":
-            action = payload.get("action")
-            req_id = str(payload.get("id") or "").strip()
-            custom_title = payload.get("custom_title")
-            custom_caption = payload.get("custom_caption")
+        if parsed.path == "/api/reject":
+            filename = body.get("filename")
+            pending_items = read_json_file(PENDING_FILE)
+            item = next((x for x in pending_items if x.get("filename") == filename), None)
 
-            reqs = read_json_file(REQUESTS_FILE)
-            target = next((x for x in reqs if str(x.get("id", "")).strip() == req_id), None)
+            if item:
+                pending_items = [x for x in pending_items if x.get("filename") != filename]
+                write_json_file(PENDING_FILE, pending_items)
 
-            if not target:
-                return self.send_json(404, {"error": "Заявка не найдена"})
+                src = PENDING_DIR / filename
+                dst = DELETED_DIR / filename
+                if src.exists():
+                    shutil.move(src, dst)
 
-            if action == "apply":
-                db = read_json_file(DATA_FILE)
-                file_target = target.get("file")
+                return self.send_json({"status": "success", "message": "Отправлено в брак"})
 
-                if target.get("type") == "delete":
-                    db = [item for item in db if item.get("file") != file_target]
-                    write_json_file(DATA_FILE, db)
-                    if file_target:
-                        disk_path = BASE_DIR / file_target.replace("/", os.sep)
-                        if disk_path.exists():
-                            dest = DELETED_DIR / disk_path.name
-                            if dest.exists():
-                                dest.unlink()
-                            shutil.move(str(disk_path), str(dest))
+            return self.send_json({"status": "error", "message": "Элемент не найден"}, 404)
 
-                elif target.get("type") == "edit":
-                    for item in db:
-                        if item.get("file") == file_target:
-                            item["title"] = custom_title if custom_title is not None else target.get("new_title", item.get("title"))
-                            item["caption"] = custom_caption if custom_caption is not None else target.get("new_caption", item.get("caption"))
-                            break
-                    write_json_file(DATA_FILE, db)
+        if parsed.path == "/api/resolve-request":
+            req_id = body.get("id")
+            requests_items = read_json_file(REQUESTS_FILE)
+            requests_items = [x for x in requests_items if x.get("id") != req_id]
+            write_json_file(REQUESTS_FILE, requests_items)
+            return self.send_json({"status": "success"})
 
-            reqs = [x for x in reqs if str(x.get("id", "")).strip() != req_id]
-            write_json_file(REQUESTS_FILE, reqs)
-            return self.send_json(200, {"status": "ok"})
+        return self.send_json({"status": "error", "message": "Неизвестный эндпоинт"}, 404)
 
-        return self.send_json(404, {"error": "Неизвестный роут"})
 
 def run_server():
-    for folder in (PENDING_DIR, IMAGES_DIR, DELETED_DIR):
-        folder.mkdir(parents=True, exist_ok=True)
+    sync_thread = threading.Thread(target=sync_cloud_buffer, daemon=True)
+    sync_thread.start()
 
-    ThreadingHTTPServer.allow_reuse_address = True
-    server_address = ("", PORT)
-
+    server = ThreadingHTTPServer(("", PORT), AdminRequestHandler)
+    print(f"[ШТАБ МОДЕРАЦИИ] Сервер запущен на http://localhost:{PORT}/admin.html")
     try:
-        httpd = ThreadingHTTPServer(server_address, AdminAPIHandler)
-    except OSError as e:
-        if "10048" in str(e) or "Address already in use" in str(e):
-            print(f"[Ошибка] Порт {PORT} занят. Выполните: taskkill /F /IM python.exe")
-            sys.exit(1)
-        raise e
-
-    print(f"Админка доступна: http://localhost:{PORT}/admin.html")
-    try:
-        httpd.serve_forever()
+        server.serve_forever()
     except KeyboardInterrupt:
-        print("\nОстановка сервера...")
-        httpd.server_close()
+        print("\n[ОСТАНОВКА] Сервер выключен.")
+        server.server_close()
+
 
 if __name__ == "__main__":
     run_server()
