@@ -152,12 +152,12 @@ GEMINI_API_KEYS=AIzaSyA...,AIzaSyB...
 GEMINI_MODEL=gemini-2.5-flash
 
 # Приватный Master-Key JSONBin для админки (полный доступ: чтение и очистка очереди)
-JSONBIN_BIN_ID=6abbe438ffd5d160533c11f1
-JSONBIN_API_KEY=$2a$10$H9St1yD1Zyt0Km88YV9We.RR90DpES1voBLWoHZr9ZKrWE5H3OzyO
+JSONBIN_BIN_ID=6abbe438ffd5...
+JSONBIN_API_KEY=$2a$10$your_private_master_key_here...
 ```
 
 > [!TIP]
-> Для отправки пользовательских заявок («В предложку») на публичном сайте GitHub Pages используется отдельный ограниченный **Access Key** (`$2a$10$O1huo...`), зашитый в `index.html` и не дающий прав на чтение приватных данных или управление аккаунтом.
+> Для отправки пользовательских заявок («В предложку») на публичном сайте GitHub Pages используется отдельный ограниченный **Access Key** (только чтение/запись буфера предложки), зашитый в `index.html` и не дающий прав на чтение чужих данных или управление аккаунтом.
 
 ### 4. Рабочий процесс
 
