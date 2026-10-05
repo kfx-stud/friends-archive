@@ -150,6 +150,20 @@ def background_sync_worker():
             print(f"[ОБЛАКО] Ошибка потока синхронизации: {e}")
         time.sleep(25)
 
+def get_clean_pending():
+    pending = read_json_file(PENDING_FILE, [])
+    valid_pending = []
+    dirty = False
+    for item in pending:
+        fn = os.path.basename(item.get("filename", "") or item.get("file", ""))
+        if fn and os.path.exists(os.path.join(PENDING_DIR, fn)):
+            valid_pending.append(item)
+        else:
+            dirty = True
+    if dirty:
+        write_json_file(PENDING_FILE, valid_pending)
+    return valid_pending
+
 class AdminHandler(SimpleHTTPRequestHandler):
     def send_json(self, payload, status=200):
         body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
@@ -184,7 +198,7 @@ class AdminHandler(SimpleHTTPRequestHandler):
             return self.send_json({"status": "success", "added": added, "requests": reqs})
 
         if parsed.path == "/api/pending":
-            return self.send_json(read_json_file(PENDING_FILE, []))
+            return self.send_json(get_clean_pending())
 
         if parsed.path == "/api/requests":
             return self.send_json(read_json_file(REQUESTS_FILE, []))
@@ -221,9 +235,11 @@ class AdminHandler(SimpleHTTPRequestHandler):
             pending = read_json_file(PENDING_FILE, [])
             item = next((x for x in pending if x.get("filename") == filename or os.path.basename(x.get("file", "")) == filename), None)
             pending = [x for x in pending if x.get("filename") != filename and os.path.basename(x.get("file", "")) != filename]
+            pending = [x for x in pending if os.path.exists(os.path.join(PENDING_DIR, os.path.basename(x.get("filename", "") or x.get("file", ""))))]
             write_json_file(PENDING_FILE, pending)
 
             data = read_json_file(DATA_FILE, [])
+            data = [c for c in data if os.path.basename(c.get("file", "") or c.get("filename", "")) != filename]
             card = {
                 "id": (item.get("id") if item else None) or filename.split("@")[0].replace("photo_", ""),
                 "file": f"images/{filename}",
@@ -236,6 +252,8 @@ class AdminHandler(SimpleHTTPRequestHandler):
                 "crop_x": body.get("crop_x", 50),
                 "crop_y": body.get("crop_y", 50)
             }
+            if item and item.get("sha256"):
+                card["sha256"] = item["sha256"]
             data.insert(0, card)
             write_json_file(DATA_FILE, data)
             return self.send_json({"status": "success", "card": card})
@@ -252,6 +270,7 @@ class AdminHandler(SimpleHTTPRequestHandler):
                 shutil.move(src, dst)
 
             pending = [x for x in read_json_file(PENDING_FILE, []) if x.get("filename") != filename and os.path.basename(x.get("file", "")) != filename]
+            pending = [x for x in pending if os.path.exists(os.path.join(PENDING_DIR, os.path.basename(x.get("filename", "") or x.get("file", ""))))]
             write_json_file(PENDING_FILE, pending)
             return self.send_json({"status": "success"})
 

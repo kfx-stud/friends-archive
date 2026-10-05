@@ -327,8 +327,14 @@ def main():
     data_items = load_json(DATA_FILE)
     pending_items = load_json(PENDING_FILE)
 
-    known_hashes = {item.get("sha256") for item in data_items if "sha256" in item}
-    known_hashes.update({item.get("sha256") for item in pending_items if "sha256" in item})
+    known_hashes = {item.get("sha256") for item in data_items if item.get("sha256")}
+    known_hashes.update({item.get("sha256") for item in pending_items if item.get("sha256")})
+
+    known_filenames = {os.path.basename(item.get("file", "") or item.get("filename", "")) for item in data_items}
+    known_filenames.update({item.get("filename") for item in pending_items if item.get("filename")})
+    known_filenames.update({f.name for f in IMAGES_DIR.iterdir() if f.is_file()})
+    known_filenames.update({f.name for f in DELETED_DIR.iterdir() if f.is_file()})
+    known_filenames.update({f.name for f in PENDING_DIR.iterdir() if f.is_file()})
 
     all_incoming = sorted(
         [f for f in INCOMING_DIR.iterdir() if f.is_file() and f.suffix.lower() in (".jpg", ".jpeg", ".png", ".webp")],
@@ -347,6 +353,11 @@ def main():
             filepath.unlink(missing_ok=True)
             continue
 
+        if filename in known_filenames or (IMAGES_DIR / filename).exists() or (DELETED_DIR / filename).exists() or (PENDING_DIR / filename).exists():
+            print("-> Файл уже обработан ранее (найден в images/, deleted/ или pending/). Удаление из incoming...")
+            filepath.unlink(missing_ok=True)
+            continue
+
         file_hash = calculate_sha256(filepath)
         if file_hash in known_hashes:
             print("-> Дубликат (уже есть в базе/очереди). Удаление из incoming...")
@@ -358,6 +369,7 @@ def main():
         except Exception as e:
             print(f"-> Ошибка чтения фото: {e}. Перенос в deleted...")
             filepath.rename(DELETED_DIR / filename)
+            known_filenames.add(filename)
             continue
 
         ai_result = query_gemini(image_b64, key_manager)
@@ -377,6 +389,8 @@ def main():
             if dest_del.exists():
                 dest_del.unlink()
             filepath.rename(dest_del)
+            known_filenames.add(filename)
+            known_hashes.add(file_hash)
         else:
             print(f"✓ Одобрено AI (Score: {score}/{10}): «{title}» [{tag}] -> отправка в pending/")
             
@@ -393,16 +407,22 @@ def main():
                 "title": title,
                 "caption": caption,
                 "tag": tag,
-                "tag_class": "alt" if len(pending_items) % 2 == 0 else "",
+                "tag_class": "alt" if (len(known_hashes) % 2 == 0) else "",
                 "score": score,
                 "date": parse_date_from_filename(filename),
                 "sha256": file_hash,
                 "timestamp": int(time.time())
             }
 
-            pending_items.append(card)
-            save_json(PENDING_FILE, pending_items)
+            # ВАЖНО: всегда читаем актуальный PENDING_FILE с диска,
+            # чтобы не затереть действия модератора (одобрения и отказы в admin.html)!
+            current_pending = load_json(PENDING_FILE)
+            current_pending = [x for x in current_pending if (PENDING_DIR / os.path.basename(x.get("filename", "") or x.get("file", ""))).exists()]
+            if not any(x.get("filename") == filename or x.get("sha256") == file_hash for x in current_pending):
+                current_pending.append(card)
+            save_json(PENDING_FILE, current_pending)
             known_hashes.add(file_hash)
+            known_filenames.add(filename)
 
         delay = key_manager.get_pace_delay()
         time.sleep(delay)

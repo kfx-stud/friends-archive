@@ -6,6 +6,7 @@ data/config.json
 # Временная папка с исходниками фото и архивы
 deleted/
 incoming/
+pending/
 *.7z
 *.zip
 *.tar.gz

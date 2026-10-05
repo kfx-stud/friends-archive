@@ -782,7 +782,7 @@
     function extractFilename(item) {
       if (!item) return '';
       const raw = item.filename || item.file || '';
-      return raw.split('/').pop();
+      return raw.replace(/\\/g, '/').split('/').pop();
     }
 
     async function init() {
@@ -869,15 +869,26 @@
     }
 
     async function rejectPending(filename) {
-      const res = await fetch('/api/reject', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ filename })
-      });
-      if (res.ok) {
-        showToast(`Кадр ${filename} отправлен в брак`);
-        await loadPending();
+      // Мгновенно скрываем карточку и обновляем бейдж для отзывчивости интерфейса
+      pendingList = pendingList.filter(x => extractFilename(x) !== filename);
+      document.getElementById('badge-pending').innerText = pendingList.length;
+      renderPending();
+
+      try {
+        const res = await fetch('/api/reject', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename })
+        });
+        if (res.ok) {
+          showToast(`Кадр ${filename} отправлен в брак`);
+        } else {
+          showToast(`Ошибка отклонения ${filename}`);
+        }
+      } catch (e) {
+        showToast('Сбой соединения с сервером');
       }
+      await loadPending();
     }
     async function manualSyncCloud() {
       try {
@@ -904,16 +915,27 @@
         crop_y: item.crop_y ?? 50
       };
 
-      const res = await fetch('/api/approve', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+      // Мгновенно убираем из очереди и обновляем счетчик
+      pendingList = pendingList.filter(x => extractFilename(x) !== filename);
+      document.getElementById('badge-pending').innerText = pendingList.length;
+      renderPending();
 
-      if (res.ok) {
-        showToast('Карточка одобрена и отправлена на сайт!');
-        await Promise.all([loadPending(), loadPublished()]);
+      try {
+        const res = await fetch('/api/approve', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          showToast('Карточка одобрена и отправлена на сайт!');
+        } else {
+          showToast('Ошибка одобрения карточки');
+        }
+      } catch (e) {
+        showToast('Сбой соединения с сервером');
       }
+      await Promise.all([loadPending(), loadPublished()]);
     }
 
     async function loadRequests() {
@@ -1264,6 +1286,11 @@
 
       if (photoModalMode === 'pending') {
         const fn = extractFilename(currentPhotoTarget);
+        pendingList = pendingList.filter(x => extractFilename(x) !== fn);
+        document.getElementById('badge-pending').innerText = pendingList.length;
+        renderPending();
+        closeModal('photo-modal');
+
         const res = await fetch('/api/approve', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -1275,9 +1302,10 @@
         });
         if (res.ok) {
           showToast('Карточка успешно одобрена и добавлена на сайт!');
-          closeModal('photo-modal');
-          await Promise.all([loadPending(), loadPublished()]);
+        } else {
+          showToast('Ошибка одобрения карточки');
         }
+        await Promise.all([loadPending(), loadPublished()]);
       } else if (photoModalMode === 'request') {
         const fn = extractFilename(currentPhotoTarget);
         const res = await fetch('/api/update-card', {
