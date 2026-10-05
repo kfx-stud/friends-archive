@@ -46,22 +46,26 @@ JSONBIN_API_KEY = os.environ.get("JSONBIN_API_KEY", "")
 if not JSONBIN_BIN_ID or not JSONBIN_API_KEY:
     print("[ПРЕДУПРЕЖДЕНИЕ] Переменные JSONBIN_BIN_ID или JSONBIN_API_KEY не найдены в .env!")
 
+JSON_LOCK = threading.Lock()
+
 def read_json_file(path, default=None):
     if default is None:
         default = []
-    if not os.path.exists(path):
-        return default
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return default
+    with JSON_LOCK:
+        if not os.path.exists(path):
+            return default
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            return default
 
 def write_json_file(path, data):
     temp_path = path + ".tmp"
-    with open(temp_path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-    os.replace(temp_path, path)
+    with JSON_LOCK:
+        with open(temp_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        os.replace(temp_path, path)
 
 def sync_with_jsonbin():
     bin_id = os.environ.get("JSONBIN_BIN_ID", "")
@@ -73,6 +77,7 @@ def sync_with_jsonbin():
     url_latest = f"https://api.jsonbin.io/v3/b/{bin_id}/latest"
     headers = {
         "X-Master-Key": api_key,
+        "X-Access-Key": api_key,
         "User-Agent": USER_AGENT,
         "Accept": "application/json"
     }
@@ -121,6 +126,7 @@ def sync_with_jsonbin():
             headers={
                 "Content-Type": "application/json",
                 "X-Master-Key": api_key,
+                "X-Access-Key": api_key,
                 "User-Agent": USER_AGENT,
                 "Accept": "application/json"
             },
@@ -368,9 +374,9 @@ if __name__ == "__main__":
     port = 8080
     threading.Thread(target=background_sync_worker, daemon=True).start()
     
-    server = HTTPServer(("0.0.0.0", port), AdminHandler)
+    server = HTTPServer(("127.0.0.1", port), AdminHandler)
     print("=" * 56)
-    print(f"[ШТАБ МОДЕРАЦИИ] Сервер запущен на http://localhost:{port}/admin.html")
+    print(f"[ШТАБ МОДЕРАЦИИ] Сервер запущен на http://127.0.0.1:{port}/admin.html")
     print("=" * 56)
     try:
         server.serve_forever()

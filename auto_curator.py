@@ -27,8 +27,9 @@ ENV_FILE = BASE_DIR / ".env"
 # Порог вайба для попадания в очередь (1-10)
 SCORE_THRESHOLD = 5
 
-# Задержка под лимит 5 RPM (1 запрос в 12 секунд)
-REQUEST_PACE_DELAY = 12.0
+# Базовая задержка под лимит 5 RPM для 1 ключа (1 запрос в 12 секунд)
+BASE_REQUEST_PACE_DELAY = 12.0
+REQUEST_PACE_DELAY = BASE_REQUEST_PACE_DELAY
 
 # ==========================================
 # 2. ПЕРЕМЕННЫЕ ОКРУЖЕНИЯ И ПРОКСИ
@@ -68,6 +69,17 @@ class GeminiKeyManager:
     @property
     def total_count(self) -> int:
         return len(self.keys)
+
+    @property
+    def active_count(self) -> int:
+        return len([k for k in self.keys if k not in self.dead_keys])
+
+    def get_pace_delay(self, base_delay: float = BASE_REQUEST_PACE_DELAY) -> float:
+        """Динамический расчет задержки: base_delay / N активных ключей (например, 12 / N).
+        При N ключах каждый ключ делает не более 5 RPM (60 / 12 = 5 RPM),
+        а суммарный темп обработки архива ускоряется пропорционально числу ключей."""
+        n = max(1, self.active_count)
+        return max(0.5, round(base_delay / n, 2))
 
     def print_status(self):
         now = time.time()
@@ -303,8 +315,10 @@ def main():
         sys.exit(1)
 
     key_manager = GeminiKeyManager(raw_keys)
+    current_delay = key_manager.get_pace_delay()
     print(f"Используемая модель: {GEMINI_MODEL}")
     print(f"Загружено ключей: {key_manager.total_count}")
+    print(f"Динамический темп: {current_delay:.2f} сек/запрос (12 / {key_manager.total_count} ключей, ускорение {round(BASE_REQUEST_PACE_DELAY / current_delay, 1)}x)")
     key_manager.print_status()
 
     for d in (INCOMING_DIR, PENDING_DIR, IMAGES_DIR, DELETED_DIR):
@@ -390,7 +404,8 @@ def main():
             save_json(PENDING_FILE, pending_items)
             known_hashes.add(file_hash)
 
-        time.sleep(REQUEST_PACE_DELAY)
+        delay = key_manager.get_pace_delay()
+        time.sleep(delay)
 
     print("\nОбработка входящих файлов завершена.")
 

@@ -569,6 +569,65 @@
       padding: 1px 4px;
       border-radius: 3px;
     }
+
+    /* Стили пагинации галереи */
+    .gallery-pagination-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 36px auto 60px;
+      text-align: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .gallery-count-info {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-gallery-load-more {
+      background: linear-gradient(135deg, var(--accent-gold) 0%, #eab308 100%);
+      color: #000;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 34px;
+      font-size: 14.5px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 18px rgba(250, 204, 21, 0.25);
+    }
+
+    .btn-gallery-load-more:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(250, 204, 21, 0.4);
+      filter: brightness(1.08);
+    }
+
+    .btn-gallery-load-more:active {
+      transform: translateY(0);
+    }
+
+    .load-more-counter {
+      background: rgba(0, 0, 0, 0.16);
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+    }
+
+    .gallery-sentinel {
+      width: 100%;
+      height: 24px;
+      pointer-events: none;
+      visibility: hidden;
+    }
   </style>
 </head>
 <body>
@@ -591,6 +650,15 @@
 
     <div class="section-title">📸 Основной состав</div>
     <div id="gallery" class="gallery-grid"></div>
+
+    <div id="gallery-pagination-wrapper" class="gallery-pagination-container">
+      <div id="gallery-count-info" class="gallery-count-info"></div>
+      <button id="btn-gallery-load-more" class="btn-gallery-load-more" onclick="loadMoreCards()">
+        <span>Показать еще</span>
+        <span id="load-more-counter" class="load-more-counter"></span>
+      </button>
+      <div id="gallery-sentinel" class="gallery-sentinel"></div>
+    </div>
   </main>
 
   <div id="card-modal" class="modal-backdrop">
@@ -793,15 +861,40 @@
 
   <script>
     const DEFAULT_BIN_ID = "6abbe438ffd5d160533c11f1";
+    const DEFAULT_ACCESS_KEY = "$2a$10$O1huoOnWr514Q11f8aMZjOJULgE9ejfgdMdlH9zJdMoXP0VzMTFTa";
 
     let activeCard = null;
     let cardsData = [];
     let loadedArticles = [];
     let currentSuggestType = 'article';
 
+    const GALLERY_PAGE_SIZE = 12;
+    let visibleCardsCount = GALLERY_PAGE_SIZE;
+    let galleryScrollObserver = null;
+
     let isInlineEditingPhoto = false;
     let currentCrop = { x: 50, y: 50 };
     let envConfigCache = null;
+
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function escapeAttr(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
 
     function showToast(text) {
       const t = document.getElementById('toast');
@@ -813,40 +906,29 @@
     async function getEnvConfig() {
       if (envConfigCache) return envConfigCache;
 
-      try {
-        const res = await fetch('data/config.json');
-        if (res.ok) {
-          envConfigCache = await res.json();
-          return envConfigCache;
-        }
-      } catch (e) {}
+      const isLocal = ['localhost', '127.0.0.1', ''].includes(window.location.hostname);
+      if (isLocal) {
+        try {
+          const res = await fetch('data/config.json');
+          if (res.ok) {
+            envConfigCache = await res.json();
+            return envConfigCache;
+          }
+        } catch (e) {}
 
-      try {
-        const res = await fetch('/api/config');
-        if (res.ok) {
-          envConfigCache = await res.json();
-          return envConfigCache;
-        }
-      } catch (e) {}
+        try {
+          const res = await fetch('/api/config');
+          if (res.ok) {
+            envConfigCache = await res.json();
+            return envConfigCache;
+          }
+        } catch (e) {}
+      }
 
-      try {
-        const res = await fetch('.env');
-        if (res.ok) {
-          const text = await res.text();
-          const cfg = {};
-          text.split('\n').forEach(line => {
-            line = line.trim();
-            if (line && !line.startsWith('#') && line.includes('=')) {
-              const [k, ...v] = line.split('=');
-              cfg[k.trim()] = v.join('=').trim().replace(/^["']|["']$/g, '');
-            }
-          });
-          envConfigCache = cfg;
-          return envConfigCache;
-        }
-      } catch (e) {}
-
-      envConfigCache = { JSONBIN_BIN_ID: DEFAULT_BIN_ID };
+      envConfigCache = { 
+        JSONBIN_BIN_ID: DEFAULT_BIN_ID,
+        JSONBIN_API_KEY: DEFAULT_ACCESS_KEY
+      };
       return envConfigCache;
     }
 
@@ -862,6 +944,7 @@
         const res = await fetch('data/data.json');
         cardsData = await res.json();
         renderGallery(cardsData);
+        setupGalleryScrollObserver();
       } catch (e) {
         console.error("Ошибка загрузки data.json", e);
       }
@@ -879,26 +962,102 @@
 
     function renderGallery(cards) {
       const container = document.getElementById('gallery');
-      container.innerHTML = cards.map(c => {
+      const paginationWrapper = document.getElementById('gallery-pagination-wrapper');
+      const countInfo = document.getElementById('gallery-count-info');
+      const btnMore = document.getElementById('btn-gallery-load-more');
+      const counterSpan = document.getElementById('load-more-counter');
+
+      if (!cards || cards.length === 0) {
+        container.innerHTML = '<div style="color: var(--text-muted); grid-column: 1 / -1; text-align: center; padding: 40px;">Кадров пока нет</div>';
+        if (paginationWrapper) paginationWrapper.style.display = 'none';
+        return;
+      }
+
+      const total = cards.length;
+      const visibleCount = Math.min(visibleCardsCount, total);
+      const visibleCards = cards.slice(0, visibleCount);
+
+      container.innerHTML = visibleCards.map(c => {
         const imgPath = resolveImagePath(c);
-        const cardKey = c.id || c.file || c.filename;
+        const cardKey = c.id || c.file || c.filename || '';
+        const safeKey = escapeAttr(cardKey);
+        const safeImg = escapeAttr(imgPath);
+        const safeTitle = escapeHtml(c.title || 'Без названия');
+        const safeCaption = escapeHtml(c.caption || '');
+        const safeTag = escapeHtml(c.tag ?? 'ФОТО');
+        const safeScore = escapeHtml(c.score ?? 5);
+        const cropX = Number(c.crop_x ?? 50);
+        const cropY = Number(c.crop_y ?? 50);
 
         return `
-          <div class="media-card" id="card-el-${cardKey}" data-card-key="${cardKey}" onclick="openModal('${cardKey}')">
+          <div class="media-card" id="card-el-${safeKey}" data-card-key="${safeKey}" onclick="openModal(this.dataset.cardKey)">
             <div class="media-thumb-box">
-              <img src="${imgPath}" loading="lazy" style="object-position: ${c.crop_x ?? 50}% ${c.crop_y ?? 50}%;">
+              <img src="${safeImg}" loading="lazy" style="object-position: ${cropX}% ${cropY}%;">
               <div class="media-badges">
-                <span class="badge-score">${c.score ?? 5}/10</span>
-                <span class="badge-tag">${c.tag ?? 'ФОТО'}</span>
+                <span class="badge-score">${safeScore}/10</span>
+                <span class="badge-tag">${safeTag}</span>
               </div>
             </div>
             <div class="media-info">
-              <div class="media-title">${c.title || 'Без названия'}</div>
-              <div class="media-caption">${c.caption || ''}</div>
+              <div class="media-title">${safeTitle}</div>
+              <div class="media-caption">${safeCaption}</div>
             </div>
           </div>
         `;
       }).join('');
+
+      if (paginationWrapper) {
+        if (total > GALLERY_PAGE_SIZE) {
+          paginationWrapper.style.display = 'flex';
+          const remaining = total - visibleCount;
+
+          if (countInfo) {
+            countInfo.innerText = `Показано ${visibleCount} из ${total} кадров`;
+          }
+
+          if (btnMore) {
+            if (remaining > 0) {
+              btnMore.style.display = 'inline-flex';
+              if (counterSpan) {
+                const nextChunk = Math.min(remaining, GALLERY_PAGE_SIZE);
+                counterSpan.innerText = `+${nextChunk}`;
+              }
+            } else {
+              btnMore.style.display = 'none';
+            }
+          }
+        } else {
+          paginationWrapper.style.display = 'none';
+        }
+      }
+    }
+
+    function loadMoreCards() {
+      if (!cardsData || visibleCardsCount >= cardsData.length) return;
+      visibleCardsCount = Math.min(visibleCardsCount + GALLERY_PAGE_SIZE, cardsData.length);
+      renderGallery(cardsData);
+    }
+
+    function setupGalleryScrollObserver() {
+      if (galleryScrollObserver) {
+        galleryScrollObserver.disconnect();
+      }
+      const sentinel = document.getElementById('gallery-sentinel');
+      if (!sentinel || !window.IntersectionObserver) return;
+
+      galleryScrollObserver = new IntersectionObserver((entries) => {
+        const entry = entries[0];
+        if (entry && entry.isIntersecting) {
+          if (cardsData && visibleCardsCount < cardsData.length) {
+            loadMoreCards();
+          }
+        }
+      }, {
+        rootMargin: '250px',
+        threshold: 0.1
+      });
+
+      galleryScrollObserver.observe(sentinel);
     }
 
     function renderArticles(articles) {
@@ -907,10 +1066,17 @@
 
       container.innerHTML = articles.map((a, index) => {
         const col = a.color || a.highlight_color || (a.featured ? '#facc15' : 'var(--accent-gold)');
+        const safeCol = escapeAttr(col);
         const isFirst = (index === 0);
+        const safeId = escapeAttr(a.id || ('art_' + index));
+        const safeTag = escapeHtml(a.tag || '');
+        const safeDate = escapeHtml(a.date || '');
+        const safeAuthor = escapeHtml(a.author || 'Редакция');
+        const safeTitle = escapeHtml(a.title || '');
+        const safeContent = escapeHtml(a.content || '').replace(/\n/g, '<br>');
 
         return `
-          <div class="article-box ${a.featured ? 'featured' : ''}" style="--highlight-color: ${col};">
+          <div class="article-box ${a.featured ? 'featured' : ''}" style="--highlight-color: ${safeCol};">
             <div>
               ${isFirst ? `
                 <div class="vestnik-lead-header">
@@ -919,14 +1085,14 @@
                 </div>
               ` : ''}
               <div class="art-top">
-                <span class="art-badge">${a.featured ? '★ ' : ''}${a.tag}</span>
-                <span style="font-size: 11px; color: var(--text-muted);">${a.date || ''} | ${a.author || 'Редакция'}</span>
+                <span class="art-badge">${a.featured ? '★ ' : ''}${safeTag}</span>
+                <span style="font-size: 11px; color: var(--text-muted);">${safeDate} | ${safeAuthor}</span>
               </div>
-              <div class="art-heading" style="color: ${a.featured ? col : '#fff'};">${a.title}</div>
-              <div class="art-body">${a.content}</div>
+              <div class="art-heading" style="color: ${a.featured ? safeCol : '#fff'};">${safeTitle}</div>
+              <div class="art-body">${safeContent}</div>
             </div>
             <div style="margin-top: 14px; display: flex; justify-content: flex-end; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px;">
-              <button class="nav-btn" style="padding: 3px 10px; font-size: 11px;" onclick="openArticleEditModal('${a.id}')">✏️ Править</button>
+              <button class="nav-btn" style="padding: 3px 10px; font-size: 11px;" data-art-id="${safeId}" onclick="openArticleEditModal(this.dataset.artId)">✏️ Править</button>
             </div>
           </div>
         `;
@@ -934,7 +1100,7 @@
     }
 
     function openModal(key) {
-      activeCard = cardsData.find(c => c.id === key || c.file === key || c.filename === key);
+      activeCard = cardsData.find(c => String(c.id) === String(key) || String(c.file) === String(key) || String(c.filename) === String(key));
       if (!activeCard) return;
 
       const fullSrc = resolveImagePath(activeCard);
@@ -1133,7 +1299,7 @@
     }
 
     function openArticleEditModal(id) {
-      const art = loadedArticles.find(a => a.id === id);
+      const art = loadedArticles.find(a => String(a.id) === String(id));
       if (!art) return;
 
       document.getElementById('edit-art-id').value = art.id;
@@ -1260,7 +1426,7 @@
     async function sendToCloudBuffer(payload) {
       const cfg = await getEnvConfig();
       const binId = cfg.JSONBIN_BIN_ID || DEFAULT_BIN_ID;
-      const apiKey = cfg.JSONBIN_API_KEY || cfg.JSONBIN_ACCESS_KEY || '';
+      const apiKey = cfg.JSONBIN_API_KEY || cfg.JSONBIN_ACCESS_KEY || DEFAULT_ACCESS_KEY;
 
       if (!binId || !apiKey) {
         showToast('Ключи JSONBin не найдены в конфигурации');
@@ -1270,7 +1436,6 @@
       try {
         const getRes = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
           headers: { 
-            'X-Master-Key': apiKey,
             'X-Access-Key': apiKey 
           }
         });
@@ -1293,7 +1458,6 @@
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            'X-Master-Key': apiKey,
             'X-Access-Key': apiKey
           },
           body: JSON.stringify({ queue })

@@ -744,6 +744,26 @@
     let currentCrop = { x: 50, y: 50 };
     let selectedArticleColor = '#facc15';
 
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function escapeAttr(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
     function showToast(text) {
       const t = document.getElementById('toast');
       t.innerText = text;
@@ -817,24 +837,30 @@
         const imgPath = resolveImagePath(item, 'pending/');
         const cx = item.crop_x ?? 50;
         const cy = item.crop_y ?? 50;
+        const safeFn = escapeAttr(fn);
+        const safeImg = escapeAttr(imgPath);
+        const safeTitle = escapeHtml(item.title || 'Без названия');
+        const safeCaption = escapeHtml(item.caption || '');
+        const safeTag = escapeHtml(item.tag ?? 'КАДР');
+        const safeScore = escapeHtml(item.score ?? 5);
 
         return `
-          <div class="photo-card" onclick="openPhotoModal('${fn}', 'pending')">
+          <div class="photo-card" data-fn="${safeFn}" onclick="openPhotoModal(this.dataset.fn, 'pending')">
             <div class="card-photo-box">
-              <img src="${imgPath}" style="object-position: ${cx}% ${cy}%;">
+              <img src="${safeImg}" style="object-position: ${cx}% ${cy}%;">
               <div class="card-badges-top">
-                <span class="score-badge">${item.score ?? 5}/10</span>
-                <span class="tag-badge">${item.tag ?? 'КАДР'}</span>
+                <span class="score-badge">${safeScore}/10</span>
+                <span class="tag-badge">${safeTag}</span>
               </div>
             </div>
             <div class="card-info">
               <div>
-                <div class="card-title">${item.title || 'Без названия'}</div>
-                <div class="card-caption">${item.caption || ''}</div>
+                <div class="card-title">${safeTitle}</div>
+                <div class="card-caption">${safeCaption}</div>
               </div>
               <div class="card-actions" onclick="event.stopPropagation()">
-                <button class="btn btn-red" onclick="rejectPending('${fn}')">✖ Отклонить [D]</button>
-                <button class="btn btn-green" onclick="approvePendingDirect('${fn}')">✔ Одобрить [A]</button>
+                <button class="btn btn-red" data-fn="${safeFn}" onclick="rejectPending(this.dataset.fn)">✖ Отклонить [D]</button>
+                <button class="btn btn-green" data-fn="${safeFn}" onclick="approvePendingDirect(this.dataset.fn)">✔ Одобрить [A]</button>
               </div>
             </div>
           </div>
@@ -923,29 +949,36 @@
         const imgPath = isSuggest && r.photo_url ? r.photo_url : resolveImagePath(r, 'images/');
         const cx = r.current_crop_x ?? 50;
         const cy = r.current_crop_y ?? 50;
+        const safeId = escapeAttr(r.id || '');
+        const safeFn = escapeAttr(fn);
+        const safeImg = escapeAttr(imgPath);
+        const safeTitle = escapeHtml(r.title || 'Без названия');
+        const safeCaption = escapeHtml(r.caption || (isDelete ? 'Запрос на удаление карточки' : ''));
+        const safeTag = escapeHtml(r.tag ?? 'ПРЕДЛОЖКА');
+        const safeUrl = r.photo_url ? escapeAttr(r.photo_url) : '';
 
         return `
-          <div class="photo-card" style="border-left: 5px solid ${isDelete ? 'var(--accent-red)' : 'var(--accent-purple)'};" onclick="openPhotoModal('${r.id}', 'request')">
+          <div class="photo-card" style="border-left: 5px solid ${isDelete ? 'var(--accent-red)' : 'var(--accent-purple)'};" data-req-id="${safeId}" onclick="openPhotoModal(this.dataset.reqId, 'request')">
             <div class="card-photo-box">
-              <img src="${imgPath}" onerror="this.src='symbol.png'" style="object-position: ${cx}% ${cy}%;">
+              <img src="${safeImg}" onerror="this.src='symbol.png'" style="object-position: ${cx}% ${cy}%;">
               <div class="card-badges-top">
                 <span class="score-badge" style="border-color:${isDelete ? 'var(--accent-red)' : 'var(--accent-purple)'}; color:#fff;">
                   ${isDelete ? 'УДАЛЕНИЕ' : (isSuggest ? 'НОВОЕ ФОТО' : 'ПРАВКА')}
                 </span>
-                <span class="tag-badge">${r.tag ?? 'ПРЕДЛОЖКА'}</span>
+                <span class="tag-badge">${safeTag}</span>
               </div>
             </div>
             <div class="card-info">
               <div>
-                <div class="card-title">${r.title || 'Без названия'}</div>
-                <div class="card-caption">${r.caption || (isDelete ? 'Запрос на удаление карточки' : '')}</div>
-                ${r.photo_url ? `<div style="margin-top:6px; font-size:12px;"><a href="${r.photo_url}" target="_blank" style="color:var(--accent-blue); text-decoration:underline;" onclick="event.stopPropagation()">Открыть оригинал ↗</a></div>` : ''}
+                <div class="card-title">${safeTitle}</div>
+                <div class="card-caption">${safeCaption}</div>
+                ${safeUrl ? `<div style="margin-top:6px; font-size:12px;"><a href="${safeUrl}" target="_blank" rel="noopener noreferrer" style="color:var(--accent-blue); text-decoration:underline;" onclick="event.stopPropagation()">Открыть оригинал ↗</a></div>` : ''}
               </div>
               <div class="card-actions" onclick="event.stopPropagation()">
-                <button class="btn btn-red" onclick="resolveRequest('${r.id}')">✖ Отклонить</button>
+                <button class="btn btn-red" data-req-id="${safeId}" onclick="resolveRequest(this.dataset.reqId)">✖ Отклонить</button>
                 ${isDelete
-                  ? `<button class="btn btn-red" onclick="executeDeleteCard('${fn}', '${r.id}')">Удалить с сайта</button>`
-                  : `<button class="btn btn-green" onclick="openPhotoModal('${r.id}', 'request')">✔ Настроить и в состав</button>`}
+                  ? `<button class="btn btn-red" data-fn="${safeFn}" data-req-id="${safeId}" onclick="executeDeleteCard(this.dataset.fn, this.dataset.reqId)">Удалить с сайта</button>`
+                  : `<button class="btn btn-green" data-req-id="${safeId}" onclick="openPhotoModal(this.dataset.reqId, 'request')">✔ Настроить и в состав</button>`}
               </div>
             </div>
           </div>
@@ -999,41 +1032,55 @@
 
       // Сначала отображаем заявки от пользователей с яркой плашкой
       if (reqs && reqs.length > 0) {
-        html += reqs.map(r => `
-          <div class="article-box" style="border: 2px dashed var(--accent-gold); background: rgba(250, 204, 21, 0.08);" onclick="openArticleModalFromRequest('${r.id}')">
+        html += reqs.map(r => {
+          const safeId = escapeAttr(r.id || '');
+          const safeTitle = escapeHtml(r.title || '');
+          const safeTag = escapeHtml(r.tag || 'ВЕСТНИК');
+          const safeContent = escapeHtml(r.content || '').replace(/\n/g, '<br>');
+          return `
+          <div class="article-box" style="border: 2px dashed var(--accent-gold); background: rgba(250, 204, 21, 0.08);" data-req-id="${safeId}" onclick="openArticleModalFromRequest(this.dataset.reqId)">
             <div>
               <div class="art-top">
                 <span class="art-badge" style="background: var(--accent-gold); color: #000;">★ ПРЕДЛОЖКА ОТ ЧИТАТЕЛЯ</span>
-                <span style="font-size: 11px; color: var(--text-muted);">${r.tag || 'ВЕСТНИК'}</span>
+                <span style="font-size: 11px; color: var(--text-muted);">${safeTag}</span>
               </div>
-              <div class="art-heading">${r.title}</div>
-              <div class="art-body">${r.content}</div>
+              <div class="art-heading">${safeTitle}</div>
+              <div class="art-body">${safeContent}</div>
             </div>
             <div style="display:flex; justify-content:space-between; margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.1);" onclick="event.stopPropagation()">
-              <button class="btn btn-red" style="padding:4px 8px; font-size:11px;" onclick="resolveRequest('${r.id}')">Отклонить</button>
-              <button class="btn btn-green" style="padding:4px 10px; font-size:11px;" onclick="openArticleModalFromRequest('${r.id}')">Проверить и опубликовать</button>
+              <button class="btn btn-red" style="padding:4px 8px; font-size:11px;" data-req-id="${safeId}" onclick="resolveRequest(this.dataset.reqId)">Отклонить</button>
+              <button class="btn btn-green" style="padding:4px 10px; font-size:11px;" data-req-id="${safeId}" onclick="openArticleModalFromRequest(this.dataset.reqId)">Проверить и опубликовать</button>
             </div>
           </div>
-        `).join('');
+        `;
+        }).join('');
       }
 
       // Далее все статьи вестника в оформлении как на сайте
       if (articlesList.length > 0) {
         html += articlesList.map(a => {
           const col = a.color || (a.featured ? '#facc15' : 'var(--accent-gold)');
+          const safeCol = escapeAttr(col);
+          const safeId = escapeAttr(a.id || '');
+          const safeTitle = escapeHtml(a.title || '');
+          const safeTag = escapeHtml(a.tag || '');
+          const safeDate = escapeHtml(a.date || '');
+          const safeAuthor = escapeHtml(a.author || 'Редакция');
+          const safeContent = escapeHtml(a.content || '').replace(/\n/g, '<br>');
+
           return `
-            <div class="article-box ${a.featured ? 'featured' : ''}" style="--highlight-color: ${col};" onclick="openArticleModal('${a.id}')">
+            <div class="article-box ${a.featured ? 'featured' : ''}" style="--highlight-color: ${safeCol};" data-art-id="${safeId}" onclick="openArticleModal(this.dataset.artId)">
               <div>
                 <div class="art-top">
-                  <span class="art-badge">${a.featured ? '★ ' : ''}${a.tag}</span>
-                  <span style="font-size: 11px; color: var(--text-muted);">${a.date || ''} | ${a.author || 'Редакция'}</span>
+                  <span class="art-badge">${a.featured ? '★ ' : ''}${safeTag}</span>
+                  <span style="font-size: 11px; color: var(--text-muted);">${safeDate} | ${safeAuthor}</span>
                 </div>
-                <div class="art-heading" style="color: ${a.featured ? col : '#fff'};">${a.title}</div>
-                <div class="art-body">${a.content}</div>
+                <div class="art-heading" style="color: ${a.featured ? safeCol : '#fff'};">${safeTitle}</div>
+                <div class="art-body">${safeContent}</div>
               </div>
               <div style="display:flex; justify-content:flex-end; gap:6px; margin-top:12px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.06);" onclick="event.stopPropagation()">
-                <button class="btn btn-gray" style="padding:3px 8px; font-size:11px;" onclick="openArticleModal('${a.id}')">✏️ Править</button>
-                <button class="btn btn-red" style="padding:3px 8px; font-size:11px;" onclick="deleteArticle('${a.id}')">🗑️</button>
+                <button class="btn btn-gray" style="padding:3px 8px; font-size:11px;" data-art-id="${safeId}" onclick="openArticleModal(this.dataset.artId)">✏️ Править</button>
+                <button class="btn btn-red" style="padding:3px 8px; font-size:11px;" data-art-id="${safeId}" onclick="deleteArticle(this.dataset.artId)">🗑️</button>
               </div>
             </div>
           `;
@@ -1068,15 +1115,22 @@
       } else {
         artContainer.innerHTML = articlesList.map(a => {
           const col = a.color || (a.featured ? '#facc15' : 'var(--accent-gold)');
+          const safeCol = escapeAttr(col);
+          const safeId = escapeAttr(a.id || '');
+          const safeTitle = escapeHtml(a.title || '');
+          const safeTag = escapeHtml(a.tag || '');
+          const safeDate = escapeHtml(a.date || '');
+          const safeContent = escapeHtml(a.content || '').replace(/\n/g, '<br>');
+
           return `
-            <div class="article-box ${a.featured ? 'featured' : ''}" style="--highlight-color: ${col};" onclick="openArticleModal('${a.id}')">
+            <div class="article-box ${a.featured ? 'featured' : ''}" style="--highlight-color: ${safeCol};" data-art-id="${safeId}" onclick="openArticleModal(this.dataset.artId)">
               <div>
                 <div class="art-top">
-                  <span class="art-badge">${a.featured ? '★ ' : ''}${a.tag}</span>
-                  <span style="font-size:11px; color:var(--text-muted);">${a.date || ''}</span>
+                  <span class="art-badge">${a.featured ? '★ ' : ''}${safeTag}</span>
+                  <span style="font-size:11px; color:var(--text-muted);">${safeDate}</span>
                 </div>
-                <div class="art-heading" style="color:${a.featured ? col : '#fff'};">${a.title}</div>
-                <div class="art-body">${a.content}</div>
+                <div class="art-heading" style="color:${a.featured ? safeCol : '#fff'};">${safeTitle}</div>
+                <div class="art-body">${safeContent}</div>
               </div>
               <div style="margin-top:10px; padding-top:6px; border-top:1px solid rgba(255,255,255,0.06); font-size:11px; color:var(--text-muted);">
                 ⚡ Кликните для мгновенного редактирования
@@ -1096,20 +1150,26 @@
           const imgPath = resolveImagePath(c, 'images/');
           const cx = c.crop_x ?? 50;
           const cy = c.crop_y ?? 50;
+          const safeFn = escapeAttr(fn);
+          const safeImg = escapeAttr(imgPath);
+          const safeTitle = escapeHtml(c.title || 'Без названия');
+          const safeCaption = escapeHtml(c.caption || '');
+          const safeTag = escapeHtml(c.tag ?? 'ОСНОВА');
+          const safeScore = escapeHtml(c.score ?? 5);
 
           return `
-            <div class="photo-card" onclick="openPhotoModal('${fn}', 'live')">
+            <div class="photo-card" data-fn="${safeFn}" onclick="openPhotoModal(this.dataset.fn, 'live')">
               <div class="card-photo-box">
-                <img src="${imgPath}" style="object-position: ${cx}% ${cy}%;">
+                <img src="${safeImg}" style="object-position: ${cx}% ${cy}%;">
                 <div class="card-badges-top">
-                  <span class="score-badge">${c.score ?? 5}/10</span>
-                  <span class="tag-badge">${c.tag ?? 'ОСНОВА'}</span>
+                  <span class="score-badge">${safeScore}/10</span>
+                  <span class="tag-badge">${safeTag}</span>
                 </div>
               </div>
               <div class="card-info">
                 <div>
-                  <div class="card-title">${c.title || 'Без названия'}</div>
-                  <div class="card-caption">${c.caption || ''}</div>
+                  <div class="card-title">${safeTitle}</div>
+                  <div class="card-caption">${safeCaption}</div>
                 </div>
                 <div style="font-size:11px; color:var(--accent-gold); margin-top:4px;">
                   ⚡ Кликните для мгновенной правки фокуса и текста
