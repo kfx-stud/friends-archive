@@ -746,6 +746,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
     }
 
     .slot-grid {
@@ -755,6 +756,7 @@
       gap: 4px;
       width: 100%;
       height: 100%;
+      overflow: hidden;
     }
 
     .slot-cell {
@@ -765,7 +767,7 @@
       justify-content: center;
       position: relative;
       user-select: none;
-      overflow: hidden;
+      overflow: visible;
       transition: transform 0.15s ease, background-color 0.25s ease;
     }
 
@@ -821,51 +823,123 @@
     .badge-x512 { background: #3b82f6; color: #fff; }
     .badge-x1024 { background: #ffd700; color: #990000; font-weight: 900; border: 1px solid #fff; }
 
-    /* SVG-символы */
-    .candy-svg-wrap {
-      width: 82%;
-      height: 82%;
+    /* Символы конфетных эмодзи */
+    .candy-emoji-wrap {
+      width: 86%;
+      height: 86%;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+      font-size: 33px;
+      line-height: 1;
+      user-select: none;
+      filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.5));
+      transition: transform 0.15s ease, opacity 0.15s ease;
       z-index: 2;
     }
 
-    .candy-svg {
-      width: 100%;
-      height: 100%;
-      filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.4));
+    @media (max-width: 480px) {
+      .candy-emoji-wrap {
+        font-size: 25px;
+      }
+    }
+
+    .scatter-wrap {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .scatter-tag {
+      position: absolute;
+      bottom: -2px;
+      font-size: 7.5px;
+      font-weight: 900;
+      background: #ff0055;
+      color: #fff;
+      padding: 1px 4px;
+      border-radius: 4px;
+      letter-spacing: 0.3px;
+      border: 1px solid #ff80ab;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .super-scatter-wrap {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      animation: goldAuraPulse 1.2s infinite alternate;
+    }
+
+    .super-scatter-tag {
+      position: absolute;
+      bottom: -2px;
+      font-size: 7.5px;
+      font-weight: 900;
+      background: #d50000;
+      color: #ffd700;
+      padding: 1px 4px;
+      border-radius: 4px;
+      letter-spacing: 0.3px;
+      border: 1px solid #ffd700;
+      box-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+    }
+
+    @keyframes goldAuraPulse {
+      0% { filter: drop-shadow(0 0 5px #ffd700); transform: scale(1); }
+      100% { filter: drop-shadow(0 0 14px #ff6d00); transform: scale(1.1); }
     }
 
     /* Анимации выигрыша и взрыва */
-    .slot-cell.cell-winning .candy-svg-wrap {
-      animation: winCandyPulse 0.4s ease infinite alternate;
-      filter: drop-shadow(0 0 8px #ffd700);
+    .slot-cell.cell-winning .candy-emoji-wrap {
+      animation: winEmojiThump 0.35s ease infinite alternate;
+      filter: drop-shadow(0 0 10px #ffd700);
     }
 
-    @keyframes winCandyPulse {
+    @keyframes winEmojiThump {
       0% { transform: scale(1); }
-      100% { transform: scale(1.18); }
+      100% { transform: scale(1.28); }
     }
 
-    .slot-cell.cell-exploding .candy-svg-wrap {
-      animation: candyExplode 0.3s forwards ease-in;
+    .slot-cell.cell-exploding .candy-emoji-wrap {
+      animation: emojiBurst 0.28s forwards ease-in;
     }
 
-    @keyframes candyExplode {
+    @keyframes emojiBurst {
       0% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.4); opacity: 0.8; filter: brightness(2); }
-      100% { transform: scale(0); opacity: 0; }
+      40% { transform: scale(1.5) rotate(15deg); opacity: 0.9; filter: brightness(2); }
+      100% { transform: scale(0) rotate(-30deg); opacity: 0; }
     }
 
-    .slot-cell.cell-falling .candy-svg-wrap {
-      animation: candyFall 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* Настоящее падение сверху с упругим желе-отскоком */
+    .slot-cell.cell-dropping .candy-emoji-wrap {
+      animation: fallFromTop 0.42s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+      animation-delay: var(--fall-delay, 0s);
     }
 
-    @keyframes candyFall {
-      0% { transform: translateY(-40px) scale(0.6); opacity: 0; }
-      100% { transform: translateY(0) scale(1); opacity: 1; }
+    @keyframes fallFromTop {
+      0% {
+        transform: translateY(-380px) scaleY(1.45) scaleX(0.7);
+        opacity: 0.15;
+      }
+      62% {
+        transform: translateY(0) scaleY(0.76) scaleX(1.26);
+        opacity: 1;
+      }
+      82% {
+        transform: translateY(-12px) scaleY(1.1) scaleX(0.92);
+      }
+      92% {
+        transform: translateY(2px) scaleY(0.97) scaleX(1.02);
+      }
+      100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
     }
 
     /* Нижняя панель управления */
@@ -2136,24 +2210,16 @@
     let guaranteedScatters = 0;
     let guaranteedSuper = false;
 
-    const REGULAR_SYMBOLS = [
-      'pink_round',
-      'orange_heart',
-      'purple_bean',
-      'green_star',
-      'red_bear',
-      'purple_bear',
-      'orange_bear'
-    ];
+    const REGULAR_SYMBOLS = ['💖', '🍭', '🍬', '⭐', '🍓', '🍇', '🐻'];
 
     const PAYTABLE_DATA = {
-      pink_round:   { name: "Розовый леденец",  m5: 1.0,  m7: 1.5,  m9: 3.0,  m12: 10.0, m15: 150.0 },
-      orange_heart: { name: "Оранжевое сердце", m5: 0.75, m7: 1.25, m9: 2.5,  m12: 7.5,  m15: 100.0 },
-      purple_bean:  { name: "Фиолетовый боб",   m5: 0.5,  m7: 1.0,  m9: 2.0,  m12: 5.0,  m15: 60.0  },
-      green_star:   { name: "Зеленая звезда",   m5: 0.4,  m7: 0.75, m9: 1.5,  m12: 3.0,  m15: 40.0  },
-      red_bear:     { name: "Красный мишка",    m5: 0.3,  m7: 0.5,  m9: 1.0,  m12: 2.0,  m15: 30.0  },
-      purple_bear:  { name: "Фиолетовый мишка", m5: 0.25, m7: 0.4,  m9: 0.8,  m12: 1.5,  m15: 25.0  },
-      orange_bear:  { name: "Оранжевый мишка",  m5: 0.2,  m7: 0.3,  m9: 0.5,  m12: 1.0,  m15: 20.0  }
+      '💖': { name: "Розовое сердце", emoji: "💖", m5: 1.5,  m7: 3.0,  m9: 8.0,  m12: 25.0, m15: 150.0, color: "#ff4081" },
+      '🍭': { name: "Леденец",         emoji: "🍭", m5: 1.0,  m7: 2.0,  m9: 5.0,  m12: 15.0, m15: 100.0, color: "#ff6d00" },
+      '🍬': { name: "Карамелька",      emoji: "🍬", m5: 0.75, m7: 1.5,  m9: 3.5,  m12: 10.0, m15: 60.0,  color: "#aa00ff" },
+      '⭐': { name: "Звезда",          emoji: "⭐", m5: 0.5,  m7: 1.0,  m9: 2.5,  m12: 6.0,  m15: 40.0,  color: "#ffd600" },
+      '🍓': { name: "Клубника",        emoji: "🍓", m5: 0.4,  m7: 0.8,  m9: 1.8,  m12: 4.0,  m15: 30.0,  color: "#ff1744" },
+      '🍇': { name: "Виноград",        emoji: "🍇", m5: 0.3,  m7: 0.6,  m9: 1.2,  m12: 3.0,  m15: 25.0,  color: "#7c4dff" },
+      '🐻': { name: "Мишка",           emoji: "🐻", m5: 0.25, m7: 0.5,  m9: 1.0,  m12: 2.0,  m15: 20.0,  color: "#ff9100" }
     };
 
     function getBaseBet() {
@@ -2261,192 +2327,47 @@
       if (btn) btn.innerText = soundEnabled ? '🔊' : '🔇';
     }
 
-    // Генерация SVG для каждого типа конфет
-    function getSymbolSvg(sym) {
-      switch (sym) {
-        case 'pink_round':
-          return `<svg viewBox="0 0 100 100" class="candy-svg">
-            <defs>
-              <radialGradient id="pr_grad" cx="35%" cy="35%" r="65%">
-                <stop offset="0%" stop-color="#ff80ab"/>
-                <stop offset="60%" stop-color="#f50057"/>
-                <stop offset="100%" stop-color="#880e4f"/>
-              </radialGradient>
-              <linearGradient id="pr_swirl" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
-                <stop offset="100%" stop-color="#ffffff" stop-opacity="0.2"/>
-              </linearGradient>
-            </defs>
-            <circle cx="50" cy="50" r="42" fill="url(#pr_grad)"/>
-            <path d="M50 15 Q68 35 50 50 Q32 65 50 85" stroke="url(#pr_swirl)" stroke-width="6.5" fill="none" stroke-linecap="round"/>
-            <path d="M15 50 Q35 32 50 50 Q65 68 85 50" stroke="url(#pr_swirl)" stroke-width="5.5" fill="none" stroke-linecap="round"/>
-            <ellipse cx="36" cy="28" rx="14" ry="7" transform="rotate(-30 36 28)" fill="#ffffff" opacity="0.65"/>
-          </svg>`;
-        case 'orange_heart':
-          return `<svg viewBox="0 0 100 100" class="candy-svg">
-            <defs>
-              <radialGradient id="oh_grad" cx="35%" cy="30%" r="70%">
-                <stop offset="0%" stop-color="#ffb74d"/>
-                <stop offset="60%" stop-color="#ff6d00"/>
-                <stop offset="100%" stop-color="#b71c1c"/>
-              </radialGradient>
-            </defs>
-            <path d="M50 86 C20 62 10 42 10 28 A19 19 0 0 1 50 25 A19 19 0 0 1 90 28 C90 42 80 62 50 86 Z" fill="url(#oh_grad)"/>
-            <path d="M22 28 C22 22 28 18 35 18 C40 18 43 20 46 24 C40 22 30 24 26 34 C24 38 22 34 22 28 Z" fill="#ffffff" opacity="0.6"/>
-          </svg>`;
-        case 'purple_bean':
-          return `<svg viewBox="0 0 100 100" class="candy-svg">
-            <defs>
-              <radialGradient id="pb_grad" cx="35%" cy="30%" r="70%">
-                <stop offset="0%" stop-color="#ea80fc"/>
-                <stop offset="60%" stop-color="#aa00ff"/>
-                <stop offset="100%" stop-color="#4a148c"/>
-              </radialGradient>
-            </defs>
-            <path d="M30 20 C55 12 85 25 85 52 C85 78 58 88 38 82 C20 76 15 55 22 38 C25 30 24 23 30 20 Z" fill="url(#pb_grad)"/>
-            <ellipse cx="40" cy="30" rx="14" ry="7" transform="rotate(-20 40 30)" fill="#ffffff" opacity="0.65"/>
-          </svg>`;
-        case 'green_star':
-          return `<svg viewBox="0 0 100 100" class="candy-svg">
-            <defs>
-              <radialGradient id="gs_grad" cx="40%" cy="35%" r="65%">
-                <stop offset="0%" stop-color="#b9f6ca"/>
-                <stop offset="50%" stop-color="#00e676"/>
-                <stop offset="100%" stop-color="#007e33"/>
-              </radialGradient>
-            </defs>
-            <path d="M50 12 L61 36 A2 2 0 0 0 63 37 L89 40 L69 58 A2 2 0 0 0 68 60 L74 86 L51 72 A2 2 0 0 0 49 72 L26 86 L32 60 A2 2 0 0 0 31 58 L11 40 L37 37 A2 2 0 0 0 39 36 Z" fill="url(#gs_grad)" stroke="#69f0ae" stroke-width="2"/>
-            <circle cx="45" cy="40" r="8" fill="#ffffff" opacity="0.5"/>
-          </svg>`;
-        case 'red_bear':
-          return `<svg viewBox="0 0 100 100" class="candy-svg">
-            <defs>
-              <radialGradient id="rb_grad" cx="35%" cy="30%" r="70%">
-                <stop offset="0%" stop-color="#ff8a80"/>
-                <stop offset="55%" stop-color="#d50000"/>
-                <stop offset="100%" stop-color="#6a0000"/>
-              </radialGradient>
-            </defs>
-            <circle cx="28" cy="24" r="10" fill="url(#rb_grad)"/>
-            <circle cx="72" cy="24" r="10" fill="url(#rb_grad)"/>
-            <ellipse cx="50" cy="36" rx="22" ry="19" fill="url(#rb_grad)"/>
-            <path d="M30 46 C24 55 24 75 32 82 C38 88 62 88 68 82 C76 75 76 55 70 46 Z" fill="url(#rb_grad)"/>
-            <circle cx="22" cy="56" r="8" fill="url(#rb_grad)"/>
-            <circle cx="78" cy="56" r="8" fill="url(#rb_grad)"/>
-            <circle cx="34" cy="85" r="9" fill="url(#rb_grad)"/>
-            <circle cx="66" cy="85" r="9" fill="url(#rb_grad)"/>
-            <ellipse cx="50" cy="42" rx="9" ry="7" fill="#ffb4ab" opacity="0.8"/>
-            <ellipse cx="44" cy="34" rx="2.5" ry="3" fill="#220000"/>
-            <ellipse cx="56" cy="34" rx="2.5" ry="3" fill="#220000"/>
-            <ellipse cx="50" cy="40" rx="3" ry="2" fill="#220000"/>
-            <ellipse cx="40" cy="28" rx="6" ry="3" transform="rotate(-15 40 28)" fill="#ffffff" opacity="0.6"/>
-          </svg>`;
-        case 'purple_bear':
-          return `<svg viewBox="0 0 100 100" class="candy-svg">
-            <defs>
-              <radialGradient id="pb2_grad" cx="35%" cy="30%" r="70%">
-                <stop offset="0%" stop-color="#e1bee7"/>
-                <stop offset="55%" stop-color="#8e24aa"/>
-                <stop offset="100%" stop-color="#4a148c"/>
-              </radialGradient>
-            </defs>
-            <circle cx="28" cy="24" r="10" fill="url(#pb2_grad)"/>
-            <circle cx="72" cy="24" r="10" fill="url(#pb2_grad)"/>
-            <ellipse cx="50" cy="36" rx="22" ry="19" fill="url(#pb2_grad)"/>
-            <path d="M30 46 C24 55 24 75 32 82 C38 88 62 88 68 82 C76 75 76 55 70 46 Z" fill="url(#pb2_grad)"/>
-            <circle cx="22" cy="56" r="8" fill="url(#pb2_grad)"/>
-            <circle cx="78" cy="56" r="8" fill="url(#pb2_grad)"/>
-            <circle cx="34" cy="85" r="9" fill="url(#pb2_grad)"/>
-            <circle cx="66" cy="85" r="9" fill="url(#pb2_grad)"/>
-            <ellipse cx="50" cy="42" rx="9" ry="7" fill="#f3e5f5" opacity="0.8"/>
-            <ellipse cx="44" cy="34" rx="2.5" ry="3" fill="#220000"/>
-            <ellipse cx="56" cy="34" rx="2.5" ry="3" fill="#220000"/>
-            <ellipse cx="50" cy="40" rx="3" ry="2" fill="#220000"/>
-            <ellipse cx="40" cy="28" rx="6" ry="3" transform="rotate(-15 40 28)" fill="#ffffff" opacity="0.6"/>
-          </svg>`;
-        case 'orange_bear':
-          return `<svg viewBox="0 0 100 100" class="candy-svg">
-            <defs>
-              <radialGradient id="ob_grad" cx="35%" cy="30%" r="70%">
-                <stop offset="0%" stop-color="#ffe0b2"/>
-                <stop offset="55%" stop-color="#fb8c00"/>
-                <stop offset="100%" stop-color="#e65100"/>
-              </radialGradient>
-            </defs>
-            <circle cx="28" cy="24" r="10" fill="url(#ob_grad)"/>
-            <circle cx="72" cy="24" r="10" fill="url(#ob_grad)"/>
-            <ellipse cx="50" cy="36" rx="22" ry="19" fill="url(#ob_grad)"/>
-            <path d="M30 46 C24 55 24 75 32 82 C38 88 62 88 68 82 C76 75 76 55 70 46 Z" fill="url(#ob_grad)"/>
-            <circle cx="22" cy="56" r="8" fill="url(#ob_grad)"/>
-            <circle cx="78" cy="56" r="8" fill="url(#ob_grad)"/>
-            <circle cx="34" cy="85" r="9" fill="url(#ob_grad)"/>
-            <circle cx="66" cy="85" r="9" fill="url(#ob_grad)"/>
-            <ellipse cx="50" cy="42" rx="9" ry="7" fill="#fff3e0" opacity="0.8"/>
-            <ellipse cx="44" cy="34" rx="2.5" ry="3" fill="#220000"/>
-            <ellipse cx="56" cy="34" rx="2.5" ry="3" fill="#220000"/>
-            <ellipse cx="50" cy="40" rx="3" ry="2" fill="#220000"/>
-            <ellipse cx="40" cy="28" rx="6" ry="3" transform="rotate(-15 40 28)" fill="#ffffff" opacity="0.6"/>
-          </svg>`;
-        case 'scatter':
-          return `<svg viewBox="0 0 100 100" class="candy-svg">
-            <defs>
-              <linearGradient id="sc_nose" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#ff4081"/>
-                <stop offset="100%" stop-color="#c2185b"/>
-              </linearGradient>
-              <radialGradient id="sc_bulb" cx="40%" cy="35%" r="60%">
-                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85"/>
-                <stop offset="40%" stop-color="#b2ebf2" stop-opacity="0.3"/>
-                <stop offset="100%" stop-color="#00838f" stop-opacity="0.7"/>
-              </radialGradient>
-            </defs>
-            <path d="M22 66 L12 78 L26 76 Z" fill="#e91e63"/>
-            <path d="M78 66 L88 78 L74 76 Z" fill="#e91e63"/>
-            <path d="M50 8 C40 18 36 28 36 36 L64 36 C64 28 60 18 50 8 Z" fill="url(#sc_nose)"/>
-            <ellipse cx="50" cy="18" rx="4" ry="7" fill="#ffffff" opacity="0.8"/>
-            <circle cx="50" cy="52" r="23" fill="url(#sc_bulb)" stroke="#80deea" stroke-width="1.5"/>
-            <circle cx="43" cy="50" r="4.5" fill="#f44336"/>
-            <circle cx="55" cy="48" r="4.5" fill="#ffeb3b"/>
-            <circle cx="48" cy="59" r="4.5" fill="#4caf50"/>
-            <circle cx="58" cy="57" r="4" fill="#9c27b0"/>
-            <circle cx="40" cy="58" r="4" fill="#2196f3"/>
-            <rect x="23" y="74" width="54" height="15" rx="4" fill="#ffb300" stroke="#ffe082" stroke-width="1.5"/>
-            <text x="50" y="85" text-anchor="middle" font-size="8.5" font-weight="900" fill="#3e2723" letter-spacing="0.5">SCATTER</text>
-          </svg>`;
-        case 'super_scatter':
-          return `<svg viewBox="0 0 100 100" class="candy-svg">
-            <defs>
-              <radialGradient id="ssc_glow" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stop-color="#ffd700" stop-opacity="0.9"/>
-                <stop offset="70%" stop-color="#ff9100" stop-opacity="0.4"/>
-                <stop offset="100%" stop-color="#ff6d00" stop-opacity="0"/>
-              </radialGradient>
-              <linearGradient id="ssc_gold" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#fff59d"/>
-                <stop offset="40%" stop-color="#ffd700"/>
-                <stop offset="75%" stop-color="#ff8f00"/>
-                <stop offset="100%" stop-color="#ff6f00"/>
-              </linearGradient>
-            </defs>
-            <circle cx="50" cy="50" r="48" fill="url(#ssc_glow)"/>
-            <path d="M50 2 L52 8 L58 10 L52 12 L50 18 L48 12 L42 10 L48 8 Z" fill="#fff"/>
-            <path d="M85 30 L86 34 L90 35 L86 36 L85 40 L84 36 L80 35 L84 34 Z" fill="#ffd700"/>
-            <path d="M15 35 L16 39 L20 40 L16 41 L15 45 L14 41 L10 40 L14 39 Z" fill="#ffd700"/>
-            <path d="M22 66 L10 80 L26 77 Z" fill="url(#ssc_gold)"/>
-            <path d="M78 66 L90 80 L74 77 Z" fill="url(#ssc_gold)"/>
-            <path d="M50 8 C40 18 36 28 36 36 L64 36 C64 28 60 18 50 8 Z" fill="url(#ssc_gold)" stroke="#fffde7" stroke-width="1.5"/>
-            <ellipse cx="50" cy="18" rx="4" ry="7" fill="#ffffff" opacity="0.9"/>
-            <circle cx="50" cy="52" r="23" fill="url(#sc_bulb)" stroke="#ffe082" stroke-width="2"/>
-            <polygon points="43,47 45,51 49,52 46,55 47,59 43,57 39,59 40,55 37,52 41,51" fill="#ffd700"/>
-            <circle cx="56" cy="50" r="4.5" fill="#ffc107"/>
-            <circle cx="50" cy="60" r="4.5" fill="#ff9800"/>
-            <polygon points="57,56 58,59 61,59 59,61 60,64 57,62 54,64 55,61 53,59 56,59" fill="#ffffff"/>
-            <rect x="12" y="73" width="76" height="17" rx="5" fill="#d50000" stroke="#ffd700" stroke-width="2"/>
-            <text x="50" y="85" text-anchor="middle" font-size="7.5" font-weight="900" fill="#ffd700" letter-spacing="0.5">SUPER SCATTER</text>
-          </svg>`;
-        default:
-          return '';
+    function playCascadeSounds() {
+      if (!soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+      for (let c = 0; c < 7; c++) {
+        setTimeout(() => {
+          if (!soundEnabled) return;
+          const freq = 260 + c * 32;
+          playSoundTone(freq, 0.065, 'triangle', 0.16);
+        }, c * 45 + 130);
       }
+    }
+
+    // Генерация HTML-разметки для конфетных эмодзи и спец-символов
+    function getSymbolHtml(sym) {
+      if (sym === 'scatter') {
+        return `<div class="candy-emoji-wrap scatter-wrap"><span style="font-size: 30px;">🚀</span><span class="scatter-tag">SCATTER</span></div>`;
+      }
+      if (sym === 'super_scatter') {
+        return `<div class="candy-emoji-wrap super-scatter-wrap"><span style="font-size: 32px;">🌟</span><span class="super-scatter-tag">SUPER</span></div>`;
+      }
+      const item = PAYTABLE_DATA[sym];
+      const char = item ? item.emoji : sym;
+      return `<div class="candy-emoji-wrap"><span>${char}</span></div>`;
+    }
+
+    // Запуск каскадной анимации падения эмодзи сверху со смещением по колонкам и рядам
+    function triggerDropAnimation(indices = null) {
+      const targetIndices = indices || Array.from({ length: 49 }, (_, i) => i);
+      targetIndices.forEach(idx => {
+        const cell = document.getElementById('cell-' + idx);
+        if (!cell) return;
+        const col = idx % 7;
+        const row = Math.floor(idx / 7);
+        const delaySec = (col * 0.045) + ((6 - row) * 0.012);
+        cell.style.setProperty('--fall-delay', `${delaySec.toFixed(3)}s`);
+        cell.classList.remove('cell-dropping');
+        void cell.offsetWidth; // Принудительный reflow для надежного рестарта CSS-анимации
+        cell.classList.add('cell-dropping');
+      });
+      playCascadeSounds();
     }
 
     // Случайный символ с учетом Ante Bet и вероятностей
@@ -2632,6 +2553,7 @@
         board.appendChild(cell);
       }
       renderBoard();
+      triggerDropAnimation();
       updateUI();
     }
 
@@ -2662,16 +2584,16 @@
           badge.remove();
         }
 
-        let wrap = cell.querySelector('.candy-svg-wrap');
+        let wrap = cell.querySelector('.candy-emoji-wrap');
         const sym = grid[i];
         if (sym) {
-          if (!wrap) {
-            wrap = document.createElement('div');
-            wrap.className = 'candy-svg-wrap';
-            cell.appendChild(wrap);
-          }
-          if (cell.dataset.sym !== sym) {
-            wrap.innerHTML = getSymbolSvg(sym);
+          if (!wrap || cell.dataset.sym !== sym) {
+            if (wrap) wrap.remove();
+            const temp = document.createElement('div');
+            temp.innerHTML = getSymbolHtml(sym);
+            if (temp.firstElementChild) {
+              cell.appendChild(temp.firstElementChild);
+            }
             cell.dataset.sym = sym;
           }
         } else if (wrap) {
@@ -2734,8 +2656,8 @@
       }
 
       renderBoard();
-      playSoundTone(300, 0.15, 'triangle', 0.25);
-      await delay(isTurbo ? 100 : 250);
+      triggerDropAnimation();
+      await delay(isTurbo ? 250 : 520);
 
       // Процесс лавины кластеров
       const roundWin = await processTumbles();
@@ -2856,6 +2778,12 @@
 
       while (hasWin) {
         hasWin = false;
+        // Снимаем класс анимации падения перед проверкой выигрышных кластеров
+        for (let i = 0; i < 49; i++) {
+          const cell = document.getElementById('cell-' + i);
+          if (cell) cell.classList.remove('cell-dropping', 'cell-falling');
+        }
+
         const visited = Array(49).fill(false);
         const winningClusters = [];
 
@@ -2899,12 +2827,17 @@
           lastRoundWin += stepWin;
           updateUI();
 
-          await delay(isTurbo ? 160 : 380);
+          await delay(isTurbo ? 180 : 400);
 
           // Взрыв и обновление спот-множителей
+          const affectedCols = new Set();
           toExplode.forEach(idx => {
+            affectedCols.add(idx % 7);
             const cell = document.getElementById('cell-' + idx);
-            if (cell) cell.classList.add('cell-exploding');
+            if (cell) {
+              cell.classList.remove('cell-winning');
+              cell.classList.add('cell-exploding');
+            }
 
             if (spots[idx] === 0) {
               spots[idx] = 1; // Помеченная обертка
@@ -2916,34 +2849,40 @@
             grid[idx] = '';
           });
 
-          await delay(isTurbo ? 140 : 280);
+          await delay(isTurbo ? 150 : 290);
 
-          // Гравитация: падение сверху
+          // Гравитация: падение сверху в затронутых колонках
+          const droppedIndices = [];
           for (let col = 0; col < 7; col++) {
             let emptyRow = 6;
+            let colMoved = false;
             for (let row = 6; row >= 0; row--) {
               const idx = row * 7 + col;
               if (grid[idx] !== '') {
-                grid[emptyRow * 7 + col] = grid[idx];
-                if (emptyRow !== row) grid[idx] = '';
+                if (emptyRow !== row) {
+                  grid[emptyRow * 7 + col] = grid[idx];
+                  grid[idx] = '';
+                  colMoved = true;
+                }
                 emptyRow--;
               }
             }
             while (emptyRow >= 0) {
               grid[emptyRow * 7 + col] = getRandomSymbol(false);
               emptyRow--;
+              colMoved = true;
+            }
+            if (colMoved || affectedCols.has(col)) {
+              for (let r = 0; r < 7; r++) {
+                droppedIndices.push(r * 7 + col);
+              }
             }
           }
 
           renderBoard();
+          triggerDropAnimation(droppedIndices.length > 0 ? droppedIndices : null);
 
-          // Анимация приземления
-          for (let i = 0; i < 49; i++) {
-            const cell = document.getElementById('cell-' + i);
-            if (cell) cell.classList.add('cell-falling');
-          }
-
-          await delay(isTurbo ? 120 : 250);
+          await delay(isTurbo ? 220 : 460);
         }
       }
 
@@ -3078,18 +3017,52 @@
         const card = document.createElement('div');
         card.className = 'paytable-card';
         card.innerHTML = `
-          <div class="paytable-card-svg">${getSymbolSvg(sym)}</div>
-          <div style="font-weight: 800; font-size: 11.5px; color: #fff;">${d.name}</div>
+          <div class="paytable-card-svg" style="font-size: 34px; display: flex; align-items: center; justify-content: center; height: 46px;">${d.emoji}</div>
+          <div style="font-weight: 800; font-size: 11.5px; color: ${d.color};">${d.name}</div>
           <div class="paytable-payouts">
-            15+: <b>${Math.round(d.m15 * baseBet)}</b><br>
-            12-14: <b>${Math.round(d.m12 * baseBet)}</b><br>
-            9-11: <b>${Math.round(d.m9 * baseBet)}</b><br>
-            7-8: <b>${Math.round(d.m7 * baseBet)}</b><br>
-            5-6: <b>${Math.round(d.m5 * baseBet)}</b>
+            15+: <b>${Math.round(d.m15 * baseBet).toLocaleString()}</b><br>
+            12-14: <b>${Math.round(d.m12 * baseBet).toLocaleString()}</b><br>
+            9-11: <b>${Math.round(d.m9 * baseBet).toLocaleString()}</b><br>
+            7-8: <b>${Math.round(d.m7 * baseBet).toLocaleString()}</b><br>
+            5-6: <b>${Math.round(d.m5 * baseBet).toLocaleString()}</b>
           </div>
         `;
         container.appendChild(card);
       });
+
+      // Карточка SCATTER
+      const scatterCard = document.createElement('div');
+      scatterCard.className = 'paytable-card';
+      scatterCard.style.borderColor = '#ff4081';
+      scatterCard.innerHTML = `
+        <div class="paytable-card-svg" style="font-size: 34px; display: flex; align-items: center; justify-content: center; height: 46px;">🚀</div>
+        <div style="font-weight: 800; font-size: 11.5px; color: #ff4081;">SCATTER</div>
+        <div class="paytable-payouts">
+          7+: <b>30 Фриспинов</b><br>
+          6: <b>20 Фриспинов</b><br>
+          5: <b>15 Фриспинов</b><br>
+          4: <b>12 Фриспинов</b><br>
+          3: <b>10 Фриспинов</b>
+        </div>
+      `;
+      container.appendChild(scatterCard);
+
+      // Карточка SUPER SCATTER
+      const superCard = document.createElement('div');
+      superCard.className = 'paytable-card';
+      superCard.style.borderColor = '#ffd700';
+      superCard.innerHTML = `
+        <div class="paytable-card-svg" style="font-size: 34px; display: flex; align-items: center; justify-content: center; height: 46px;">🌟</div>
+        <div style="font-weight: 800; font-size: 11.5px; color: #ffd700;">SUPER SCATTER</div>
+        <div class="paytable-payouts">
+          4+: <b>50 000x MAX</b><br>
+          3: <b>5 000x ставка</b><br>
+          2: <b>500x ставка</b><br>
+          1: <b>100x ставка</b><br>
+          + дает Фриспины!
+        </div>
+      `;
+      container.appendChild(superCard);
 
       modal.style.display = 'flex';
     }
