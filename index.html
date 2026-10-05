@@ -511,63 +511,595 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    /* === Стили слота Sugar Rush Super Scatter === */
     #slot-modal {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.9);
-      z-index: 1000;
+      background: radial-gradient(circle at center, rgba(38, 12, 30, 0.96) 0%, rgba(10, 4, 10, 0.98) 100%);
+      backdrop-filter: blur(12px);
+      z-index: 1500;
       align-items: center;
       justify-content: center;
+      padding: 10px;
+      overflow-y: auto;
     }
 
     .slot-container {
-      background: #1e0f14;
-      border: 2px solid var(--accent-gold);
-      border-radius: 12px;
-      padding: 20px;
-      width: 95%;
-      max-width: 620px;
+      background: linear-gradient(180deg, #240c1e 0%, #150612 100%);
+      border: 2px solid #ff4081;
+      box-shadow: 0 0 35px rgba(255, 64, 129, 0.35), inset 0 0 25px rgba(255, 193, 7, 0.15);
+      border-radius: 20px;
+      padding: 16px 20px;
+      width: 100%;
+      max-width: 900px;
       display: flex;
       flex-direction: column;
       align-items: center;
       color: #fff;
+      position: relative;
+      user-select: none;
+      box-sizing: border-box;
+    }
+
+    .slot-header {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+    }
+
+    .slot-title-box {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+    }
+
+    .slot-logo-main {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      background: linear-gradient(135deg, #ff80ab 0%, #ff4081 50%, #f50057 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 10px rgba(255, 64, 129, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .slot-logo-sub {
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #fff9c4 0%, #ffd700 50%, #ff8f00 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slot-header-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .slot-icon-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      border-radius: 8px;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.2s ease;
+    }
+
+    .slot-icon-btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+      transform: scale(1.05);
+    }
+
+    /* Верхний инфобар бонуски */
+    .slot-bonus-bar {
+      display: none;
+      width: 100%;
+      background: linear-gradient(90deg, #ff007f 0%, #9c27b0 50%, #ffb300 100%);
+      padding: 7px 14px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 800;
+      font-size: 13.5px;
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(255, 0, 127, 0.4);
+      animation: pulseBar 2s infinite alternate;
+    }
+
+    @keyframes pulseBar {
+      0% { filter: brightness(1); }
+      100% { filter: brightness(1.2); }
+    }
+
+    /* Основной макет: боковые опции + сетка */
+    .slot-main-stage {
+      display: flex;
+      gap: 16px;
+      width: 100%;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .slot-side-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 170px;
+      flex-shrink: 0;
+    }
+
+    .slot-feature-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 6px;
+    }
+
+    .slot-feature-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #ffd54f;
+    }
+
+    .slot-feature-price {
+      font-size: 14px;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .btn-buy-bonus {
+      background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+      color: #fff;
+      border: 1px solid #f472b6;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+    }
+
+    .btn-buy-bonus:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(236, 72, 153, 0.5);
+    }
+
+    .btn-buy-super {
+      background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+      color: #000;
+      border: 1px solid #fde047;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+    }
+
+    .btn-buy-super:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(245, 158, 11, 0.6);
+    }
+
+    .ante-toggle-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 8px;
+      width: 100%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #fff;
+      font-size: 11.5px;
+      font-weight: 700;
+      transition: all 0.2s ease;
+    }
+
+    .ante-toggle-btn.active {
+      background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+      border-color: #34d399;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+    }
+
+    /* Игровое поле 7x7 */
+    .slot-grid-frame {
+      background: #11050d;
+      border: 3px solid #ff4081;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 64, 129, 0.25);
+      border-radius: 14px;
+      padding: 6px;
+      width: 100%;
+      max-width: 480px;
+      aspect-ratio: 1/1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .slot-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
+      grid-template-rows: repeat(7, 1fr);
       gap: 4px;
-      background: #0d0608;
-      padding: 8px;
-      border-radius: 8px;
       width: 100%;
-      aspect-ratio: 1/1;
-      max-width: 480px;
-      margin: 12px 0;
+      height: 100%;
     }
 
     .slot-cell {
-      background: #2a1218;
-      border-radius: 6px;
+      background: rgba(45, 18, 36, 0.6);
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
       position: relative;
       user-select: none;
+      overflow: hidden;
+      transition: transform 0.15s ease, background-color 0.25s ease;
     }
 
-    .cell-mult {
+    /* Состояния спотов (множителей) */
+    .slot-cell.spot-marked {
+      background: rgba(255, 64, 129, 0.18);
+      border: 1px dashed rgba(255, 128, 171, 0.4);
+    }
+
+    .slot-cell.spot-x2   { background: radial-gradient(circle, rgba(234, 179, 8, 0.35) 0%, rgba(45, 18, 36, 0.8) 100%); }
+    .slot-cell.spot-x4   { background: radial-gradient(circle, rgba(34, 197, 94, 0.35) 0%, rgba(45, 18, 36, 0.8) 100%); }
+    .slot-cell.spot-x8   { background: radial-gradient(circle, rgba(6, 182, 212, 0.35) 0%, rgba(45, 18, 36, 0.8) 100%); }
+    .slot-cell.spot-x16  { background: radial-gradient(circle, rgba(168, 85, 247, 0.38) 0%, rgba(45, 18, 36, 0.8) 100%); }
+    .slot-cell.spot-x32  { background: radial-gradient(circle, rgba(236, 72, 153, 0.42) 0%, rgba(45, 18, 36, 0.8) 100%); }
+    .slot-cell.spot-x64  { background: radial-gradient(circle, rgba(239, 68, 68, 0.45) 0%, rgba(45, 18, 36, 0.8) 100%); }
+    .slot-cell.spot-x128 { background: radial-gradient(circle, rgba(245, 158, 11, 0.5) 0%, rgba(45, 18, 36, 0.8) 100%); }
+    .slot-cell.spot-x256 { background: radial-gradient(circle, rgba(139, 92, 246, 0.55) 0%, rgba(45, 18, 36, 0.8) 100%); }
+    .slot-cell.spot-x512 { background: radial-gradient(circle, rgba(59, 130, 246, 0.6) 0%, rgba(45, 18, 36, 0.8) 100%); }
+    .slot-cell.spot-x1024 {
+      background: radial-gradient(circle, rgba(255, 215, 0, 0.75) 0%, rgba(220, 38, 38, 0.9) 100%);
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+      animation: maxSpotPulse 1s infinite alternate;
+    }
+
+    @keyframes maxSpotPulse {
+      0% { transform: scale(1); filter: brightness(1); }
+      100% { transform: scale(1.04); filter: brightness(1.3); }
+    }
+
+    /* Плашка множителя */
+    .cell-mult-badge {
       position: absolute;
       top: 2px;
       right: 2px;
-      background: var(--accent-gold);
       color: #000;
       font-size: 10px;
-      font-weight: 800;
+      font-weight: 900;
       padding: 1px 4px;
-      border-radius: 3px;
+      border-radius: 4px;
+      z-index: 5;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
+      pointer-events: none;
+    }
+
+    .badge-x2   { background: #eab308; }
+    .badge-x4   { background: #22c55e; }
+    .badge-x8   { background: #06b6d4; }
+    .badge-x16  { background: #a855f7; color: #fff; }
+    .badge-x32  { background: #ec4899; color: #fff; }
+    .badge-x64  { background: #ef4444; color: #fff; }
+    .badge-x128 { background: #f59e0b; }
+    .badge-x256 { background: #8b5cf6; color: #fff; }
+    .badge-x512 { background: #3b82f6; color: #fff; }
+    .badge-x1024 { background: #ffd700; color: #990000; font-weight: 900; border: 1px solid #fff; }
+
+    /* SVG-символы */
+    .candy-svg-wrap {
+      width: 82%;
+      height: 82%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+      z-index: 2;
+    }
+
+    .candy-svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.4));
+    }
+
+    /* Анимации выигрыша и взрыва */
+    .slot-cell.cell-winning .candy-svg-wrap {
+      animation: winCandyPulse 0.4s ease infinite alternate;
+      filter: drop-shadow(0 0 8px #ffd700);
+    }
+
+    @keyframes winCandyPulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.18); }
+    }
+
+    .slot-cell.cell-exploding .candy-svg-wrap {
+      animation: candyExplode 0.3s forwards ease-in;
+    }
+
+    @keyframes candyExplode {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.8; filter: brightness(2); }
+      100% { transform: scale(0); opacity: 0; }
+    }
+
+    .slot-cell.cell-falling .candy-svg-wrap {
+      animation: candyFall 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes candyFall {
+      0% { transform: translateY(-40px) scale(0.6); opacity: 0; }
+      100% { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    /* Нижняя панель управления */
+    .slot-control-panel {
+      display: flex;
+      width: 100%;
+      margin-top: 14px;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .slot-stat-block {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .slot-stat-label {
+      font-size: 10.5px;
+      color: #94a3b8;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .slot-stat-val {
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 0.3px;
+    }
+
+    .slot-bet-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 4px 6px;
+    }
+
+    .btn-bet-step {
+      width: 28px;
+      height: 28px;
+      background: rgba(255, 255, 255, 0.12);
+      border: none;
+      color: #fff;
+      font-weight: 900;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s ease;
+    }
+
+    .btn-bet-step:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-bet-step:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .btn-spin-main {
+      background: radial-gradient(circle, #ff0055 0%, #b3003b 100%);
+      border: 3px solid #ff80ab;
+      box-shadow: 0 0 20px rgba(255, 0, 85, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+      color: #fff;
+      font-size: 17px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      padding: 12px 28px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      min-width: 130px;
+    }
+
+    .btn-spin-main:hover:not(:disabled) {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px rgba(255, 0, 85, 0.8), inset 0 2px 4px rgba(255, 255, 255, 0.6);
+    }
+
+    .btn-spin-main:active:not(:disabled) {
+      transform: scale(0.96);
+    }
+
+    .btn-spin-main:disabled {
+      filter: grayscale(0.6);
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-sub-action {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 7px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-sub-action.active {
+      background: #eab308;
+      color: #000;
+      font-weight: 900;
+      box-shadow: 0 0 10px rgba(234, 179, 8, 0.4);
+    }
+
+    /* Модалка BIG WIN / MEGA WIN / SUPER SCATTER WIN */
+    .slot-celebration-overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      border-radius: 20px;
+      z-index: 50;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+      animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .celebration-title {
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-shadow: 0 0 25px rgba(255, 215, 0, 0.8);
+      margin-bottom: 8px;
+    }
+
+    .celebration-amount {
+      font-size: 46px;
+      font-weight: 900;
+      color: #ffd700;
+      text-shadow: 0 0 30px rgba(255, 215, 0, 0.9);
+      margin-bottom: 20px;
+    }
+
+    /* Модалка таблицы выплат */
+    .slot-paytable-modal {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(18, 5, 14, 0.96);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      z-index: 60;
+      padding: 24px;
+      flex-direction: column;
+      align-items: center;
+      overflow-y: auto;
+    }
+
+    .paytable-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      width: 100%;
+      margin: 16px 0;
+    }
+
+    .paytable-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 6px;
+    }
+
+    .paytable-card-svg {
+      width: 44px;
+      height: 44px;
+    }
+
+    .paytable-payouts {
+      font-size: 11px;
+      color: #cbd5e1;
+      line-height: 1.4;
+      text-align: left;
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .slot-main-stage {
+        flex-direction: column-reverse;
+        align-items: center;
+      }
+      .slot-side-panel {
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-between;
+      }
+      .slot-feature-card {
+        flex: 1;
+      }
+      .slot-grid-frame {
+        max-width: 350px;
+      }
+      .btn-spin-main {
+        padding: 10px 20px;
+        min-width: 100px;
+        font-size: 15px;
+      }
+      .celebration-title {
+        font-size: 26px;
+      }
+      .celebration-amount {
+        font-size: 32px;
+      }
     }
 
     /* Стили пагинации галереи */
@@ -638,7 +1170,7 @@
       <span>ФК «ГазМяс»</span>
     </div>
     <div class="nav-links">
-      <button class="nav-btn" onclick="openSlot()">🍭 Sugar Rush 7x7</button>
+      <button class="nav-btn" onclick="openSlot()" style="border-color: #ff4081; box-shadow: 0 0 10px rgba(255, 64, 129, 0.35);">🍭 Sugar Rush: Super Scatter</button>
       <button class="nav-btn nav-btn-gold" onclick="openSuggestModal()">➕ В предложку</button>
     </div>
   </header>
@@ -837,22 +1369,129 @@
     </div>
   </div>
 
-  <div id="slot-modal" class="modal-backdrop">
+  <div id="slot-modal">
     <div class="slot-container">
-      <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-        <h3 style="color: var(--accent-gold);">🍭 Sugar Rush 7x7</h3>
-        <button class="nav-btn" onclick="closeSlot()">✕</button>
-      </div>
-      <div style="display: flex; gap: 20px; margin-top: 8px; font-weight: 700;">
-        <div>Баланс: <span id="slot-balance" style="color: #4ade80;">1000</span></div>
-        <div>Выигрыш: <span id="slot-win" style="color: var(--accent-gold);">0</span></div>
+      <!-- Шапка слота -->
+      <div class="slot-header">
+        <div class="slot-title-box">
+          <div class="slot-logo-main">🍭 SUGAR RUSH</div>
+          <div class="slot-logo-sub">✨ SUPER SCATTER EDITION ✨</div>
+        </div>
+        <div class="slot-header-actions">
+          <button id="btn-slot-sound" class="slot-icon-btn" onclick="toggleSlotSound()" title="Звук (Вкл/Выкл)">🔊</button>
+          <button class="slot-icon-btn" onclick="openPaytable()" title="Таблица выплат и правила">ℹ️</button>
+          <button class="slot-icon-btn" onclick="reloadSlotBalance()" title="Пополнить банкролл (+5000)">💰</button>
+          <button class="slot-icon-btn" onclick="closeSlot()" title="Закрыть">✕</button>
+        </div>
       </div>
 
-      <div id="slot-board" class="slot-grid"></div>
+      <!-- Инфобар бесплатных вращений -->
+      <div id="slot-bonus-bar" class="slot-bonus-bar">
+        <div>🎉 БОНУСНЫЙ РАУНД: <span id="slot-fs-count" style="color: #ffd700;">10 / 10</span></div>
+        <div style="font-size: 11.5px; opacity: 0.9;">🔥 МУЛЬТИПЛИКАТОРЫ НЕ СБРАСЫВАЮТСЯ!</div>
+        <div>КУШ БОНУСА: <span id="slot-fs-win" style="color: #4ade80;">0</span></div>
+      </div>
 
-      <div style="display: flex; gap: 10px; width: 100%; justify-content: center;">
-        <button id="btn-spin" class="btn-action" style="background: var(--accent-red); color: #fff; max-width: 150px;" onclick="spin()">КРУТИТЬ (20)</button>
-        <button id="btn-buy" class="btn-action" style="background: var(--accent-gold); color: #000; max-width: 170px;" onclick="buyBonus()">BUY BONUS (2000)</button>
+      <!-- Главная игровая зона: боковые кнопки + поле 7x7 -->
+      <div class="slot-main-stage">
+        <!-- Боковая панель опций (Ante Bet, Buy Bonus, Buy Super Bonus) -->
+        <div class="slot-side-panel">
+          <div class="slot-feature-card">
+            <div class="slot-feature-title">Двойной Шанс</div>
+            <div class="slot-feature-price">+25% к ставке</div>
+            <button id="btn-ante" class="ante-toggle-btn" onclick="toggleAnteBet()">
+              <span>Scatters x3</span>
+              <span id="ante-status" style="font-weight: 900; color: #f87171;">ВЫКЛ</span>
+            </button>
+          </div>
+
+          <div class="slot-feature-card">
+            <div class="slot-feature-title">Купить Бонус</div>
+            <div class="slot-feature-price" id="buy-bonus-price">2 000</div>
+            <button id="btn-buy-regular" class="btn-buy-bonus" onclick="buyRegularBonus()">BUY (100x)</button>
+          </div>
+
+          <div class="slot-feature-card" style="border-color: rgba(253, 224, 71, 0.4); background: rgba(245, 158, 11, 0.08);">
+            <div class="slot-feature-title" style="color: #ffd700;">Super Бонус</div>
+            <div class="slot-feature-price" id="buy-super-price" style="color: #ffd700;">10 000</div>
+            <button id="btn-buy-super" class="btn-buy-super" onclick="buySuperBonus()">SUPER (500x) 🌟</button>
+          </div>
+        </div>
+
+        <!-- Игровое поле 7x7 -->
+        <div class="slot-grid-frame">
+          <div id="slot-board" class="slot-grid"></div>
+        </div>
+      </div>
+
+      <!-- Нижняя панель управления: Баланс, Выигрыш, Ставка, Турбо, Авто, Спин -->
+      <div class="slot-control-panel">
+        <div class="slot-stat-block">
+          <div class="slot-stat-label">Баланс</div>
+          <div class="slot-stat-val" style="color: #4ade80;"><span id="slot-balance">10000</span></div>
+        </div>
+
+        <div class="slot-stat-block">
+          <div class="slot-stat-label">Выигрыш</div>
+          <div class="slot-stat-val" style="color: #ffd700;"><span id="slot-win">0</span></div>
+        </div>
+
+        <div class="slot-bet-controls">
+          <button id="btn-bet-minus" class="btn-bet-step" onclick="changeBet(-1)">−</button>
+          <div style="text-align: center; min-width: 90px;">
+            <div class="slot-stat-label">Ставка</div>
+            <div class="slot-stat-val" id="slot-current-bet">20</div>
+          </div>
+          <button id="btn-bet-plus" class="btn-bet-step" onclick="changeBet(1)">+</button>
+        </div>
+
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <button id="btn-turbo" class="btn-sub-action" onclick="toggleTurbo()" title="Ускоренная анимация падения">⚡ ТУРБО</button>
+          <button id="btn-auto" class="btn-sub-action" onclick="toggleAutoplay()" title="Серия автоспинов">🔄 АВТО</button>
+          <button id="btn-spin" class="btn-spin-main" onclick="handleSpinClick()">КРУТИТЬ</button>
+        </div>
+      </div>
+
+      <!-- Всплывающий экран выигрыша (BIG WIN / MEGA WIN / SUPER SCATTER WIN) -->
+      <div id="slot-celebration" class="slot-celebration-overlay">
+        <div id="celebration-title" class="celebration-title">BIG WIN</div>
+        <div id="celebration-amount" class="celebration-amount">0</div>
+        <button class="btn-spin-main" onclick="dismissCelebration()">ЗАБРАТЬ</button>
+      </div>
+
+      <!-- Модальное окно: Таблица выплат и правила -->
+      <div id="slot-paytable" class="slot-paytable-modal">
+        <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">
+          <h3 style="margin: 0; color: #ff80ab; font-size: 18px; font-weight: 900;">🍬 Таблица выплат и правила</h3>
+          <button class="slot-icon-btn" onclick="closePaytable()">✕</button>
+        </div>
+
+        <div style="font-size: 12.5px; color: #e2e8f0; margin-top: 10px; line-height: 1.5; text-align: left; width: 100%;">
+          <b>Кластерные выплаты:</b> 5 или более одинаковых символов, соединенных по горизонтали или вертикали.
+        </div>
+
+        <div id="paytable-symbols" class="paytable-grid"></div>
+
+        <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 10px; width: 100%; text-align: left; font-size: 12px; line-height: 1.6; margin-top: 8px;">
+          <div style="color: #ffd700; font-weight: 900; font-size: 13px; margin-bottom: 4px;">🚀 Множители позиций (Multiplier Spots):</div>
+          • При взрыве кластера клетка помечается оберткой.<br>
+          • При втором взрыве на этой клетке появляется множитель <b>x2</b>.<br>
+          • Каждый следующий взрыв удваивает множитель: <b>x4, x8, x16 ... до x1024</b>!<br>
+          • Если кластер накрывает несколько множителей, они <b>складываются</b>!<br>
+          • В обычных спинах клетки очищаются в конце спина, а во <b>Free Spins множители остаются ЛИПКИМИ</b> до конца бонуски!
+        </div>
+
+        <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); padding: 12px; border-radius: 10px; width: 100%; text-align: left; font-size: 12px; line-height: 1.6; margin-top: 10px;">
+          <div style="color: #ffd700; font-weight: 900; font-size: 13px; margin-bottom: 4px;">🌟 СУПЕР СКЕТТЕР (Instant Cash Prize):</div>
+          • 3+ ракет (обычных или золотых) дают 10, 12, 15, 20 или 30 бесплатных вращений.<br>
+          • Если среди ракет выпал <b>Super Scatter</b>, начисляется моментальный куш:<br>
+          &nbsp;&nbsp;<b>1 Super Scatter</b> = <b>100x</b> от ставки<br>
+          &nbsp;&nbsp;<b>2 Super Scatters</b> = <b>500x</b> от ставки<br>
+          &nbsp;&nbsp;<b>3 Super Scatters</b> = <b>5 000x</b> от ставки<br>
+          &nbsp;&nbsp;<b>4+ Super Scatters</b> = <b>50 000x</b> (MAX WIN игры!)
+        </div>
+
+        <button class="btn-action" style="max-width: 160px; margin-top: 16px; background: #ff4081; color: #fff;" onclick="closePaytable()">Закрыть</button>
       </div>
     </div>
   </div>
@@ -1471,81 +2110,722 @@
       }
     }
 
-    const ICONS = ['🍬', '🍭', '🍇', '🍉', '⭐', '🐻', '🚀'];
-    let grid = Array(49).fill('');
-    let spots = Array(49).fill(0);
-    let balance = 1000;
+    // ========================================================
+    // 🍭 SUGAR RUSH SUPER SCATTER — ПОЛНЫЙ ДВИЖОК СЛОТА
+    // ========================================================
+
+    const BET_TIERS = [10, 20, 50, 100, 200, 500, 1000, 2000];
+    let currentBetIndex = 1; // Дефолт: 20
+    let anteBetActive = false;
+    let isTurbo = false;
+    let isAuto = false;
+    let autoSpinsLeft = 0;
     let isSpinning = false;
+    let soundEnabled = true;
+    let audioCtx = null;
 
-    function openSlot() { document.getElementById('slot-modal').style.display = 'flex'; initBoard(); }
-    function closeSlot() { document.getElementById('slot-modal').style.display = 'none'; }
+    let slotBalance = 10000;
+    let isFreeSpins = false;
+    let freeSpinsLeft = 0;
+    let freeSpinsTotal = 0;
+    let freeSpinsWinAccum = 0;
 
+    let grid = Array(49).fill('');
+    let spots = Array(49).fill(0); // 0: пусто, 1: обертка (метка), 2..1024: множитель
+
+    let guaranteedScatters = 0;
+    let guaranteedSuper = false;
+
+    const REGULAR_SYMBOLS = [
+      'pink_round',
+      'orange_heart',
+      'purple_bean',
+      'green_star',
+      'red_bear',
+      'purple_bear',
+      'orange_bear'
+    ];
+
+    const PAYTABLE_DATA = {
+      pink_round:   { name: "Розовый леденец",  m5: 1.0,  m7: 1.5,  m9: 3.0,  m12: 10.0, m15: 150.0 },
+      orange_heart: { name: "Оранжевое сердце", m5: 0.75, m7: 1.25, m9: 2.5,  m12: 7.5,  m15: 100.0 },
+      purple_bean:  { name: "Фиолетовый боб",   m5: 0.5,  m7: 1.0,  m9: 2.0,  m12: 5.0,  m15: 60.0  },
+      green_star:   { name: "Зеленая звезда",   m5: 0.4,  m7: 0.75, m9: 1.5,  m12: 3.0,  m15: 40.0  },
+      red_bear:     { name: "Красный мишка",    m5: 0.3,  m7: 0.5,  m9: 1.0,  m12: 2.0,  m15: 30.0  },
+      purple_bear:  { name: "Фиолетовый мишка", m5: 0.25, m7: 0.4,  m9: 0.8,  m12: 1.5,  m15: 25.0  },
+      orange_bear:  { name: "Оранжевый мишка",  m5: 0.2,  m7: 0.3,  m9: 0.5,  m12: 1.0,  m15: 20.0  }
+    };
+
+    function getBaseBet() {
+      return BET_TIERS[currentBetIndex];
+    }
+
+    function getTotalBet() {
+      const base = getBaseBet();
+      return anteBetActive ? Math.round(base * 1.25) : base;
+    }
+
+    // Аудиосинтезатор Web Audio API
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) audioCtx = new AudioContext();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playSoundTone(freq, duration, type = 'sine', gainVal = 0.25) {
+      if (!soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+      try {
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, now);
+        g.gain.setValueAtTime(gainVal, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + duration);
+        osc.connect(g);
+        g.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + duration);
+      } catch (e) {}
+    }
+
+    function playPopSound() {
+      if (!soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+      try {
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(520, now);
+        osc.frequency.exponentialRampToValueAtTime(90, now + 0.12);
+        g.gain.setValueAtTime(0.3, now);
+        g.gain.linearRampToValueAtTime(0.01, now + 0.12);
+        osc.connect(g);
+        g.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.13);
+      } catch (e) {}
+    }
+
+    function playMultSound(mult) {
+      if (!soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+      try {
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        osc.type = 'triangle';
+        const baseFreq = 420 + Math.min(1400, Math.log2(Math.max(2, mult || 2)) * 130);
+        osc.frequency.setValueAtTime(baseFreq, now);
+        osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.4, now + 0.22);
+        g.gain.setValueAtTime(0.3, now);
+        g.gain.linearRampToValueAtTime(0.01, now + 0.23);
+        osc.connect(g);
+        g.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.24);
+      } catch (e) {}
+    }
+
+    function playScatterSound(count) {
+      playSoundTone(440 * Math.pow(1.22, count || 1), 0.35, 'triangle', 0.35);
+    }
+
+    function playSuperScatterSound() {
+      if (!soundEnabled) return;
+      [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+        setTimeout(() => playSoundTone(freq, 0.4, 'triangle', 0.35), idx * 75);
+      });
+    }
+
+    function playBigWinFanfare() {
+      if (!soundEnabled) return;
+      const notes = [440, 554.37, 659.25, 880, 1108.73, 1318.51];
+      notes.forEach((freq, idx) => {
+        setTimeout(() => playSoundTone(freq, 0.6, 'sine', 0.35), idx * 80);
+      });
+    }
+
+    function toggleSlotSound() {
+      soundEnabled = !soundEnabled;
+      const btn = document.getElementById('btn-slot-sound');
+      if (btn) btn.innerText = soundEnabled ? '🔊' : '🔇';
+    }
+
+    // Генерация SVG для каждого типа конфет
+    function getSymbolSvg(sym) {
+      switch (sym) {
+        case 'pink_round':
+          return `<svg viewBox="0 0 100 100" class="candy-svg">
+            <defs>
+              <radialGradient id="pr_grad" cx="35%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#ff80ab"/>
+                <stop offset="60%" stop-color="#f50057"/>
+                <stop offset="100%" stop-color="#880e4f"/>
+              </radialGradient>
+              <linearGradient id="pr_swirl" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+                <stop offset="100%" stop-color="#ffffff" stop-opacity="0.2"/>
+              </linearGradient>
+            </defs>
+            <circle cx="50" cy="50" r="42" fill="url(#pr_grad)"/>
+            <path d="M50 15 Q68 35 50 50 Q32 65 50 85" stroke="url(#pr_swirl)" stroke-width="6.5" fill="none" stroke-linecap="round"/>
+            <path d="M15 50 Q35 32 50 50 Q65 68 85 50" stroke="url(#pr_swirl)" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+            <ellipse cx="36" cy="28" rx="14" ry="7" transform="rotate(-30 36 28)" fill="#ffffff" opacity="0.65"/>
+          </svg>`;
+        case 'orange_heart':
+          return `<svg viewBox="0 0 100 100" class="candy-svg">
+            <defs>
+              <radialGradient id="oh_grad" cx="35%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#ffb74d"/>
+                <stop offset="60%" stop-color="#ff6d00"/>
+                <stop offset="100%" stop-color="#b71c1c"/>
+              </radialGradient>
+            </defs>
+            <path d="M50 86 C20 62 10 42 10 28 A19 19 0 0 1 50 25 A19 19 0 0 1 90 28 C90 42 80 62 50 86 Z" fill="url(#oh_grad)"/>
+            <path d="M22 28 C22 22 28 18 35 18 C40 18 43 20 46 24 C40 22 30 24 26 34 C24 38 22 34 22 28 Z" fill="#ffffff" opacity="0.6"/>
+          </svg>`;
+        case 'purple_bean':
+          return `<svg viewBox="0 0 100 100" class="candy-svg">
+            <defs>
+              <radialGradient id="pb_grad" cx="35%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#ea80fc"/>
+                <stop offset="60%" stop-color="#aa00ff"/>
+                <stop offset="100%" stop-color="#4a148c"/>
+              </radialGradient>
+            </defs>
+            <path d="M30 20 C55 12 85 25 85 52 C85 78 58 88 38 82 C20 76 15 55 22 38 C25 30 24 23 30 20 Z" fill="url(#pb_grad)"/>
+            <ellipse cx="40" cy="30" rx="14" ry="7" transform="rotate(-20 40 30)" fill="#ffffff" opacity="0.65"/>
+          </svg>`;
+        case 'green_star':
+          return `<svg viewBox="0 0 100 100" class="candy-svg">
+            <defs>
+              <radialGradient id="gs_grad" cx="40%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#b9f6ca"/>
+                <stop offset="50%" stop-color="#00e676"/>
+                <stop offset="100%" stop-color="#007e33"/>
+              </radialGradient>
+            </defs>
+            <path d="M50 12 L61 36 A2 2 0 0 0 63 37 L89 40 L69 58 A2 2 0 0 0 68 60 L74 86 L51 72 A2 2 0 0 0 49 72 L26 86 L32 60 A2 2 0 0 0 31 58 L11 40 L37 37 A2 2 0 0 0 39 36 Z" fill="url(#gs_grad)" stroke="#69f0ae" stroke-width="2"/>
+            <circle cx="45" cy="40" r="8" fill="#ffffff" opacity="0.5"/>
+          </svg>`;
+        case 'red_bear':
+          return `<svg viewBox="0 0 100 100" class="candy-svg">
+            <defs>
+              <radialGradient id="rb_grad" cx="35%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#ff8a80"/>
+                <stop offset="55%" stop-color="#d50000"/>
+                <stop offset="100%" stop-color="#6a0000"/>
+              </radialGradient>
+            </defs>
+            <circle cx="28" cy="24" r="10" fill="url(#rb_grad)"/>
+            <circle cx="72" cy="24" r="10" fill="url(#rb_grad)"/>
+            <ellipse cx="50" cy="36" rx="22" ry="19" fill="url(#rb_grad)"/>
+            <path d="M30 46 C24 55 24 75 32 82 C38 88 62 88 68 82 C76 75 76 55 70 46 Z" fill="url(#rb_grad)"/>
+            <circle cx="22" cy="56" r="8" fill="url(#rb_grad)"/>
+            <circle cx="78" cy="56" r="8" fill="url(#rb_grad)"/>
+            <circle cx="34" cy="85" r="9" fill="url(#rb_grad)"/>
+            <circle cx="66" cy="85" r="9" fill="url(#rb_grad)"/>
+            <ellipse cx="50" cy="42" rx="9" ry="7" fill="#ffb4ab" opacity="0.8"/>
+            <ellipse cx="44" cy="34" rx="2.5" ry="3" fill="#220000"/>
+            <ellipse cx="56" cy="34" rx="2.5" ry="3" fill="#220000"/>
+            <ellipse cx="50" cy="40" rx="3" ry="2" fill="#220000"/>
+            <ellipse cx="40" cy="28" rx="6" ry="3" transform="rotate(-15 40 28)" fill="#ffffff" opacity="0.6"/>
+          </svg>`;
+        case 'purple_bear':
+          return `<svg viewBox="0 0 100 100" class="candy-svg">
+            <defs>
+              <radialGradient id="pb2_grad" cx="35%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#e1bee7"/>
+                <stop offset="55%" stop-color="#8e24aa"/>
+                <stop offset="100%" stop-color="#4a148c"/>
+              </radialGradient>
+            </defs>
+            <circle cx="28" cy="24" r="10" fill="url(#pb2_grad)"/>
+            <circle cx="72" cy="24" r="10" fill="url(#pb2_grad)"/>
+            <ellipse cx="50" cy="36" rx="22" ry="19" fill="url(#pb2_grad)"/>
+            <path d="M30 46 C24 55 24 75 32 82 C38 88 62 88 68 82 C76 75 76 55 70 46 Z" fill="url(#pb2_grad)"/>
+            <circle cx="22" cy="56" r="8" fill="url(#pb2_grad)"/>
+            <circle cx="78" cy="56" r="8" fill="url(#pb2_grad)"/>
+            <circle cx="34" cy="85" r="9" fill="url(#pb2_grad)"/>
+            <circle cx="66" cy="85" r="9" fill="url(#pb2_grad)"/>
+            <ellipse cx="50" cy="42" rx="9" ry="7" fill="#f3e5f5" opacity="0.8"/>
+            <ellipse cx="44" cy="34" rx="2.5" ry="3" fill="#220000"/>
+            <ellipse cx="56" cy="34" rx="2.5" ry="3" fill="#220000"/>
+            <ellipse cx="50" cy="40" rx="3" ry="2" fill="#220000"/>
+            <ellipse cx="40" cy="28" rx="6" ry="3" transform="rotate(-15 40 28)" fill="#ffffff" opacity="0.6"/>
+          </svg>`;
+        case 'orange_bear':
+          return `<svg viewBox="0 0 100 100" class="candy-svg">
+            <defs>
+              <radialGradient id="ob_grad" cx="35%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#ffe0b2"/>
+                <stop offset="55%" stop-color="#fb8c00"/>
+                <stop offset="100%" stop-color="#e65100"/>
+              </radialGradient>
+            </defs>
+            <circle cx="28" cy="24" r="10" fill="url(#ob_grad)"/>
+            <circle cx="72" cy="24" r="10" fill="url(#ob_grad)"/>
+            <ellipse cx="50" cy="36" rx="22" ry="19" fill="url(#ob_grad)"/>
+            <path d="M30 46 C24 55 24 75 32 82 C38 88 62 88 68 82 C76 75 76 55 70 46 Z" fill="url(#ob_grad)"/>
+            <circle cx="22" cy="56" r="8" fill="url(#ob_grad)"/>
+            <circle cx="78" cy="56" r="8" fill="url(#ob_grad)"/>
+            <circle cx="34" cy="85" r="9" fill="url(#ob_grad)"/>
+            <circle cx="66" cy="85" r="9" fill="url(#ob_grad)"/>
+            <ellipse cx="50" cy="42" rx="9" ry="7" fill="#fff3e0" opacity="0.8"/>
+            <ellipse cx="44" cy="34" rx="2.5" ry="3" fill="#220000"/>
+            <ellipse cx="56" cy="34" rx="2.5" ry="3" fill="#220000"/>
+            <ellipse cx="50" cy="40" rx="3" ry="2" fill="#220000"/>
+            <ellipse cx="40" cy="28" rx="6" ry="3" transform="rotate(-15 40 28)" fill="#ffffff" opacity="0.6"/>
+          </svg>`;
+        case 'scatter':
+          return `<svg viewBox="0 0 100 100" class="candy-svg">
+            <defs>
+              <linearGradient id="sc_nose" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#ff4081"/>
+                <stop offset="100%" stop-color="#c2185b"/>
+              </linearGradient>
+              <radialGradient id="sc_bulb" cx="40%" cy="35%" r="60%">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85"/>
+                <stop offset="40%" stop-color="#b2ebf2" stop-opacity="0.3"/>
+                <stop offset="100%" stop-color="#00838f" stop-opacity="0.7"/>
+              </radialGradient>
+            </defs>
+            <path d="M22 66 L12 78 L26 76 Z" fill="#e91e63"/>
+            <path d="M78 66 L88 78 L74 76 Z" fill="#e91e63"/>
+            <path d="M50 8 C40 18 36 28 36 36 L64 36 C64 28 60 18 50 8 Z" fill="url(#sc_nose)"/>
+            <ellipse cx="50" cy="18" rx="4" ry="7" fill="#ffffff" opacity="0.8"/>
+            <circle cx="50" cy="52" r="23" fill="url(#sc_bulb)" stroke="#80deea" stroke-width="1.5"/>
+            <circle cx="43" cy="50" r="4.5" fill="#f44336"/>
+            <circle cx="55" cy="48" r="4.5" fill="#ffeb3b"/>
+            <circle cx="48" cy="59" r="4.5" fill="#4caf50"/>
+            <circle cx="58" cy="57" r="4" fill="#9c27b0"/>
+            <circle cx="40" cy="58" r="4" fill="#2196f3"/>
+            <rect x="23" y="74" width="54" height="15" rx="4" fill="#ffb300" stroke="#ffe082" stroke-width="1.5"/>
+            <text x="50" y="85" text-anchor="middle" font-size="8.5" font-weight="900" fill="#3e2723" letter-spacing="0.5">SCATTER</text>
+          </svg>`;
+        case 'super_scatter':
+          return `<svg viewBox="0 0 100 100" class="candy-svg">
+            <defs>
+              <radialGradient id="ssc_glow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#ffd700" stop-opacity="0.9"/>
+                <stop offset="70%" stop-color="#ff9100" stop-opacity="0.4"/>
+                <stop offset="100%" stop-color="#ff6d00" stop-opacity="0"/>
+              </radialGradient>
+              <linearGradient id="ssc_gold" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#fff59d"/>
+                <stop offset="40%" stop-color="#ffd700"/>
+                <stop offset="75%" stop-color="#ff8f00"/>
+                <stop offset="100%" stop-color="#ff6f00"/>
+              </linearGradient>
+            </defs>
+            <circle cx="50" cy="50" r="48" fill="url(#ssc_glow)"/>
+            <path d="M50 2 L52 8 L58 10 L52 12 L50 18 L48 12 L42 10 L48 8 Z" fill="#fff"/>
+            <path d="M85 30 L86 34 L90 35 L86 36 L85 40 L84 36 L80 35 L84 34 Z" fill="#ffd700"/>
+            <path d="M15 35 L16 39 L20 40 L16 41 L15 45 L14 41 L10 40 L14 39 Z" fill="#ffd700"/>
+            <path d="M22 66 L10 80 L26 77 Z" fill="url(#ssc_gold)"/>
+            <path d="M78 66 L90 80 L74 77 Z" fill="url(#ssc_gold)"/>
+            <path d="M50 8 C40 18 36 28 36 36 L64 36 C64 28 60 18 50 8 Z" fill="url(#ssc_gold)" stroke="#fffde7" stroke-width="1.5"/>
+            <ellipse cx="50" cy="18" rx="4" ry="7" fill="#ffffff" opacity="0.9"/>
+            <circle cx="50" cy="52" r="23" fill="url(#sc_bulb)" stroke="#ffe082" stroke-width="2"/>
+            <polygon points="43,47 45,51 49,52 46,55 47,59 43,57 39,59 40,55 37,52 41,51" fill="#ffd700"/>
+            <circle cx="56" cy="50" r="4.5" fill="#ffc107"/>
+            <circle cx="50" cy="60" r="4.5" fill="#ff9800"/>
+            <polygon points="57,56 58,59 61,59 59,61 60,64 57,62 54,64 55,61 53,59 56,59" fill="#ffffff"/>
+            <rect x="12" y="73" width="76" height="17" rx="5" fill="#d50000" stroke="#ffd700" stroke-width="2"/>
+            <text x="50" y="85" text-anchor="middle" font-size="7.5" font-weight="900" fill="#ffd700" letter-spacing="0.5">SUPER SCATTER</text>
+          </svg>`;
+        default:
+          return '';
+      }
+    }
+
+    // Случайный символ с учетом Ante Bet и вероятностей
+    function getRandomSymbol(allowScatters = true) {
+      if (allowScatters) {
+        const scatterThreshold = anteBetActive ? 0.035 : 0.015;
+        const superThreshold = anteBetActive ? 0.010 : 0.003;
+        const rnd = Math.random();
+        if (rnd < superThreshold) return 'super_scatter';
+        if (rnd < scatterThreshold) return 'scatter';
+      }
+      return REGULAR_SYMBOLS[Math.floor(Math.random() * REGULAR_SYMBOLS.length)];
+    }
+
+    // Открытие и закрытие слота
+    function openSlot() {
+      const modal = document.getElementById('slot-modal');
+      if (modal) modal.style.display = 'flex';
+      initAudio();
+      if (!grid[0]) initBoard();
+      updateUI();
+    }
+
+    function closeSlot() {
+      const modal = document.getElementById('slot-modal');
+      if (modal) modal.style.display = 'none';
+      stopAutoplay();
+    }
+
+    function reloadSlotBalance() {
+      slotBalance += 5000;
+      updateUI();
+      playSoundTone(880, 0.25, 'sine', 0.3);
+      showToast('💰 Банкролл пополнен на +5 000 кредитов!');
+    }
+
+    function changeBet(dir) {
+      if (isSpinning) return;
+      const nextIndex = currentBetIndex + dir;
+      if (nextIndex >= 0 && nextIndex < BET_TIERS.length) {
+        currentBetIndex = nextIndex;
+        updateUI();
+        playSoundTone(350, 0.08, 'sine', 0.2);
+      }
+    }
+
+    function toggleAnteBet() {
+      if (isSpinning || isFreeSpins) return;
+      anteBetActive = !anteBetActive;
+      const btn = document.getElementById('btn-ante');
+      const status = document.getElementById('ante-status');
+      if (btn && status) {
+        if (anteBetActive) {
+          btn.classList.add('active');
+          status.innerText = 'ВКЛ';
+          status.style.color = '#34d399';
+        } else {
+          btn.classList.remove('active');
+          status.innerText = 'ВЫКЛ';
+          status.style.color = '#f87171';
+        }
+      }
+      updateUI();
+      playSoundTone(500, 0.1, 'triangle', 0.25);
+    }
+
+    function toggleTurbo() {
+      isTurbo = !isTurbo;
+      const btn = document.getElementById('btn-turbo');
+      if (btn) btn.classList.toggle('active', isTurbo);
+      playSoundTone(600, 0.08, 'sine', 0.2);
+    }
+
+    function toggleAutoplay() {
+      if (isAuto) {
+        stopAutoplay();
+      } else {
+        autoSpinsLeft = 25;
+        isAuto = true;
+        const btn = document.getElementById('btn-auto');
+        if (btn) {
+          btn.classList.add('active');
+          btn.innerText = 'СТОП (' + autoSpinsLeft + ')';
+        }
+        if (!isSpinning) spin();
+      }
+    }
+
+    function stopAutoplay() {
+      isAuto = false;
+      autoSpinsLeft = 0;
+      const btn = document.getElementById('btn-auto');
+      if (btn) {
+        btn.classList.remove('active');
+        btn.innerText = '🔄 АВТО';
+      }
+    }
+
+    function updateUI() {
+      const balEl = document.getElementById('slot-balance');
+      if (balEl) balEl.innerText = slotBalance.toLocaleString();
+
+      const betEl = document.getElementById('slot-current-bet');
+      if (betEl) betEl.innerText = getTotalBet().toLocaleString();
+
+      const winEl = document.getElementById('slot-win');
+      if (winEl) winEl.innerText = lastRoundWin.toLocaleString();
+
+      const buyRegularPrice = 100 * getTotalBet();
+      const buySuperPrice = 500 * getTotalBet();
+
+      const regEl = document.getElementById('buy-bonus-price');
+      if (regEl) regEl.innerText = buyRegularPrice.toLocaleString();
+
+      const supEl = document.getElementById('buy-super-price');
+      if (supEl) supEl.innerText = buySuperPrice.toLocaleString();
+
+      const minusBtn = document.getElementById('btn-bet-minus');
+      const plusBtn = document.getElementById('btn-bet-plus');
+      if (minusBtn) minusBtn.disabled = currentBetIndex <= 0 || isSpinning || isFreeSpins;
+      if (plusBtn) plusBtn.disabled = currentBetIndex >= BET_TIERS.length - 1 || isSpinning || isFreeSpins;
+
+      const anteBtn = document.getElementById('btn-ante');
+      if (anteBtn) anteBtn.disabled = isSpinning || isFreeSpins;
+
+      const buyRegBtn = document.getElementById('btn-buy-regular');
+      if (buyRegBtn) buyRegBtn.disabled = isSpinning || isFreeSpins || slotBalance < buyRegularPrice;
+
+      const buySupBtn = document.getElementById('btn-buy-super');
+      if (buySupBtn) buySupBtn.disabled = isSpinning || isFreeSpins || slotBalance < buySuperPrice;
+    }
+
+    // Покупка бонусов
+    function buyRegularBonus() {
+      if (isSpinning || isFreeSpins) return;
+      const price = 100 * getTotalBet();
+      if (slotBalance < price) {
+        showToast('Недостаточно баланса для покупки бонуса!');
+        return;
+      }
+      slotBalance -= price;
+      guaranteedScatters = Math.floor(Math.random() * 3) + 3; // 3 - 5 скеттеров
+      guaranteedSuper = false;
+      showToast('🎁 Куплен бонусный раунд! Выпадение гарантировано.');
+      spin();
+    }
+
+    function buySuperBonus() {
+      if (isSpinning || isFreeSpins) return;
+      const price = 500 * getTotalBet();
+      if (slotBalance < price) {
+        showToast('Недостаточно баланса для покупки Super Бонуса!');
+        return;
+      }
+      slotBalance -= price;
+      guaranteedScatters = Math.floor(Math.random() * 2) + 3; // 3 - 4 скеттера
+      guaranteedSuper = true; // С обязательным Super Scatter!
+
+      // Случайно расставляем 3 начальных множителя x2 на сетке
+      spots.fill(0);
+      const preSpots = [];
+      while (preSpots.length < 3) {
+        const rndIdx = Math.floor(Math.random() * 49);
+        if (!preSpots.includes(rndIdx)) {
+          preSpots.push(rndIdx);
+          spots[rndIdx] = 2;
+        }
+      }
+      showToast('🌟 Куплен SUPER BONUS с гарантированным золотым Super Scatter!');
+      spin();
+    }
+
+    // Инициализация сетки
     function initBoard() {
-      const b = document.getElementById('slot-board');
-      b.innerHTML = '';
+      const board = document.getElementById('slot-board');
+      if (!board) return;
+      board.innerHTML = '';
       for (let i = 0; i < 49; i++) {
-        grid[i] = ICONS[Math.floor(Math.random() * 6)];
+        if (!grid[i]) grid[i] = getRandomSymbol(false);
         const cell = document.createElement('div');
         cell.className = 'slot-cell';
         cell.id = 'cell-' + i;
-        cell.innerText = grid[i];
-        b.appendChild(cell);
+        board.appendChild(cell);
       }
+      renderBoard();
+      updateUI();
     }
 
     function renderBoard() {
       for (let i = 0; i < 49; i++) {
-        const c = document.getElementById('cell-' + i);
-        c.innerText = grid[i];
-        const oldMult = c.querySelector('.cell-mult');
-        if (oldMult) oldMult.remove();
-        if (spots[i] > 1) {
-          const m = document.createElement('span');
-          m.className = 'cell-mult';
-          m.innerText = 'x' + spots[i];
-          c.appendChild(m);
+        const cell = document.getElementById('cell-' + i);
+        if (!cell) continue;
+
+        cell.className = 'slot-cell';
+
+        const sp = spots[i];
+        if (sp === 1) {
+          cell.classList.add('spot-marked');
+        } else if (sp >= 2) {
+          cell.classList.add('spot-x' + Math.min(1024, sp));
+        }
+
+        let badge = cell.querySelector('.cell-mult-badge');
+        if (sp >= 2) {
+          if (!badge) {
+            badge = document.createElement('div');
+            badge.className = 'cell-mult-badge';
+            cell.appendChild(badge);
+          }
+          badge.className = 'cell-mult-badge badge-x' + Math.min(1024, sp);
+          badge.innerText = 'x' + sp;
+        } else if (badge) {
+          badge.remove();
+        }
+
+        let wrap = cell.querySelector('.candy-svg-wrap');
+        const sym = grid[i];
+        if (sym) {
+          if (!wrap) {
+            wrap = document.createElement('div');
+            wrap.className = 'candy-svg-wrap';
+            cell.appendChild(wrap);
+          }
+          if (cell.dataset.sym !== sym) {
+            wrap.innerHTML = getSymbolSvg(sym);
+            cell.dataset.sym = sym;
+          }
+        } else if (wrap) {
+          wrap.remove();
+          delete cell.dataset.sym;
         }
       }
     }
 
+    function handleSpinClick() {
+      if (isSpinning) return;
+      spin();
+    }
+
+    // Основной цикл вращения
     async function spin() {
-      if (isSpinning || balance < 20) return;
+      const totalBet = getTotalBet();
+      if (!isFreeSpins && slotBalance < totalBet && guaranteedScatters === 0) {
+        showToast('Недостаточно баланса! Пополните банкролл кнопкой 💰');
+        stopAutoplay();
+        return;
+      }
+
       isSpinning = true;
-      balance -= 20;
-      document.getElementById('slot-balance').innerText = balance;
-      document.getElementById('slot-win').innerText = 0;
+      const spinBtn = document.getElementById('btn-spin');
+      if (spinBtn) {
+        spinBtn.disabled = true;
+        spinBtn.innerText = 'ИГРА...';
+      }
 
-      for (let i = 0; i < 49; i++) grid[i] = ICONS[Math.floor(Math.random() * 6)];
+      if (!isFreeSpins && guaranteedScatters === 0) {
+        slotBalance -= totalBet;
+        spots.fill(0); // В обычной игре споты сбрасываются перед спином
+      }
+
+      lastRoundWin = 0;
+      updateUI();
+
+      // Генерация сетки
+      for (let i = 0; i < 49; i++) {
+        grid[i] = getRandomSymbol(true);
+      }
+
+      // Если была покупка бонуса
+      if (guaranteedScatters > 0) {
+        const scatterIndices = [];
+        while (scatterIndices.length < guaranteedScatters) {
+          const r = Math.floor(Math.random() * 49);
+          if (!scatterIndices.includes(r)) scatterIndices.push(r);
+        }
+        scatterIndices.forEach((idx, order) => {
+          if (guaranteedSuper && order === 0) {
+            grid[idx] = 'super_scatter';
+          } else {
+            grid[idx] = 'scatter';
+          }
+        });
+        guaranteedScatters = 0;
+        guaranteedSuper = false;
+      }
+
       renderBoard();
-      await processClusters();
+      playSoundTone(300, 0.15, 'triangle', 0.25);
+      await delay(isTurbo ? 100 : 250);
+
+      // Процесс лавины кластеров
+      const roundWin = await processTumbles();
+
+      if (isFreeSpins) {
+        freeSpinsWinAccum += roundWin;
+        const fsWinEl = document.getElementById('slot-fs-win');
+        if (fsWinEl) fsWinEl.innerText = freeSpinsWinAccum.toLocaleString();
+      }
+
+      // Проверка на выпадение Скеттеров
+      await checkScattersTrigger();
+
+      // Проверка на крупный занос
+      if (!isFreeSpins && roundWin > 0) {
+        checkCelebration(roundWin, totalBet);
+      }
+
       isSpinning = false;
+      if (spinBtn) {
+        spinBtn.disabled = false;
+        spinBtn.innerText = isFreeSpins ? 'БОНУС' : 'КРУТИТЬ';
+      }
+      updateUI();
+
+      // Обработка Free Spins очереди
+      if (isFreeSpins) {
+        freeSpinsLeft--;
+        const countEl = document.getElementById('slot-fs-count');
+        if (countEl) countEl.innerText = freeSpinsLeft + ' / ' + freeSpinsTotal;
+
+        if (freeSpinsLeft > 0) {
+          await delay(isTurbo ? 250 : 600);
+          spin();
+          return;
+        } else {
+          // Завершение бонусного раунда
+          isFreeSpins = false;
+          const bar = document.getElementById('slot-bonus-bar');
+          if (bar) bar.style.display = 'none';
+
+          playSoundTone(880, 0.5, 'triangle', 0.4);
+          showCelebration('🎉 БОНУС ЗАВЕРШЕН!', freeSpinsWinAccum);
+          slotBalance += freeSpinsWinAccum;
+          freeSpinsWinAccum = 0;
+          spots.fill(0);
+          renderBoard();
+          updateUI();
+        }
+      }
+
+      // Автоспины
+      if (isAuto && autoSpinsLeft > 0) {
+        autoSpinsLeft--;
+        const autoBtn = document.getElementById('btn-auto');
+        if (autoBtn) autoBtn.innerText = 'СТОП (' + autoSpinsLeft + ')';
+
+        if (autoSpinsLeft > 0 && slotBalance >= totalBet) {
+          await delay(isTurbo ? 200 : 500);
+          spin();
+        } else {
+          stopAutoplay();
+        }
+      }
     }
 
-    async function buyBonus() {
-      if (isSpinning || balance < 2000) return;
-      balance -= 2000;
-      document.getElementById('slot-balance').innerText = balance;
-      showToast('Бонусный раунд запущен!');
-      await spin();
+    function delay(ms) {
+      return new Promise(r => setTimeout(r, ms));
     }
 
-    function getCluster(startIndex, visited) {
+    // Кластерный поиск
+    function findCluster(startIndex, visited) {
       const sym = grid[startIndex];
-      if (!sym || sym === '🚀') return [];
+      if (!sym || sym === 'scatter' || sym === 'super_scatter') return [];
+
       const cluster = [];
       const queue = [startIndex];
       visited[startIndex] = true;
 
-      while (queue.length) {
-        const idx = queue.shift();
-        cluster.push(idx);
-        const r = Math.floor(idx / 7);
-        const c = idx % 7;
+      while (queue.length > 0) {
+        const curr = queue.shift();
+        cluster.push(curr);
+        const r = Math.floor(curr / 7);
+        const c = curr % 7;
+
         const neighbors = [];
-        if (r > 0) neighbors.push(idx - 7);
-        if (r < 6) neighbors.push(idx + 7);
-        if (c > 0) neighbors.push(idx - 1);
-        if (c < 6) neighbors.push(idx + 1);
+        if (r > 0) neighbors.push(curr - 7);
+        if (r < 6) neighbors.push(curr + 7);
+        if (c > 0) neighbors.push(curr - 1);
+        if (c < 6) neighbors.push(curr + 1);
 
         for (const n of neighbors) {
           if (!visited[n] && grid[n] === sym) {
@@ -1557,38 +2837,88 @@
       return cluster;
     }
 
-    async function processClusters() {
-      let winRound = 0;
+    // Вычисление выигрыша кластера
+    function calculateClusterWin(sym, size) {
+      const data = PAYTABLE_DATA[sym];
+      if (!data || size < 5) return 0;
+      let mult = data.m5;
+      if (size >= 15) mult = data.m15;
+      else if (size >= 12) mult = data.m12;
+      else if (size >= 9) mult = data.m9;
+      else if (size >= 7) mult = data.m7;
+      return mult * getBaseBet();
+    }
+
+    // Лавины и взрывы (Tumbles)
+    async function processTumbles() {
+      let tumbleWinTotal = 0;
       let hasWin = true;
 
       while (hasWin) {
         hasWin = false;
         const visited = Array(49).fill(false);
-        const toExplode = new Set();
+        const winningClusters = [];
 
         for (let i = 0; i < 49; i++) {
           if (!visited[i]) {
-            const cluster = getCluster(i, visited);
+            const cluster = findCluster(i, visited);
             if (cluster.length >= 5) {
-              hasWin = true;
-              cluster.forEach(idx => toExplode.add(idx));
-              let multSum = 0;
-              cluster.forEach(idx => {
-                multSum += (spots[idx] > 1 ? spots[idx] : 1);
+              winningClusters.push({
+                sym: grid[i],
+                indices: cluster
               });
-              winRound += cluster.length * 4 * multSum;
             }
           }
         }
 
-        if (hasWin) {
+        if (winningClusters.length > 0) {
+          hasWin = true;
+          const toExplode = new Set();
+          let stepWin = 0;
+
+          // Подсветка выигрышных клеток
+          winningClusters.forEach(cl => {
+            const basePayout = calculateClusterWin(cl.sym, cl.indices.length);
+            let multSum = 0;
+            cl.indices.forEach(idx => {
+              toExplode.add(idx);
+              const cell = document.getElementById('cell-' + idx);
+              if (cell) cell.classList.add('cell-winning');
+              if (spots[idx] >= 2) multSum += spots[idx];
+            });
+
+            const clusterMult = multSum > 0 ? multSum : 1;
+            stepWin += Math.round(basePayout * clusterMult);
+          });
+
+          playPopSound();
+          if (stepWin > 0) playMultSound(stepWin);
+
+          tumbleWinTotal += stepWin;
+          slotBalance += stepWin;
+          lastRoundWin += stepWin;
+          updateUI();
+
+          await delay(isTurbo ? 160 : 380);
+
+          // Взрыв и обновление спот-множителей
           toExplode.forEach(idx => {
-            spots[idx] = spots[idx] === 0 ? 2 : Math.min(128, spots[idx] * 2);
+            const cell = document.getElementById('cell-' + idx);
+            if (cell) cell.classList.add('cell-exploding');
+
+            if (spots[idx] === 0) {
+              spots[idx] = 1; // Помеченная обертка
+            } else if (spots[idx] === 1) {
+              spots[idx] = 2; // x2
+            } else {
+              spots[idx] = Math.min(1024, spots[idx] * 2); // Удвоение до x1024!
+            }
             grid[idx] = '';
           });
-          renderBoard();
-          await new Promise(r => setTimeout(r, 400));
 
+          await delay(isTurbo ? 140 : 280);
+
+          // Гравитация: падение сверху
           for (let col = 0; col < 7; col++) {
             let emptyRow = 6;
             for (let row = 6; row >= 0; row--) {
@@ -1600,18 +2930,173 @@
               }
             }
             while (emptyRow >= 0) {
-              grid[emptyRow * 7 + col] = ICONS[Math.floor(Math.random() * 6)];
+              grid[emptyRow * 7 + col] = getRandomSymbol(false);
               emptyRow--;
             }
           }
+
           renderBoard();
-          await new Promise(r => setTimeout(r, 300));
+
+          // Анимация приземления
+          for (let i = 0; i < 49; i++) {
+            const cell = document.getElementById('cell-' + i);
+            if (cell) cell.classList.add('cell-falling');
+          }
+
+          await delay(isTurbo ? 120 : 250);
         }
       }
 
-      balance += winRound;
-      document.getElementById('slot-win').innerText = winRound;
-      document.getElementById('slot-balance').innerText = balance;
+      return tumbleWinTotal;
+    }
+
+    // Проверка выпадения скеттеров и Super Scatter
+    async function checkScattersTrigger() {
+      const scatters = [];
+      let superCount = 0;
+
+      for (let i = 0; i < 49; i++) {
+        if (grid[i] === 'scatter') scatters.push(i);
+        if (grid[i] === 'super_scatter') {
+          scatters.push(i);
+          superCount++;
+        }
+      }
+
+      if (scatters.length >= 3) {
+        // Подсветка скеттеров
+        scatters.forEach(idx => {
+          const cell = document.getElementById('cell-' + idx);
+          if (cell) cell.classList.add('cell-winning');
+        });
+
+        playScatterSound(scatters.length);
+        await delay(500);
+
+        let awardedSpins = 10;
+        if (scatters.length === 4) awardedSpins = 12;
+        else if (scatters.length === 5) awardedSpins = 15;
+        else if (scatters.length === 6) awardedSpins = 20;
+        else if (scatters.length >= 7) awardedSpins = 30;
+
+        // Расчет мгновенного куша Super Scatter
+        if (superCount > 0) {
+          playSuperScatterSound();
+          let instantMult = 100;
+          if (superCount === 2) instantMult = 500;
+          else if (superCount === 3) instantMult = 5000;
+          else if (superCount >= 4) instantMult = 50000;
+
+          const instantWin = instantMult * getTotalBet();
+          slotBalance += instantWin;
+          lastRoundWin += instantWin;
+          updateUI();
+
+          showCelebration('🌟 SUPER SCATTER ' + instantMult + 'X!', instantWin);
+          await delay(1800);
+        }
+
+        if (!isFreeSpins) {
+          isFreeSpins = true;
+          freeSpinsLeft = awardedSpins;
+          freeSpinsTotal = awardedSpins;
+          freeSpinsWinAccum = 0;
+
+          const bar = document.getElementById('slot-bonus-bar');
+          if (bar) bar.style.display = 'flex';
+
+          const countEl = document.getElementById('slot-fs-count');
+          if (countEl) countEl.innerText = freeSpinsLeft + ' / ' + freeSpinsTotal;
+
+          showToast('🎉 ЗАПУСК БОНУСА: ' + awardedSpins + ' бесплатных вращений!');
+        } else {
+          // Ретриггер во время фриспинов
+          freeSpinsLeft += awardedSpins;
+          freeSpinsTotal += awardedSpins;
+          showToast('🔥 РЕТРИГГЕР: +' + awardedSpins + ' бесплатных вращений!');
+        }
+      }
+    }
+
+    // Экран крупного заноса
+    function checkCelebration(roundWin, totalBet) {
+      const mult = roundWin / totalBet;
+      if (mult >= 50000) {
+        showCelebration('🌟 MAX WIN 50,000X! 🌟', roundWin);
+      } else if (mult >= 500) {
+        showCelebration('👑 SENSATIONAL WIN!', roundWin);
+      } else if (mult >= 100) {
+        showCelebration('🔥 SUPER WIN!', roundWin);
+      } else if (mult >= 50) {
+        showCelebration('🚀 MEGA WIN!', roundWin);
+      } else if (mult >= 20) {
+        showCelebration('🎉 BIG WIN!', roundWin);
+      }
+    }
+
+    function showCelebration(title, amount) {
+      const modal = document.getElementById('slot-celebration');
+      const titleEl = document.getElementById('celebration-title');
+      const amountEl = document.getElementById('celebration-amount');
+      if (!modal || !titleEl || !amountEl) return;
+
+      playBigWinFanfare();
+      titleEl.innerText = title;
+      amountEl.innerText = '0';
+      modal.style.display = 'flex';
+
+      // Анимация накрутки чисел
+      const duration = 1200;
+      const start = Date.now();
+      const interval = setInterval(() => {
+        const progress = Math.min(1, (Date.now() - start) / duration);
+        const curr = Math.floor(progress * amount);
+        amountEl.innerText = curr.toLocaleString();
+        if (progress >= 1) {
+          clearInterval(interval);
+          amountEl.innerText = amount.toLocaleString();
+        }
+      }, 30);
+    }
+
+    function dismissCelebration() {
+      const modal = document.getElementById('slot-celebration');
+      if (modal) modal.style.display = 'none';
+    }
+
+    // Таблица выплат
+    function openPaytable() {
+      const modal = document.getElementById('slot-paytable');
+      const container = document.getElementById('paytable-symbols');
+      if (!modal || !container) return;
+
+      const baseBet = getBaseBet();
+      container.innerHTML = '';
+
+      REGULAR_SYMBOLS.forEach(sym => {
+        const d = PAYTABLE_DATA[sym];
+        const card = document.createElement('div');
+        card.className = 'paytable-card';
+        card.innerHTML = `
+          <div class="paytable-card-svg">${getSymbolSvg(sym)}</div>
+          <div style="font-weight: 800; font-size: 11.5px; color: #fff;">${d.name}</div>
+          <div class="paytable-payouts">
+            15+: <b>${Math.round(d.m15 * baseBet)}</b><br>
+            12-14: <b>${Math.round(d.m12 * baseBet)}</b><br>
+            9-11: <b>${Math.round(d.m9 * baseBet)}</b><br>
+            7-8: <b>${Math.round(d.m7 * baseBet)}</b><br>
+            5-6: <b>${Math.round(d.m5 * baseBet)}</b>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      modal.style.display = 'flex';
+    }
+
+    function closePaytable() {
+      const modal = document.getElementById('slot-paytable');
+      if (modal) modal.style.display = 'none';
     }
 
     document.getElementById('card-modal').addEventListener('click', (e) => {
@@ -1641,6 +3126,13 @@
         closeArticleEditModal();
         closeSlot();
         closeConfirmModal();
+      }
+      if (e.code === 'Space') {
+        const slot = document.getElementById('slot-modal');
+        if (slot && slot.style.display === 'flex' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+          handleSpinClick();
+        }
       }
     });
 
