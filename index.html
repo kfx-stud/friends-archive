@@ -1251,6 +1251,7 @@
 
   <main>
     <div id="articles-section" style="display: none;">
+      <div class="section-title">📰 Вестник Клуба / Главные события</div>
       <div id="articles-list" class="articles-grid"></div>
     </div>
 
@@ -1780,7 +1781,6 @@
       container.innerHTML = articles.map((a, index) => {
         const col = a.color || a.highlight_color || (a.featured ? '#facc15' : 'var(--accent-gold)');
         const safeCol = escapeAttr(col);
-        const isFirst = (index === 0);
         const safeId = escapeAttr(a.id || ('art_' + index));
         const safeTag = escapeHtml(a.tag || '');
         const safeDate = escapeHtml(a.date || '');
@@ -1791,12 +1791,6 @@
         return `
           <div class="article-box ${a.featured ? 'featured' : ''}" style="--highlight-color: ${safeCol};">
             <div>
-              ${isFirst ? `
-                <div class="vestnik-lead-header">
-                  <span>📰</span>
-                  <span>Вестник Клуба / Главные события</span>
-                </div>
-              ` : ''}
               <div class="art-top">
                 <span class="art-badge">${a.featured ? '★ ' : ''}${safeTag}</span>
                 <span style="font-size: 11px; color: var(--text-muted);">${safeDate} | ${safeAuthor}</span>
