@@ -7,7 +7,7 @@
 
 [![Сайт](https://img.shields.io/badge/Live-site.gasmyas.me-2ea44f?style=flat-square&logo=google-chrome)](https://site.gasmyas.me)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?style=flat-square&logo=python)](https://python.org)
-[![Модель](https://img.shields.io/badge/AI-Gemini%20Flash-orange?style=flat-square&logo=google)](https://ai.google.dev/)
+[![Модель](https://img.shields.io/badge/AI-Gemini%203.8%20Flash-orange?style=flat-square&logo=google)](https://ai.google.dev/)
 [![Хостинг](https://img.shields.io/badge/Deploy-GitHub%20Pages-black?style=flat-square&logo=github)](https://pages.github.com/)
 [![CI](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF?style=flat-square&logo=githubactions)](https://github.com/kfx-stud/friends-archive/actions)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
@@ -22,7 +22,7 @@
 
 Проект стилизован под сайт футбольного клуба с локальным комьюнити-юмором. Система полностью берет на себя рутину разбора сотен фотографий из чатов Telegram:
 
-1. **Мультимодальный AI-анализ:** Нейросеть Gemini сканирует входящие файлы, оценивает уровень вайба (1–10) и генерирует едкие мемные панчлайны по клубным корзинам.
+1. **Мультимодальный AI-анализ:** Нейросеть Gemini 3.8 Flash сканирует входящие файлы, оценивает уровень вайба (1–10) и генерирует едкие мемные панчлайны по клубным корзинам.
 2. **Фильтрация и оптимизация:** Превью Telegram отсекаются, а качественные кадры (балл >= 5) сжимаются через Pillow до 1200x1200px (JPEG 85%) для моментальной загрузки с мобильных устройств.
 3. **Штаб модерации (admin.html):** Быстрый отбор кадров с клавиатуры, интерактивный выбор фокуса кадрирования (object-position) кликом по снимку и редактор статей клубного вестника.
 4. **Двусторонний облачный буфер:** Связка со статическим хостингом через JSONBin.io для приема пользовательских заявок («В предложку», «Править описание», «Удалить»).
@@ -34,7 +34,7 @@
 
 | Функция | Модуль / Компонент | Назначение |
 | :--- | :--- | :--- |
-| **AI-Курирование** | `auto_curator.py` | Оценка снимка от 1 до 10, генерация заголовка, панчлайна и тега через Gemini Flash |
+| **AI-Курирование** | `auto_curator.py` | Оценка снимка от 1 до 10, генерация заголовка, панчлайна и тега через Gemini 3.8 Flash |
 | **Динамический пул AI** | `GeminiKeyManager` | Ротация пула API-ключей и адаптивная задержка ($12 / N$ сек, ускорение до 24x) |
 | **Дедупликация** | `calculate_sha256` | Хэширование файлов для исключения повторной обработки дубликатов |
 | **Удаление мусора** | `is_telegram_thumb` | Автоматический отсев превью Telegram (`_thumb` и файлы < 15 КБ) |
@@ -150,7 +150,7 @@ pip install -r requirements.txt
 ```ini
 # Пул ключей Google Gemini API (через запятую для параллельного ускорения 12/N сек)
 GEMINI_API_KEYS=AIzaSyA...,AIzaSyB...
-GEMINI_MODEL=gemini-2.5-flash
+GEMINI_MODEL=gemini-3.8-flash
 
 # Приватный Master-Key JSONBin для админки (полный доступ: чтение и очистка очереди)
 JSONBIN_BIN_ID=6abbe438ffd5...

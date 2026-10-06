@@ -21,7 +21,19 @@ def test_articles_json():
         articles = json.load(f)
     assert isinstance(articles, list)
 
+def test_model_version():
+    curator_file = BASE_DIR / "auto_curator.py"
+    with open(curator_file, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "gemini-3.8-flash" in content
+
+    example_env = BASE_DIR / ".env.example"
+    with open(example_env, "r", encoding="utf-8") as f:
+        env_content = f.read()
+    assert "GEMINI_MODEL=gemini-3.8-flash" in env_content
+
 if __name__ == "__main__":
     test_data_json()
     test_articles_json()
+    test_model_version()
     print("All tests passed successfully!")

@@ -10,3 +10,4 @@
 - Добавлены открытые стандарты репозитория: `LICENSE` (MIT), `CONTRIBUTING.md`, `CHANGELOG.md`.
 - Добавлен CI-пайплайн GitHub Actions (`.github/workflows/ci.yml`) и автоматические тесты `tests/test_data_integrity.py`.
 - Актуализирован `README.md`.
+- Синхронизирована конфигурация AI-модели авто-куратора на `Gemini 3.8 Flash` в `README.md`, `.env.example`, bat-файлах и добавлен автотест.
