@@ -9,9 +9,10 @@
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?style=flat-square&logo=python)](https://python.org)
 [![Модель](https://img.shields.io/badge/AI-Gemini%20Flash-orange?style=flat-square&logo=google)](https://ai.google.dev/)
 [![Хостинг](https://img.shields.io/badge/Deploy-GitHub%20Pages-black?style=flat-square&logo=github)](https://pages.github.com/)
-[![Буфер](https://img.shields.io/badge/Cloud-JSONBin.io-FF6C37?style=flat-square&logo=json)](https://jsonbin.io/)
+[![CI](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF?style=flat-square&logo=githubactions)](https://github.com/kfx-stud/friends-archive/actions)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 
-[Открыть портал](https://site.gasmyas.me) • [О проекте](#-о-проекте) • [Возможности](#-ключевые-возможности) • [Архитектура](#-архитектура-пайплайна) • [Структура файлов](#-структура-репозитория) • [Установка](#-установка-и-запуск)
+[Открыть портал](https://site.gasmyas.me) • [О проекте](#-о-проекте) • [Возможности](#-ключевые-возможности) • [Архитектура](#-архитектура-пайплайна) • [Структура файлов](#-структура-репозитория) • [Установка](#-установка-и-запуск) • [Лицензия](LICENSE)
 
 </div>
 
@@ -164,5 +165,13 @@ JSONBIN_API_KEY=$2a$10$your_private_master_key_here...
 1. **Сбор фото:** поместите новые фотографии в папку `incoming/`.
 2. **AI-разбор:** запустите `run.bat` (или `python auto_curator.py`).
 3. **Модерация:** запустите `admin.bat`, откройте `http://127.0.0.1:8080/admin.html`, настройте фокус на снимках и утвердите публикации.
-4. **Деплой:** запустите `push.bat` для отправки изменений на GitHub Pages.
+4. **Тестирование:** выполните `python tests/test_data_integrity.py`.
+5. **Деплой:** запустите `push.bat` для отправки изменений на GitHub Pages.
+
+---
+
+## 📄 Лицензия и участие
+
+- Распространяется под лицензией [MIT](LICENSE).
+- Правила оформления коммитов и участие в проекте описаны в [CONTRIBUTING.md](CONTRIBUTING.md).
 

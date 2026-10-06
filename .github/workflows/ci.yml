@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Check for Leaked Secrets
+        run: |
+          if [ -f .env ]; then
+            echo "::error::.env file must not be committed!"
+            exit 1
+          fi
+          if [ -f data/config.json ]; then
+            echo "::error::data/config.json must not be committed!"
+            exit 1
+          fi
+
+      - name: Validate JSON Datasets
+        run: |
+          python -m json.tool data/data.json > /dev/null
+          python -m json.tool data/articles.json > /dev/null
+          python -m json.tool data/pending.json > /dev/null
+          python -m json.tool data/requests.json > /dev/null
+          echo "All JSON files are valid."

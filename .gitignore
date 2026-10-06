@@ -1,7 +1,10 @@
 # Секретные ключи и переменные окружения
 .env
 .env.*
+!.env.example
 data/config.json
+*.pem
+*.key
 
 # Временная папка с исходниками фото и архивы
 deleted/
@@ -10,6 +13,8 @@ pending/
 *.7z
 *.zip
 *.tar.gz
+*.rar
+*.tar
 
 # Python кэш и виртуальные окружения
 __pycache__/
@@ -22,5 +27,8 @@ env/
 # Служебные файлы ОС и редакторов
 .DS_Store
 Thumbs.db
+ehthumbs.db
 .vscode/
 .idea/
+*.tmp
+*.bak
