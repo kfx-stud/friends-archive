@@ -160,6 +160,34 @@
       padding: 24px 20px;
     }
 
+    /* Десктопная разметка слайдера: стандартный вертикальный поток */
+    .mobile-slider-nav {
+      display: none;
+    }
+
+    .mobile-slider-viewport {
+      width: 100%;
+    }
+
+    .mobile-slider-track {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .mobile-slide-pane {
+      width: 100%;
+    }
+
+    /* На десктопе сохраняем привычный порядок: Вестник сверху, состав снизу */
+    #slide-articles {
+      order: 1;
+    }
+
+    #slide-cards {
+      order: 2;
+    }
+
     .section-title {
       font-size: 20px;
       font-weight: 800;
@@ -1447,8 +1475,15 @@
     }
 
     @media (max-width: 768px) {
+      html, body {
+        height: 100dvh;
+        height: 100vh;
+        overflow: hidden;
+      }
+
       header {
         padding: 10px 14px;
+        flex-shrink: 0;
       }
       .brand {
         font-size: 17px;
@@ -1469,7 +1504,170 @@
       }
 
       main {
-        padding: 16px 12px;
+        padding: 0;
+        margin: 0;
+        max-width: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+        overflow: hidden;
+        position: relative;
+      }
+
+      /* Мобильная панель переключения слайдов */
+      .mobile-slider-nav {
+        display: flex;
+        flex-direction: column;
+        background: #150b0f;
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+        position: relative;
+        z-index: 25;
+        flex-shrink: 0;
+      }
+
+      .mobile-slider-tabs {
+        display: flex;
+        position: relative;
+        width: 100%;
+      }
+
+      .mobile-slider-tab {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        font-size: 13.5px;
+        font-weight: 700;
+        padding: 11px 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        cursor: pointer;
+        transition: color 0.2s ease, transform 0.15s ease;
+        user-select: none;
+        touch-action: manipulation;
+        position: relative;
+        z-index: 2;
+      }
+
+      .mobile-slider-tab:active {
+        transform: scale(0.97);
+      }
+
+      .mobile-slider-tab.active {
+        color: #fff;
+        font-weight: 800;
+      }
+
+      .mobile-slider-tab .tab-icon {
+        font-size: 15px;
+        line-height: 1;
+      }
+
+      .mobile-slider-tab .tab-badge {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text-muted);
+        font-size: 10.5px;
+        font-weight: 800;
+        padding: 1px 7px;
+        border-radius: 10px;
+        min-width: 18px;
+        text-align: center;
+        border: 1px solid transparent;
+        transition: all 0.2s ease;
+      }
+
+      .mobile-slider-tab.active .tab-badge {
+        background: rgba(250, 204, 21, 0.18);
+        color: var(--accent-gold);
+        border-color: rgba(250, 204, 21, 0.4);
+      }
+
+      .mobile-tab-indicator {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50%;
+        height: 3px;
+        background: linear-gradient(90deg, var(--accent-red) 0%, var(--accent-gold) 100%);
+        box-shadow: 0 0 12px rgba(250, 204, 21, 0.6);
+        border-radius: 3px 3px 0 0;
+        transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+        z-index: 3;
+        pointer-events: none;
+      }
+
+      .mobile-swipe-hint {
+        background: rgba(0, 0, 0, 0.35);
+        color: rgba(255, 241, 242, 0.5);
+        font-size: 10.5px;
+        font-weight: 600;
+        text-align: center;
+        padding: 3px 6px;
+        letter-spacing: 0.3px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: opacity 0.4s ease, max-height 0.4s ease, padding 0.4s ease;
+        overflow: hidden;
+        border-top: 1px solid rgba(255, 255, 255, 0.04);
+      }
+
+      .mobile-swipe-hint.hidden {
+        opacity: 0;
+        max-height: 0;
+        padding: 0;
+        border-top: none;
+        pointer-events: none;
+      }
+
+      /* Вьюпорт и трек слайдера */
+      .mobile-slider-viewport {
+        flex: 1;
+        width: 100%;
+        min-height: 0;
+        overflow: hidden;
+        position: relative;
+        touch-action: pan-y;
+      }
+
+      .mobile-slider-track {
+        display: flex;
+        flex-direction: row;
+        width: 200%;
+        height: 100%;
+        transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        will-change: transform;
+      }
+
+      .mobile-slide-pane {
+        width: 50%;
+        flex: 0 0 50%;
+        height: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-y: contain;
+        padding: 14px 12px 64px;
+        box-sizing: border-box;
+      }
+
+      /* Мобильный порядок слайдов: 1 - Главный (карточки), 2 - Второстепенный (статьи) */
+      #slide-cards {
+        order: 1;
+      }
+
+      #slide-articles {
+        order: 2;
+      }
+
+      .desktop-only-title {
+        display: none;
       }
 
       .section-title {
@@ -1638,7 +1836,11 @@
       }
 
       main {
-        padding: 12px 8px;
+        padding: 0;
+      }
+
+      .mobile-slide-pane {
+        padding: 10px 8px 60px;
       }
 
       .gallery-grid {
@@ -1840,21 +2042,54 @@
   </header>
 
   <main>
-    <div id="articles-section" style="display: none;">
-      <div class="section-title">📰 Вестник Клуба / Главные события</div>
-      <div id="articles-list" class="articles-grid"></div>
+    <!-- Мобильная панель переключения слайдов (видна на экранах <= 768px) -->
+    <div class="mobile-slider-nav" id="mobile-slider-nav">
+      <div class="mobile-slider-tabs">
+        <button class="mobile-slider-tab active" id="tab-cards" onclick="switchMobileSlide(0)" aria-label="Основной состав">
+          <span class="tab-icon">📸</span>
+          <span class="tab-text">Состав</span>
+          <span class="tab-badge" id="tab-cards-badge"></span>
+        </button>
+        <button class="mobile-slider-tab" id="tab-articles" onclick="switchMobileSlide(1)" aria-label="Вестник Клуба">
+          <span class="tab-icon">📰</span>
+          <span class="tab-text">Вестник</span>
+          <span class="tab-badge" id="tab-articles-badge"></span>
+        </button>
+        <div class="mobile-tab-indicator" id="mobile-tab-indicator"></div>
+      </div>
+      <div class="mobile-swipe-hint" id="mobile-swipe-hint">
+        <span>👈 Смахните влево / вправо для перехода 👉</span>
+      </div>
     </div>
 
-    <div class="section-title">📸 Основной состав</div>
-    <div id="gallery" class="gallery-grid"></div>
+    <!-- Вьюпорт свайп-слайдера -->
+    <div class="mobile-slider-viewport" id="mobile-slider-viewport">
+      <div class="mobile-slider-track" id="mobile-slider-track">
 
-    <div id="gallery-pagination-wrapper" class="gallery-pagination-container">
-      <div id="gallery-count-info" class="gallery-count-info"></div>
-      <button id="btn-gallery-load-more" class="btn-gallery-load-more" onclick="loadMoreCards()">
-        <span>Показать еще</span>
-        <span id="load-more-counter" class="load-more-counter"></span>
-      </button>
-      <div id="gallery-sentinel" class="gallery-sentinel"></div>
+        <!-- Слайд 1: Главный (Основной состав с карточками) -->
+        <div class="mobile-slide-pane" id="slide-cards" data-slide-index="0">
+          <div class="section-title desktop-only-title">📸 Основной состав</div>
+          <div id="gallery" class="gallery-grid"></div>
+
+          <div id="gallery-pagination-wrapper" class="gallery-pagination-container">
+            <div id="gallery-count-info" class="gallery-count-info"></div>
+            <button id="btn-gallery-load-more" class="btn-gallery-load-more" onclick="loadMoreCards()">
+              <span>Показать еще</span>
+              <span id="load-more-counter" class="load-more-counter"></span>
+            </button>
+            <div id="gallery-sentinel" class="gallery-sentinel"></div>
+          </div>
+        </div>
+
+        <!-- Слайд 2: Второстепенный (Вестник Клуба со статьями) -->
+        <div class="mobile-slide-pane" id="slide-articles" data-slide-index="1">
+          <div id="articles-section" style="display: none;">
+            <div class="section-title desktop-only-title">📰 Вестник Клуба / Главные события</div>
+            <div id="articles-list" class="articles-grid"></div>
+          </div>
+        </div>
+
+      </div>
     </div>
   </main>
 
@@ -2187,6 +2422,190 @@
     let currentCrop = { x: 50, y: 50 };
     let envConfigCache = null;
 
+    // ========================================================
+    // 📱 МОБИЛЬНЫЙ СВАЙП-СЛАЙДЕР (КАРТОЧКИ / ВЕСТНИК)
+    // ========================================================
+    let currentMobileSlide = 0; // 0: Главный (Карточки), 1: Второстепенный (Статьи)
+    let isMobileSwiping = false;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartTime = 0;
+    let touchLockedAxis = null;
+
+    function switchMobileSlide(index, animate = true) {
+      if (index < 0) index = 0;
+      if (index > 1) index = 1;
+      currentMobileSlide = index;
+
+      const track = document.getElementById('mobile-slider-track');
+      const tabCards = document.getElementById('tab-cards');
+      const tabArticles = document.getElementById('tab-articles');
+      const indicator = document.getElementById('mobile-tab-indicator');
+      const hint = document.getElementById('mobile-swipe-hint');
+
+      if (hint && !hint.classList.contains('hidden')) {
+        hint.classList.add('hidden');
+      }
+
+      if (track) {
+        if (animate) {
+          track.style.transition = 'transform 0.3s cubic-bezier(0.22, 1, 0.36, 1)';
+        } else {
+          track.style.transition = 'none';
+        }
+        track.style.transform = index === 0 ? 'translateX(0%)' : 'translateX(-50%)';
+      }
+
+      if (tabCards && tabArticles) {
+        if (index === 0) {
+          tabCards.classList.add('active');
+          tabArticles.classList.remove('active');
+        } else {
+          tabCards.classList.remove('active');
+          tabArticles.classList.add('active');
+        }
+      }
+
+      if (indicator) {
+        if (animate) {
+          indicator.style.transition = 'transform 0.28s cubic-bezier(0.22, 1, 0.36, 1)';
+        } else {
+          indicator.style.transition = 'none';
+        }
+        indicator.style.transform = index === 0 ? 'translateX(0%)' : 'translateX(100%)';
+      }
+    }
+
+    function initMobileSliderGestures() {
+      const viewport = document.getElementById('mobile-slider-viewport');
+      if (!viewport) return;
+
+      viewport.addEventListener('touchstart', (e) => {
+        if (window.innerWidth > 768) return;
+        if (document.querySelector('.modal-backdrop[style*="display: flex"]') ||
+            document.querySelector('.slot-modal[style*="display: flex"]')) {
+          return;
+        }
+
+        if (e.touches.length !== 1) return;
+
+        const touch = e.touches[0];
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+        touchStartTime = Date.now();
+        touchLockedAxis = null;
+        isMobileSwiping = false;
+
+        const track = document.getElementById('mobile-slider-track');
+        if (track) {
+          track.style.transition = 'none';
+        }
+      }, { passive: true });
+
+      viewport.addEventListener('touchmove', (e) => {
+        if (window.innerWidth > 768) return;
+        if (touchStartX === 0 && touchStartY === 0) return;
+        if (e.touches.length !== 1) return;
+
+        const touch = e.touches[0];
+        const dx = touch.clientX - touchStartX;
+        const dy = touch.clientY - touchStartY;
+
+        if (!touchLockedAxis) {
+          if (Math.abs(dx) > 7 && Math.abs(dx) > Math.abs(dy)) {
+            touchLockedAxis = 'h';
+            isMobileSwiping = true;
+
+            // Сбрасываем ожидающие таймеры клика по карточкам
+            Object.keys(cardTapTimers).forEach(k => {
+              clearTimeout(cardTapTimers[k]);
+              delete cardTapTimers[k];
+            });
+          } else if (Math.abs(dy) > 7) {
+            touchLockedAxis = 'v';
+          }
+        }
+
+        // Вертикальный скролл отдаем браузеру
+        if (touchLockedAxis === 'v') return;
+
+        // Горизонтальный свайп: плавное движение трека за пальцем
+        if (touchLockedAxis === 'h') {
+          if (e.cancelable) e.preventDefault();
+
+          const track = document.getElementById('mobile-slider-track');
+          if (track) {
+            const viewportWidth = viewport.clientWidth || window.innerWidth;
+            let percentShift = (dx / (viewportWidth * 2)) * 100;
+
+            if ((currentMobileSlide === 0 && dx > 0) || (currentMobileSlide === 1 && dx < 0)) {
+              percentShift *= 0.28;
+            }
+
+            const basePercent = currentMobileSlide === 0 ? 0 : -50;
+            const totalPercent = basePercent + percentShift;
+            track.style.transform = `translateX(${totalPercent}%)`;
+
+            const indicator = document.getElementById('mobile-tab-indicator');
+            if (indicator) {
+              const indicatorShift = (dx / viewportWidth) * -100;
+              const indicatorBase = currentMobileSlide === 0 ? 0 : 100;
+              const indicatorPercent = Math.max(0, Math.min(100, indicatorBase + indicatorShift));
+              indicator.style.transition = 'none';
+              indicator.style.transform = `translateX(${indicatorPercent}%)`;
+            }
+          }
+        }
+      }, { passive: false });
+
+      const handleTouchEndOrCancel = (e) => {
+        if (window.innerWidth > 768) return;
+        if (!touchLockedAxis || touchLockedAxis !== 'h') {
+          touchStartX = 0;
+          touchStartY = 0;
+          touchLockedAxis = null;
+          return;
+        }
+
+        const touch = e.changedTouches ? e.changedTouches[0] : null;
+        const dx = touch ? (touch.clientX - touchStartX) : 0;
+        const dt = Date.now() - touchStartTime;
+        const viewportWidth = viewport.clientWidth || window.innerWidth;
+
+        const isQuickFlick = dt < 300 && Math.abs(dx) > 35;
+        const isDragPastThreshold = Math.abs(dx) > (viewportWidth * 0.22);
+
+        if (isQuickFlick || isDragPastThreshold) {
+          if (dx < 0 && currentMobileSlide === 0) {
+            // Смахнули влево -> переход на 2-й слайд (Вестник/Статьи)
+            switchMobileSlide(1, true);
+          } else if (dx > 0 && currentMobileSlide === 1) {
+            // Смахнули вправо -> переход на 1-й слайд (Состав/Карточки)
+            switchMobileSlide(0, true);
+          } else {
+            switchMobileSlide(currentMobileSlide, true);
+          }
+        } else {
+          switchMobileSlide(currentMobileSlide, true);
+        }
+
+        touchStartX = 0;
+        touchStartY = 0;
+        touchLockedAxis = null;
+        setTimeout(() => {
+          isMobileSwiping = false;
+        }, 120);
+      };
+
+      viewport.addEventListener('touchend', handleTouchEndOrCancel, { passive: true });
+      viewport.addEventListener('touchcancel', handleTouchEndOrCancel, { passive: true });
+
+      setTimeout(() => {
+        const hint = document.getElementById('mobile-swipe-hint');
+        if (hint) hint.classList.add('hidden');
+      }, 4500);
+    }
+
     const CARD_REACTIONS = [
       { id: 'heart', emoji: '❤️', label: 'Сердечко' },
       { id: 'strawberry', emoji: '🍓', label: 'Клубничка' },
@@ -2420,6 +2839,7 @@
     let lastCardTap = {};
 
     function handleCardTap(cardKey, event) {
+      if (isMobileSwiping) return;
       // Игнорируем клики по кнопкам реакций и другим интерактивным элементам
       if (event.target.closest('.reaction-btn') || event.target.closest('button') || event.target.closest('a')) {
         return;
@@ -2495,6 +2915,7 @@
     let lastArticleTap = {};
 
     function handleArticleTap(artKey, event) {
+      if (isMobileSwiping) return;
       // Игнорируем клики по кнопкам реакций и другим интерактивным элементам
       if (event.target.closest('button') || event.target.closest('a') || event.target.closest('input')) {
         return;
@@ -2656,6 +3077,7 @@
 
     async function loadData() {
       initLikesSync();
+      initMobileSliderGestures();
 
       try {
         const res = await fetch('data/data.json');
@@ -2683,14 +3105,17 @@
       const countInfo = document.getElementById('gallery-count-info');
       const btnMore = document.getElementById('btn-gallery-load-more');
       const counterSpan = document.getElementById('load-more-counter');
+      const cardsBadge = document.getElementById('tab-cards-badge');
 
       if (!cards || cards.length === 0) {
         container.innerHTML = '<div style="color: var(--text-muted); grid-column: 1 / -1; text-align: center; padding: 40px;">Кадров пока нет</div>';
         if (paginationWrapper) paginationWrapper.style.display = 'none';
+        if (cardsBadge) cardsBadge.innerText = '0';
         return;
       }
 
       const total = cards.length;
+      if (cardsBadge) cardsBadge.innerText = total;
       const visibleCount = Math.min(visibleCardsCount, total);
       const visibleCards = cards.slice(0, visibleCount);
 
@@ -2769,6 +3194,9 @@
       const sentinel = document.getElementById('gallery-sentinel');
       if (!sentinel || !window.IntersectionObserver) return;
 
+      const isMobile = window.innerWidth <= 768;
+      const scrollRoot = isMobile ? document.getElementById('slide-cards') : null;
+
       galleryScrollObserver = new IntersectionObserver((entries) => {
         const entry = entries[0];
         if (entry && entry.isIntersecting) {
@@ -2777,6 +3205,7 @@
           }
         }
       }, {
+        root: scrollRoot,
         rootMargin: '250px',
         threshold: 0.1
       });
@@ -2787,6 +3216,8 @@
     function renderArticles(articles) {
       document.getElementById('articles-section').style.display = 'block';
       const container = document.getElementById('articles-list');
+      const artBadge = document.getElementById('tab-articles-badge');
+      if (artBadge) artBadge.innerText = articles.length;
 
       container.innerHTML = articles.map((a, index) => {
         const col = a.color || a.highlight_color || (a.featured ? '#facc15' : 'var(--accent-gold)');
@@ -4128,10 +4559,28 @@
           handleSpinClick();
         }
       }
+      if (window.innerWidth <= 768 && !document.querySelector('.modal-backdrop[style*="display: flex"]') && !document.querySelector('.slot-modal[style*="display: flex"]')) {
+        if (e.key === 'ArrowLeft') {
+          switchMobileSlide(0);
+        } else if (e.key === 'ArrowRight') {
+          switchMobileSlide(1);
+        }
+      }
     });
 
     window.addEventListener('resize', () => {
       if (isInlineEditingPhoto) updateInlineCropUI();
+
+      if (window.innerWidth > 768) {
+        const track = document.getElementById('mobile-slider-track');
+        if (track) {
+          track.style.transform = '';
+          track.style.transition = '';
+        }
+      } else {
+        switchMobileSlide(currentMobileSlide, false);
+      }
+      setupGalleryScrollObserver();
     });
 
     loadData();
