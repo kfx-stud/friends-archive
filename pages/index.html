@@ -287,6 +287,84 @@
       word-break: break-word;
     }
 
+    .media-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .like-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-muted);
+      padding: 4px 10px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+      outline: none;
+    }
+
+    .like-btn:hover {
+      background: rgba(239, 68, 68, 0.12);
+      border-color: rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      transform: translateY(-1px);
+    }
+
+    .like-btn:active {
+      transform: scale(0.94);
+    }
+
+    .like-btn.liked {
+      background: linear-gradient(135deg, rgba(220, 38, 38, 0.3) 0%, rgba(185, 28, 28, 0.45) 100%);
+      border-color: var(--accent-red);
+      color: #fff;
+      box-shadow: 0 2px 10px rgba(220, 38, 38, 0.35);
+    }
+
+    .like-icon {
+      width: 15px;
+      height: 15px;
+      fill: rgba(239, 68, 68, 0.2);
+      stroke: #ef4444;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), fill 0.2s, stroke 0.2s;
+    }
+
+    .like-btn.liked .like-icon {
+      fill: var(--accent-red);
+      stroke: var(--accent-red);
+      filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.7));
+    }
+
+    .like-icon.like-bounce {
+      animation: heartBounce 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes heartBounce {
+      0% { transform: scale(1); }
+      35% { transform: scale(1.45); }
+      65% { transform: scale(0.85); }
+      100% { transform: scale(1); }
+    }
+
+    .like-count {
+      font-variant-numeric: tabular-nums;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
     .modal-backdrop {
       display: none;
       position: fixed;
@@ -1285,9 +1363,17 @@
       <div class="modal-sidebar-col">
         <div id="modal-view-mode" style="display: flex; flex-direction: column; height: 100%; justify-content: space-between;">
           <div style="overflow-y: auto; padding-right: 4px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px;">
               <span id="modal-tag" class="badge-tag"></span>
-              <span id="modal-score" class="badge-score"></span>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <button id="modal-like-btn" class="like-btn" onclick="handleModalLikeClick(event)" title="Поставить лайк">
+                  <svg class="like-icon" viewBox="0 0 24 24">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                  </svg>
+                  <span id="modal-like-count" class="like-count">0</span>
+                </button>
+                <span id="modal-score" class="badge-score"></span>
+              </div>
             </div>
             <h2 id="modal-title" style="margin-bottom: 10px; font-size: 18px; color: #fff;"></h2>
             <p id="modal-caption" style="color: var(--text-muted); font-size: 13.5px; line-height: 1.5; white-space: pre-wrap;"></p>
@@ -1578,6 +1664,15 @@
   <script>
     const DEFAULT_BIN_ID = "6abbe438ffd5d160533c11f1";
     const DEFAULT_ACCESS_KEY = "$2a$10$O1huoOnWr514Q11f8aMZjOJULgE9ejfgdMdlH9zJdMoXP0VzMTFTa";
+    const FIREBASE_RTDB_URL = "https://friends-archive-default-rtdb.europe-west1.firebasedatabase.app";
+
+    let allLikes = {};
+    let userLikedPosts = {};
+    try {
+      userLikedPosts = JSON.parse(localStorage.getItem('gazmyas_liked_posts') || '{}');
+    } catch (e) {
+      userLikedPosts = {};
+    }
 
     let activeCard = null;
     let cardsData = [];
@@ -1591,6 +1686,190 @@
     let isInlineEditingPhoto = false;
     let currentCrop = { x: 50, y: 50 };
     let envConfigCache = null;
+
+    function getSafeFirebaseKey(key) {
+      if (!key) return '';
+      return String(key).replace(/[\.\$#\[\]\/]/g, '_');
+    }
+
+    function initLikesSync() {
+      // 1. Быстрый снимок всех лайков
+      fetch(`${FIREBASE_RTDB_URL}/likes.json`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && typeof data === 'object') {
+            allLikes = data;
+            updateAllLikesUI();
+          }
+        })
+        .catch(err => console.warn('Ошибка начальной загрузки лайков:', err));
+
+      // 2. Realtime SSE стрим для моментальных обновлений между всеми пользователями
+      try {
+        if (window.EventSource) {
+          const es = new EventSource(`${FIREBASE_RTDB_URL}/likes.json`);
+          es.addEventListener('put', (e) => {
+            try {
+              const parsed = JSON.parse(e.data);
+              if (parsed.path === '/') {
+                allLikes = parsed.data || {};
+                updateAllLikesUI();
+              } else if (parsed.path && parsed.path.length > 1) {
+                const key = parsed.path.substring(1);
+                allLikes[key] = parsed.data || 0;
+                updateLikeButtonUI(key);
+              }
+            } catch (err) {}
+          });
+          es.addEventListener('patch', (e) => {
+            try {
+              const parsed = JSON.parse(e.data);
+              if (parsed.data) {
+                Object.assign(allLikes, parsed.data);
+                updateAllLikesUI();
+              }
+            } catch (err) {}
+          });
+          es.onerror = () => {
+            // EventSource автоматически выполняет переподключение
+          };
+        }
+      } catch (e) {
+        console.warn('Realtime EventSource недоступен:', e);
+      }
+    }
+
+    function updateLikeButtonUI(safeKey, animate = false) {
+      const isLiked = !!userLikedPosts[safeKey];
+      const count = allLikes[safeKey] || 0;
+
+      const buttons = document.querySelectorAll(`[data-like-key="${safeKey}"]`);
+      buttons.forEach(btn => {
+        if (isLiked) {
+          btn.classList.add('liked');
+        } else {
+          btn.classList.remove('liked');
+        }
+        const countEl = btn.querySelector('.like-count');
+        if (countEl) countEl.innerText = count;
+
+        if (animate) {
+          const icon = btn.querySelector('.like-icon');
+          if (icon) {
+            icon.classList.remove('like-bounce');
+            void icon.offsetWidth;
+            icon.classList.add('like-bounce');
+          }
+        }
+      });
+
+      if (activeCard) {
+        const activeKey = getSafeFirebaseKey(activeCard.id || activeCard.file || activeCard.filename);
+        if (activeKey === safeKey) {
+          const modalBtn = document.getElementById('modal-like-btn');
+          if (modalBtn) {
+            if (isLiked) modalBtn.classList.add('liked');
+            else modalBtn.classList.remove('liked');
+            const modalCount = document.getElementById('modal-like-count');
+            if (modalCount) modalCount.innerText = count;
+            if (animate) {
+              const icon = modalBtn.querySelector('.like-icon');
+              if (icon) {
+                icon.classList.remove('like-bounce');
+                void icon.offsetWidth;
+                icon.classList.add('like-bounce');
+              }
+            }
+          }
+        }
+      }
+    }
+
+    function updateAllLikesUI() {
+      const buttons = document.querySelectorAll('[data-like-key]');
+      buttons.forEach(btn => {
+        const safeKey = btn.getAttribute('data-like-key');
+        const isLiked = !!userLikedPosts[safeKey];
+        const count = allLikes[safeKey] || 0;
+        if (isLiked) {
+          btn.classList.add('liked');
+        } else {
+          btn.classList.remove('liked');
+        }
+        const countEl = btn.querySelector('.like-count');
+        if (countEl) countEl.innerText = count;
+      });
+
+      if (activeCard) {
+        const activeKey = getSafeFirebaseKey(activeCard.id || activeCard.file || activeCard.filename);
+        const isLiked = !!userLikedPosts[activeKey];
+        const count = allLikes[activeKey] || 0;
+        const modalBtn = document.getElementById('modal-like-btn');
+        if (modalBtn) {
+          if (isLiked) modalBtn.classList.add('liked');
+          else modalBtn.classList.remove('liked');
+          const modalCount = document.getElementById('modal-like-count');
+          if (modalCount) modalCount.innerText = count;
+        }
+      }
+    }
+
+    async function toggleLike(rawKey) {
+      const safeKey = getSafeFirebaseKey(rawKey);
+      if (!safeKey) return;
+
+      const isLiked = !!userLikedPosts[safeKey];
+      const delta = isLiked ? -1 : 1;
+
+      if (isLiked) {
+        delete userLikedPosts[safeKey];
+      } else {
+        userLikedPosts[safeKey] = true;
+      }
+      try {
+        localStorage.setItem('gazmyas_liked_posts', JSON.stringify(userLikedPosts));
+      } catch (e) {}
+
+      const currentCount = Number(allLikes[safeKey] || 0);
+      const newCount = Math.max(0, currentCount + delta);
+      allLikes[safeKey] = newCount;
+
+      updateLikeButtonUI(safeKey, true);
+
+      try {
+        const res = await fetch(`${FIREBASE_RTDB_URL}/likes/${safeKey}.json`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ".sv": { "increment": delta } })
+        });
+        if (res.ok) {
+          const serverVal = await res.json();
+          if (typeof serverVal === 'number') {
+            allLikes[safeKey] = Math.max(0, serverVal);
+            updateLikeButtonUI(safeKey, false);
+          }
+        }
+      } catch (err) {
+        console.error('Ошибка записи лайка в Firebase RTDB:', err);
+      }
+    }
+
+    function handleLikeClick(rawKey, event) {
+      if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+      }
+      toggleLike(rawKey);
+    }
+
+    function handleModalLikeClick(event) {
+      if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+      }
+      if (!activeCard) return;
+      toggleLike(activeCard.id || activeCard.file || activeCard.filename);
+    }
 
     function escapeHtml(str) {
       if (str === null || str === undefined) return '';
@@ -1657,6 +1936,8 @@
     }
 
     async function loadData() {
+      initLikesSync();
+
       try {
         const res = await fetch('../data/data.json');
         cardsData = await res.json();
@@ -1698,6 +1979,9 @@
         const imgPath = resolveImagePath(c);
         const cardKey = c.id || c.file || c.filename || '';
         const safeKey = escapeAttr(cardKey);
+        const fbKey = getSafeFirebaseKey(cardKey);
+        const isLiked = !!userLikedPosts[fbKey];
+        const likesCount = allLikes[fbKey] || 0;
         const safeImg = escapeAttr(imgPath);
         const safeTitle = escapeHtml(c.title || 'Без названия');
         const safeCaption = escapeHtml(c.caption || '');
@@ -1718,6 +2002,15 @@
             <div class="media-info">
               <div class="media-title">${safeTitle}</div>
               <div class="media-caption">${safeCaption}</div>
+              <div class="media-card-footer">
+                <button class="like-btn ${isLiked ? 'liked' : ''}" data-like-key="${fbKey}" onclick="handleLikeClick('${fbKey}', event)" title="Поставить лайк">
+                  <svg class="like-icon" viewBox="0 0 24 24">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                  </svg>
+                  <span class="like-count">${likesCount}</span>
+                </button>
+                <span style="font-size: 11px; color: var(--text-muted); opacity: 0.8;">${escapeHtml(c.date || '')}</span>
+              </div>
             </div>
           </div>
         `;
@@ -1785,6 +2078,9 @@
         const col = a.color || a.highlight_color || (a.featured ? '#facc15' : 'var(--accent-gold)');
         const safeCol = escapeAttr(col);
         const safeId = escapeAttr(a.id || ('art_' + index));
+        const safeKey = getSafeFirebaseKey(safeId);
+        const isLiked = !!userLikedPosts[safeKey];
+        const likesCount = allLikes[safeKey] || 0;
         const safeTag = escapeHtml(a.tag || '');
         const safeDate = escapeHtml(a.date || '');
         const safeAuthor = escapeHtml(a.author || 'Редакция');
@@ -1801,7 +2097,13 @@
               <div class="art-heading" style="color: ${a.featured ? safeCol : '#fff'};">${safeTitle}</div>
               <div class="art-body">${safeContent}</div>
             </div>
-            <div style="margin-top: 14px; display: flex; justify-content: flex-end; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px;">
+            <div style="margin-top: 14px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px;">
+              <button class="like-btn ${isLiked ? 'liked' : ''}" data-like-key="${safeKey}" onclick="handleLikeClick('${safeKey}', event)" title="Поставить лайк">
+                <svg class="like-icon" viewBox="0 0 24 24">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+                <span class="like-count">${likesCount}</span>
+              </button>
               <button class="nav-btn" style="padding: 3px 10px; font-size: 11px;" data-art-id="${safeId}" onclick="openArticleEditModal(this.dataset.artId)">✏️ Править</button>
             </div>
           </div>
@@ -1819,6 +2121,17 @@
       document.getElementById('modal-caption').innerText = activeCard.caption || '';
       document.getElementById('modal-tag').innerText = activeCard.tag || 'ФОТО';
       document.getElementById('modal-score').innerText = (activeCard.score ? activeCard.score + '/10' : '');
+
+      const fbKey = getSafeFirebaseKey(activeCard.id || activeCard.file || activeCard.filename);
+      const isLiked = !!userLikedPosts[fbKey];
+      const likesCount = allLikes[fbKey] || 0;
+      const modalBtn = document.getElementById('modal-like-btn');
+      if (modalBtn) {
+        if (isLiked) modalBtn.classList.add('liked');
+        else modalBtn.classList.remove('liked');
+        const modalCount = document.getElementById('modal-like-count');
+        if (modalCount) modalCount.innerText = likesCount;
+      }
 
       currentCrop.x = activeCard.crop_x ?? 50;
       currentCrop.y = activeCard.crop_y ?? 50;
