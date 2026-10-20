@@ -2498,14 +2498,14 @@
 
           <div class="slot-feature-card">
             <div class="slot-feature-title">Купить Бонус</div>
-            <div class="slot-feature-price" id="buy-bonus-price">2 000</div>
-            <button id="btn-buy-regular" class="btn-buy-bonus" onclick="buyRegularBonus()">BUY (100x)</button>
+            <div class="slot-feature-price" id="buy-bonus-price">2 000 🍬</div>
+            <button id="btn-buy-regular" class="btn-buy-bonus" onclick="buyRegularBonus()">BUY 100x (2 000)</button>
           </div>
 
           <div class="slot-feature-card" style="border-color: rgba(253, 224, 71, 0.4); background: rgba(245, 158, 11, 0.08);">
             <div class="slot-feature-title" style="color: #ffd700;">Super Бонус</div>
-            <div class="slot-feature-price" id="buy-super-price" style="color: #ffd700;">10 000</div>
-            <button id="btn-buy-super" class="btn-buy-super" onclick="buySuperBonus()">SUPER (500x) 🌟</button>
+            <div class="slot-feature-price" id="buy-super-price" style="color: #ffd700;">10 000 🌟</div>
+            <button id="btn-buy-super" class="btn-buy-super" onclick="buySuperBonus()">SUPER 500x (10 000) 🌟</button>
           </div>
         </div>
 
@@ -2557,7 +2557,11 @@
           <button class="slot-icon-btn" onclick="closePaytable()">✕</button>
         </div>
 
-        <div style="font-size: 12.5px; color: #e2e8f0; margin-top: 10px; line-height: 1.5; text-align: left; width: 100%;">
+        <div id="paytable-bet-info" style="font-size: 13px; color: #ffd700; margin-top: 10px; line-height: 1.5; text-align: left; width: 100%; font-weight: 800;">
+          🎯 Текущая ставка: 20 кредитов (выплаты ниже рассчитаны для неё)
+        </div>
+
+        <div style="font-size: 12px; color: #cbd5e1; margin-top: 4px; line-height: 1.5; text-align: left; width: 100%;">
           <b>Кластерные выплаты:</b> 5 или более одинаковых символов, соединенных по горизонтали или вертикали.
         </div>
 
@@ -3885,7 +3889,9 @@
     let audioCtx = null;
 
     let slotBalance = 10000;
+    let lastRoundWin = 0;
     let isFreeSpins = false;
+    let isSuperFreeSpins = false;
     let freeSpinsLeft = 0;
     let freeSpinsTotal = 0;
     let freeSpinsWinAccum = 0;
@@ -3897,15 +3903,24 @@
     let guaranteedSuper = false;
 
     const REGULAR_SYMBOLS = ['💖', '🍭', '🍬', '⭐', '🍓', '🍇', '🐻'];
+    const SYMBOL_WEIGHTS = {
+      '💖': 5,  // Розовое сердце (топ)
+      '🍭': 8,  // Леденец
+      '🍬': 12, // Карамелька
+      '⭐': 16, // Звезда
+      '🍓': 19, // Клубника
+      '🍇': 24, // Виноград
+      '🐻': 28  // Мишка (частый)
+    };
 
     const PAYTABLE_DATA = {
-      '💖': { name: "Розовое сердце", emoji: "💖", m5: 1.5,  m7: 3.0,  m9: 8.0,  m12: 25.0, m15: 150.0, color: "#ff4081" },
-      '🍭': { name: "Леденец",         emoji: "🍭", m5: 1.0,  m7: 2.0,  m9: 5.0,  m12: 15.0, m15: 100.0, color: "#ff6d00" },
-      '🍬': { name: "Карамелька",      emoji: "🍬", m5: 0.75, m7: 1.5,  m9: 3.5,  m12: 10.0, m15: 60.0,  color: "#aa00ff" },
-      '⭐': { name: "Звезда",          emoji: "⭐", m5: 0.5,  m7: 1.0,  m9: 2.5,  m12: 6.0,  m15: 40.0,  color: "#ffd600" },
-      '🍓': { name: "Клубника",        emoji: "🍓", m5: 0.4,  m7: 0.8,  m9: 1.8,  m12: 4.0,  m15: 30.0,  color: "#ff1744" },
-      '🍇': { name: "Виноград",        emoji: "🍇", m5: 0.3,  m7: 0.6,  m9: 1.2,  m12: 3.0,  m15: 25.0,  color: "#7c4dff" },
-      '🐻': { name: "Мишка",           emoji: "🐻", m5: 0.25, m7: 0.5,  m9: 1.0,  m12: 2.0,  m15: 20.0,  color: "#ff9100" }
+      '💖': { name: "Розовое сердце", emoji: "💖", color: "#ff4081", payouts: { 5: 1.0,  7: 1.5,  9: 3.0,  12: 10.0, 15: 150.0 } },
+      '🍭': { name: "Леденец",         emoji: "🍭", color: "#ff6d00", payouts: { 5: 0.75, 7: 1.25, 9: 2.5,  12: 7.5,  15: 100.0 } },
+      '🍬': { name: "Карамелька",      emoji: "🍬", color: "#aa00ff", payouts: { 5: 0.5,  7: 1.0,  9: 2.0,  12: 5.0,  15: 60.0  } },
+      '⭐': { name: "Звезда",          emoji: "⭐", color: "#ffd600", payouts: { 5: 0.4,  7: 0.75, 9: 1.5,  12: 3.5,  15: 40.0  } },
+      '🍓': { name: "Клубника",        emoji: "🍓", color: "#ff1744", payouts: { 5: 0.3,  7: 0.5,  9: 1.0,  12: 2.5,  15: 30.0  } },
+      '🍇': { name: "Виноград",        emoji: "🍇", color: "#7c4dff", payouts: { 5: 0.25, 7: 0.4,  9: 0.75, 12: 2.0,  15: 25.0  } },
+      '🐻': { name: "Мишка",           emoji: "🐻", color: "#ff9100", payouts: { 5: 0.2,  7: 0.3,  9: 0.5,  12: 1.5,  15: 20.0  } }
     };
 
     function getBaseBet() {
@@ -3956,7 +3971,7 @@
         const osc = audioCtx.createOscillator();
         const g = audioCtx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(520, now);
+        osc.frequency.setValueAtTime(540, now);
         osc.frequency.exponentialRampToValueAtTime(90, now + 0.12);
         g.gain.setValueAtTime(0.3, now);
         g.gain.linearRampToValueAtTime(0.01, now + 0.12);
@@ -3978,8 +3993,8 @@
         osc.type = 'triangle';
         const baseFreq = 420 + Math.min(1400, Math.log2(Math.max(2, mult || 2)) * 130);
         osc.frequency.setValueAtTime(baseFreq, now);
-        osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.4, now + 0.22);
-        g.gain.setValueAtTime(0.3, now);
+        osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.35, now + 0.22);
+        g.gain.setValueAtTime(0.32, now);
         g.gain.linearRampToValueAtTime(0.01, now + 0.23);
         osc.connect(g);
         g.connect(audioCtx.destination);
@@ -3989,13 +4004,22 @@
     }
 
     function playScatterSound(count) {
-      playSoundTone(440 * Math.pow(1.22, count || 1), 0.35, 'triangle', 0.35);
+      if (!soundEnabled) return;
+      if (count === 1) {
+        playSoundTone(440, 0.25, 'triangle', 0.25);
+      } else if (count === 2) {
+        playSoundTone(554.37, 0.35, 'triangle', 0.35);
+      } else {
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+          setTimeout(() => playSoundTone(freq, 0.35, 'triangle', 0.32), idx * 80);
+        });
+      }
     }
 
     function playSuperScatterSound() {
       if (!soundEnabled) return;
-      [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
-        setTimeout(() => playSoundTone(freq, 0.4, 'triangle', 0.35), idx * 75);
+      [659.25, 830.61, 987.77, 1318.51].forEach((freq, idx) => {
+        setTimeout(() => playSoundTone(freq, 0.45, 'triangle', 0.4), idx * 75);
       });
     }
 
@@ -4056,16 +4080,182 @@
       playCascadeSounds();
     }
 
-    // Случайный символ с учетом Ante Bet и вероятностей
-    function getRandomSymbol(allowScatters = true) {
-      if (allowScatters) {
-        const scatterThreshold = anteBetActive ? 0.035 : 0.015;
-        const superThreshold = anteBetActive ? 0.010 : 0.003;
-        const rnd = Math.random();
-        if (rnd < superThreshold) return 'super_scatter';
-        if (rnd < scatterThreshold) return 'scatter';
+    // Взвешенный случайный символ с учетом соседской связности
+    function getRandomWeightedSymbol(neighbor = null, affinity = 0.10) {
+      if (neighbor && SYMBOL_WEIGHTS[neighbor] && Math.random() < affinity) {
+        return neighbor;
       }
-      return REGULAR_SYMBOLS[Math.floor(Math.random() * REGULAR_SYMBOLS.length)];
+      const total = Object.values(SYMBOL_WEIGHTS).reduce((a, b) => a + b, 0);
+      let r = Math.random() * total;
+      for (const sym of REGULAR_SYMBOLS) {
+        r -= SYMBOL_WEIGHTS[sym];
+        if (r <= 0) return sym;
+      }
+      return REGULAR_SYMBOLS[REGULAR_SYMBOLS.length - 1];
+    }
+
+    // Генератор выпадения Скеттеров и Super Scatter
+    function rollScatters(isAnte) {
+      const rnd = Math.random();
+      let count = 0;
+      if (!isAnte) {
+        if (rnd < 0.72) count = 0;
+        else if (rnd < 0.91) count = 1;
+        else if (rnd < 0.980) count = 2; // ~7% tease
+        else if (rnd < 0.996) count = 3; // ~1.6% trigger (1 в ~60 спинов)
+        else if (rnd < 0.999) count = 4;
+        else if (rnd < 0.9998) count = 5;
+        else count = 6;
+      } else {
+        if (rnd < 0.48) count = 0;
+        else if (rnd < 0.76) count = 1;
+        else if (rnd < 0.94) count = 2; // ~18% tease
+        else if (rnd < 0.988) count = 3; // ~4.8% trigger (1 в ~20 спинов!)
+        else if (rnd < 0.997) count = 4;
+        else if (rnd < 0.9995) count = 5;
+        else count = 6;
+      }
+
+      let superCount = 0;
+      if (count >= 3) {
+        const superChance = isAnte ? 0.25 : 0.12;
+        if (Math.random() < superChance) {
+          superCount = 1;
+          if (Math.random() < 0.15) superCount = 2;
+        }
+      } else if (count === 1 || count === 2) {
+        if (Math.random() < (isAnte ? 0.15 : 0.08)) {
+          superCount = 1;
+        }
+      }
+      return { count, superCount };
+    }
+
+    // Случайный размер органического кластера
+    function getClusterSizeRoll() {
+      const r = Math.random();
+      if (r < 0.58) return 5;
+      if (r < 0.83) return 6;
+      if (r < 0.93) return 7;
+      if (r < 0.97) return 8;
+      if (r < 0.99) return 9;
+      if (r < 0.998) return 12;
+      return 15;
+    }
+
+    // Разрушение случайных кластеров >= 5 для dead-спинов
+    function breakAccidentalClusters(gridArr) {
+      const visited = Array(49).fill(false);
+      for (let i = 0; i < 49; i++) {
+        if (!visited[i] && REGULAR_SYMBOLS.includes(gridArr[i])) {
+          const cl = [];
+          const q = [i];
+          visited[i] = true;
+          const targetSym = gridArr[i];
+          while (q.length > 0) {
+            const curr = q.shift();
+            cl.push(curr);
+            const r = Math.floor(curr / 7);
+            const c = curr % 7;
+            const nbrs = [];
+            if (r > 0) nbrs.push(curr - 7);
+            if (r < 6) nbrs.push(curr + 7);
+            if (c > 0) nbrs.push(curr - 1);
+            if (c < 6) nbrs.push(curr + 1);
+            for (const n of nbrs) {
+              if (!visited[n] && gridArr[n] === targetSym) {
+                visited[n] = true;
+                q.push(n);
+              }
+            }
+          }
+          if (cl.length >= 5) {
+            for (let k = 1; k < cl.length; k += 2) {
+              const diffSyms = REGULAR_SYMBOLS.filter(s => s !== targetSym);
+              gridArr[cl[k]] = diffSyms[Math.floor(Math.random() * diffSyms.length)];
+            }
+          }
+        }
+      }
+    }
+
+    // Генерация поля с органической кластеризацией
+    function generateBoardGrid(isFS, scatterInfo = null) {
+      const newGrid = Array(49).fill('');
+
+      // 1. Расставляем скеттеры
+      if (scatterInfo && scatterInfo.count > 0) {
+        const indices = [];
+        while (indices.length < scatterInfo.count) {
+          const pos = Math.floor(Math.random() * 49);
+          if (!indices.includes(pos)) indices.push(pos);
+        }
+        indices.forEach((idx, order) => {
+          newGrid[idx] = (order < scatterInfo.superCount) ? 'super_scatter' : 'scatter';
+        });
+      }
+
+      // 2. Определяем выигрышный кластер на спине (~35% база, ~52% во Free Spins)
+      const hitChance = isFS ? 0.52 : 0.35;
+      const isHit = Math.random() < hitChance;
+
+      if (isHit) {
+        const seedSym = getRandomWeightedSymbol();
+        const clusterSize = getClusterSizeRoll();
+        const freeIndices = [];
+        for (let i = 0; i < 49; i++) {
+          if (newGrid[i] === '') freeIndices.push(i);
+        }
+        if (freeIndices.length > 0) {
+          const startPos = freeIndices[Math.floor(Math.random() * freeIndices.length)];
+          newGrid[startPos] = seedSym;
+          const queue = [startPos];
+          const placed = [startPos];
+          while (queue.length > 0 && placed.length < clusterSize) {
+            const curr = queue.splice(Math.floor(Math.random() * queue.length), 1)[0];
+            const r = Math.floor(curr / 7);
+            const c = curr % 7;
+            const neighbors = [];
+            if (r > 0) neighbors.push(curr - 7);
+            if (r < 6) neighbors.push(curr + 7);
+            if (c > 0) neighbors.push(curr - 1);
+            if (c < 6) neighbors.push(curr + 1);
+            for (let i = neighbors.length - 1; i > 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [neighbors[i], neighbors[j]] = [neighbors[j], neighbors[i]];
+            }
+            for (const n of neighbors) {
+              if (newGrid[n] === '' && !placed.includes(n)) {
+                newGrid[n] = seedSym;
+                placed.push(n);
+                queue.push(n);
+                if (placed.length >= clusterSize) break;
+              }
+            }
+          }
+        }
+      }
+
+      // 3. Заполняем остальные клетки
+      const aff = isHit ? 0.12 : 0.05;
+      for (let r = 0; r < 7; r++) {
+        for (let c = 0; c < 7; c++) {
+          const idx = r * 7 + c;
+          if (newGrid[idx] === '') {
+            let nbr = null;
+            if (c > 0 && REGULAR_SYMBOLS.includes(newGrid[idx - 1])) nbr = newGrid[idx - 1];
+            else if (r > 0 && REGULAR_SYMBOLS.includes(newGrid[idx - 7])) nbr = newGrid[idx - 7];
+            newGrid[idx] = getRandomWeightedSymbol(nbr, aff);
+          }
+        }
+      }
+
+      // 4. Если спин задуман как dead-спин, убираем случайные совпадения
+      if (!isHit) {
+        breakAccidentalClusters(newGrid);
+      }
+
+      return newGrid;
     }
 
     // Открытие и закрытие слота
@@ -4091,12 +4281,16 @@
     }
 
     function changeBet(dir) {
-      if (isSpinning) return;
+      if (isSpinning || isFreeSpins) return;
       const nextIndex = currentBetIndex + dir;
       if (nextIndex >= 0 && nextIndex < BET_TIERS.length) {
         currentBetIndex = nextIndex;
         updateUI();
         playSoundTone(350, 0.08, 'sine', 0.2);
+        const paytableModal = document.getElementById('slot-paytable');
+        if (paytableModal && paytableModal.style.display === 'flex') {
+          openPaytable();
+        }
       }
     }
 
@@ -4162,14 +4356,15 @@
       const winEl = document.getElementById('slot-win');
       if (winEl) winEl.innerText = lastRoundWin.toLocaleString();
 
-      const buyRegularPrice = 100 * getTotalBet();
-      const buySuperPrice = 500 * getTotalBet();
+      const baseBet = getBaseBet();
+      const buyRegularPrice = 100 * baseBet;
+      const buySuperPrice = 500 * baseBet;
 
       const regEl = document.getElementById('buy-bonus-price');
-      if (regEl) regEl.innerText = buyRegularPrice.toLocaleString();
+      if (regEl) regEl.innerText = buyRegularPrice.toLocaleString() + ' 🍬';
 
       const supEl = document.getElementById('buy-super-price');
-      if (supEl) supEl.innerText = buySuperPrice.toLocaleString();
+      if (supEl) supEl.innerText = buySuperPrice.toLocaleString() + ' 🌟';
 
       const minusBtn = document.getElementById('btn-bet-minus');
       const plusBtn = document.getElementById('btn-bet-plus');
@@ -4180,30 +4375,38 @@
       if (anteBtn) anteBtn.disabled = isSpinning || isFreeSpins;
 
       const buyRegBtn = document.getElementById('btn-buy-regular');
-      if (buyRegBtn) buyRegBtn.disabled = isSpinning || isFreeSpins || slotBalance < buyRegularPrice;
+      if (buyRegBtn) {
+        buyRegBtn.disabled = isSpinning || isFreeSpins || slotBalance < buyRegularPrice;
+        buyRegBtn.innerText = `BUY 100x (${buyRegularPrice.toLocaleString()})`;
+      }
 
       const buySupBtn = document.getElementById('btn-buy-super');
-      if (buySupBtn) buySupBtn.disabled = isSpinning || isFreeSpins || slotBalance < buySuperPrice;
+      if (buySupBtn) {
+        buySupBtn.disabled = isSpinning || isFreeSpins || slotBalance < buySuperPrice;
+        buySupBtn.innerText = `SUPER 500x (${buySuperPrice.toLocaleString()}) 🌟`;
+      }
     }
 
     // Покупка бонусов
     function buyRegularBonus() {
       if (isSpinning || isFreeSpins) return;
-      const price = 100 * getTotalBet();
+      if (anteBetActive) toggleAnteBet(); // Автоматически выключаем Двойной Шанс для чистоты расчета
+      const price = 100 * getBaseBet();
       if (slotBalance < price) {
         showToast('Недостаточно баланса для покупки бонуса!');
         return;
       }
       slotBalance -= price;
       guaranteedScatters = Math.floor(Math.random() * 3) + 3; // 3 - 5 скеттеров
-      guaranteedSuper = false;
-      showToast('🎁 Куплен бонусный раунд! Выпадение гарантировано.');
+      guaranteedSuper = Math.random() < 0.15; // 15% шанс на золотой Super Scatter
+      showToast('🎁 Куплен бонусный раунд (100x)! Выпадение гарантировано.');
       spin();
     }
 
     function buySuperBonus() {
       if (isSpinning || isFreeSpins) return;
-      const price = 500 * getTotalBet();
+      if (anteBetActive) toggleAnteBet();
+      const price = 500 * getBaseBet();
       if (slotBalance < price) {
         showToast('Недостаточно баланса для покупки Super Бонуса!');
         return;
@@ -4222,7 +4425,7 @@
           spots[rndIdx] = 2;
         }
       }
-      showToast('🌟 Куплен SUPER BONUS с гарантированным золотым Super Scatter!');
+      showToast('🌟 Куплен SUPER BONUS (500x) с гарантированным Super Scatter и спотами x2!');
       spin();
     }
 
@@ -4231,8 +4434,8 @@
       const board = document.getElementById('slot-board');
       if (!board) return;
       board.innerHTML = '';
+      grid = generateBoardGrid(false, null);
       for (let i = 0; i < 49; i++) {
-        if (!grid[i]) grid[i] = getRandomSymbol(false);
         const cell = document.createElement('div');
         cell.className = 'slot-cell';
         cell.id = 'cell-' + i;
@@ -4318,31 +4521,29 @@
       lastRoundWin = 0;
       updateUI();
 
-      // Генерация сетки
-      for (let i = 0; i < 49; i++) {
-        grid[i] = getRandomSymbol(true);
-      }
-
-      // Если была покупка бонуса
+      // Определение скеттеров на этот спин
+      let scatterInfo = null;
       if (guaranteedScatters > 0) {
-        const scatterIndices = [];
-        while (scatterIndices.length < guaranteedScatters) {
-          const r = Math.floor(Math.random() * 49);
-          if (!scatterIndices.includes(r)) scatterIndices.push(r);
-        }
-        scatterIndices.forEach((idx, order) => {
-          if (guaranteedSuper && order === 0) {
-            grid[idx] = 'super_scatter';
-          } else {
-            grid[idx] = 'scatter';
-          }
-        });
+        scatterInfo = {
+          count: guaranteedScatters,
+          superCount: guaranteedSuper ? 1 : 0
+        };
         guaranteedScatters = 0;
         guaranteedSuper = false;
+      } else {
+        scatterInfo = rollScatters(anteBetActive);
       }
+
+      // Генерация сетки с органическими кластерами
+      grid = generateBoardGrid(isFreeSpins, scatterInfo);
 
       renderBoard();
       triggerDropAnimation();
+
+      // Звуковое сопровождение выпадения скеттеров
+      if (scatterInfo.count === 1) playScatterSound(1);
+      else if (scatterInfo.count === 2) playScatterSound(2);
+
       await delay(isTurbo ? 250 : 520);
 
       // Процесс лавины кластеров
@@ -4382,6 +4583,7 @@
         } else {
           // Завершение бонусного раунда
           isFreeSpins = false;
+          isSuperFreeSpins = false;
           const bar = document.getElementById('slot-bonus-bar');
           if (bar) bar.style.display = 'none';
 
@@ -4445,15 +4647,16 @@
       return cluster;
     }
 
-    // Вычисление выигрыша кластера
+    // Вычисление выигрыша кластера в зависимости от базовой ставки
     function calculateClusterWin(sym, size) {
       const data = PAYTABLE_DATA[sym];
       if (!data || size < 5) return 0;
-      let mult = data.m5;
-      if (size >= 15) mult = data.m15;
-      else if (size >= 12) mult = data.m12;
-      else if (size >= 9) mult = data.m9;
-      else if (size >= 7) mult = data.m7;
+      const p = data.payouts;
+      let mult = p[5];
+      if (size >= 15) mult = p[15];
+      else if (size >= 12) mult = p[12];
+      else if (size >= 9) mult = p[9];
+      else if (size >= 7) mult = p[7];
       return mult * getBaseBet();
     }
 
@@ -4490,7 +4693,7 @@
           const toExplode = new Set();
           let stepWin = 0;
 
-          // Подсветка выигрышных клеток
+          // Подсветка выигрышных клеток и расчет с учетом спот-множителей
           winningClusters.forEach(cl => {
             const basePayout = calculateClusterWin(cl.sym, cl.indices.length);
             let multSum = 0;
@@ -4502,7 +4705,8 @@
             });
 
             const clusterMult = multSum > 0 ? multSum : 1;
-            stepWin += Math.round(basePayout * clusterMult);
+            const clusterWin = Math.round(basePayout * clusterMult);
+            stepWin += clusterWin;
           });
 
           playPopSound();
@@ -4515,7 +4719,7 @@
 
           await delay(isTurbo ? 180 : 400);
 
-          // Взрыв и обновление спот-множителей
+          // Взрыв и повышение уровня спот-множителей
           const affectedCols = new Set();
           toExplode.forEach(idx => {
             affectedCols.add(idx % 7);
@@ -4526,18 +4730,19 @@
             }
 
             if (spots[idx] === 0) {
-              spots[idx] = 1; // Помеченная обертка
+              spots[idx] = 1; // Обертка-метка
             } else if (spots[idx] === 1) {
               spots[idx] = 2; // x2
             } else {
-              spots[idx] = Math.min(1024, spots[idx] * 2); // Удвоение до x1024!
+              spots[idx] = Math.min(1024, spots[idx] * 2); // Удвоение: x4, x8, x16... x1024!
             }
             grid[idx] = '';
           });
 
           await delay(isTurbo ? 150 : 290);
 
-          // Гравитация: падение сверху в затронутых колонках
+          // Гравитация и естественное падение с вероятностью продолжения каскада (~35%)
+          const cascadeContinues = Math.random() < 0.35;
           const droppedIndices = [];
           for (let col = 0; col < 7; col++) {
             let emptyRow = 6;
@@ -4554,7 +4759,10 @@
               }
             }
             while (emptyRow >= 0) {
-              grid[emptyRow * 7 + col] = getRandomSymbol(false);
+              const idx = emptyRow * 7 + col;
+              const nbr = emptyRow < 6 ? grid[(emptyRow + 1) * 7 + col] : null;
+              const aff = cascadeContinues ? 0.28 : 0.06;
+              grid[idx] = getRandomWeightedSymbol(REGULAR_SYMBOLS.includes(nbr) ? nbr : null, aff);
               emptyRow--;
               colMoved = true;
             }
@@ -4607,6 +4815,7 @@
         // Расчет мгновенного куша Super Scatter
         if (superCount > 0) {
           playSuperScatterSound();
+          isSuperFreeSpins = true;
           let instantMult = 100;
           if (superCount === 2) instantMult = 500;
           else if (superCount === 3) instantMult = 5000;
@@ -4619,6 +4828,18 @@
 
           showCelebration('🌟 SUPER SCATTER ' + instantMult + 'X!', instantWin);
           await delay(1800);
+
+          // В Super Free Spins активируем 3 стартовых спота x2, если они еще не улучшены
+          let activated = 0;
+          const shuffledIndices = Array.from({ length: 49 }, (_, i) => i).sort(() => Math.random() - 0.5);
+          for (const idx of shuffledIndices) {
+            if (spots[idx] < 2) {
+              spots[idx] = 2;
+              activated++;
+              if (activated >= 3) break;
+            }
+          }
+          renderBoard();
         }
 
         if (!isFreeSpins) {
@@ -4628,16 +4849,30 @@
           freeSpinsWinAccum = 0;
 
           const bar = document.getElementById('slot-bonus-bar');
-          if (bar) bar.style.display = 'flex';
+          if (bar) {
+            bar.style.display = 'flex';
+            if (isSuperFreeSpins) {
+              bar.innerHTML = `
+                <div>🌟 СУПЕР БОНУС: <span id="slot-fs-count" style="color: #ffd700;">${freeSpinsLeft} / ${freeSpinsTotal}</span></div>
+                <div style="font-size: 11.5px; color: #ffd700; font-weight: 900;">✨ СПОТЫ X2 + ЛИПКИЕ МНОЖИТЕЛИ!</div>
+                <div>КУШ БОНУСА: <span id="slot-fs-win" style="color: #4ade80;">0</span></div>
+              `;
+            } else {
+              bar.innerHTML = `
+                <div>🎉 БОНУСНЫЙ РАУНД: <span id="slot-fs-count" style="color: #ffd700;">${freeSpinsLeft} / ${freeSpinsTotal}</span></div>
+                <div style="font-size: 11.5px; opacity: 0.9;">🔥 МУЛЬТИПЛИКАТОРЫ НЕ СБРАСЫВАЮТСЯ!</div>
+                <div>КУШ БОНУСА: <span id="slot-fs-win" style="color: #4ade80;">0</span></div>
+              `;
+            }
+          }
 
-          const countEl = document.getElementById('slot-fs-count');
-          if (countEl) countEl.innerText = freeSpinsLeft + ' / ' + freeSpinsTotal;
-
-          showToast('🎉 ЗАПУСК БОНУСА: ' + awardedSpins + ' бесплатных вращений!');
+          showToast('🎉 ЗАПУСК ' + (isSuperFreeSpins ? 'SUPER ' : '') + 'БОНУСА: ' + awardedSpins + ' бесплатных вращений!');
         } else {
           // Ретриггер во время фриспинов
           freeSpinsLeft += awardedSpins;
           freeSpinsTotal += awardedSpins;
+          const countEl = document.getElementById('slot-fs-count');
+          if (countEl) countEl.innerText = freeSpinsLeft + ' / ' + freeSpinsTotal;
           showToast('🔥 РЕТРИГГЕР: +' + awardedSpins + ' бесплатных вращений!');
         }
       }
@@ -4689,13 +4924,18 @@
       if (modal) modal.style.display = 'none';
     }
 
-    // Таблица выплат
+    // Таблица выплат с динамическим пересчетом для текущей ставки
     function openPaytable() {
       const modal = document.getElementById('slot-paytable');
       const container = document.getElementById('paytable-symbols');
+      const betInfoEl = document.getElementById('paytable-bet-info');
       if (!modal || !container) return;
 
       const baseBet = getBaseBet();
+      if (betInfoEl) {
+        betInfoEl.innerHTML = `🎯 Текущая ставка: <span style="color:#ffd700;">${baseBet.toLocaleString()}</span> кредитов (все выплаты ниже рассчитаны для неё)`;
+      }
+
       container.innerHTML = '';
 
       REGULAR_SYMBOLS.forEach(sym => {
@@ -4706,11 +4946,11 @@
           <div class="paytable-card-svg" style="font-size: 34px; display: flex; align-items: center; justify-content: center; height: 46px;">${d.emoji}</div>
           <div style="font-weight: 800; font-size: 11.5px; color: ${d.color};">${d.name}</div>
           <div class="paytable-payouts">
-            15+: <b>${Math.round(d.m15 * baseBet).toLocaleString()}</b><br>
-            12-14: <b>${Math.round(d.m12 * baseBet).toLocaleString()}</b><br>
-            9-11: <b>${Math.round(d.m9 * baseBet).toLocaleString()}</b><br>
-            7-8: <b>${Math.round(d.m7 * baseBet).toLocaleString()}</b><br>
-            5-6: <b>${Math.round(d.m5 * baseBet).toLocaleString()}</b>
+            15+: <b>${Math.round(d.payouts[15] * baseBet).toLocaleString()}</b> <span style="font-size:9.5px; opacity:0.7;">(${d.payouts[15]}x)</span><br>
+            12-14: <b>${Math.round(d.payouts[12] * baseBet).toLocaleString()}</b> <span style="font-size:9.5px; opacity:0.7;">(${d.payouts[12]}x)</span><br>
+            9-11: <b>${Math.round(d.payouts[9] * baseBet).toLocaleString()}</b> <span style="font-size:9.5px; opacity:0.7;">(${d.payouts[9]}x)</span><br>
+            7-8: <b>${Math.round(d.payouts[7] * baseBet).toLocaleString()}</b> <span style="font-size:9.5px; opacity:0.7;">(${d.payouts[7]}x)</span><br>
+            5-6: <b>${Math.round(d.payouts[5] * baseBet).toLocaleString()}</b> <span style="font-size:9.5px; opacity:0.7;">(${d.payouts[5]}x)</span>
           </div>
         `;
         container.appendChild(card);
@@ -4722,7 +4962,7 @@
       scatterCard.style.borderColor = '#ff4081';
       scatterCard.innerHTML = `
         <div class="paytable-card-svg" style="font-size: 34px; display: flex; align-items: center; justify-content: center; height: 46px;">🚀</div>
-        <div style="font-weight: 800; font-size: 11.5px; color: #ff4081;">SCATTER</div>
+        <div style="font-weight: 800; font-size: 11.5px; color: #ff4081;">SCATTER (РАКЕТА)</div>
         <div class="paytable-payouts">
           7+: <b>30 Фриспинов</b><br>
           6: <b>20 Фриспинов</b><br>
@@ -4741,11 +4981,11 @@
         <div class="paytable-card-svg" style="font-size: 34px; display: flex; align-items: center; justify-content: center; height: 46px;">🌟</div>
         <div style="font-weight: 800; font-size: 11.5px; color: #ffd700;">SUPER SCATTER</div>
         <div class="paytable-payouts">
-          4+: <b>50 000x MAX</b><br>
-          3: <b>5 000x ставка</b><br>
-          2: <b>500x ставка</b><br>
-          1: <b>100x ставка</b><br>
-          + дает Фриспины!
+          4+: <b>50 000x MAX</b> (${(50000 * baseBet).toLocaleString()})<br>
+          3: <b>5 000x ставка</b> (${(5000 * baseBet).toLocaleString()})<br>
+          2: <b>500x ставка</b> (${(500 * baseBet).toLocaleString()})<br>
+          1: <b>100x ставка</b> (${(100 * baseBet).toLocaleString()})<br>
+          + 3 спота x2 и Фриспины!
         </div>
       `;
       container.appendChild(superCard);
