@@ -32,8 +32,25 @@ def test_model_version():
         env_content = f.read()
     assert "GEMINI_MODEL=gemini-3.8-flash" in env_content
 
+def test_prompt_configuration():
+    example_prompt = BASE_DIR / "prompt.example.txt"
+    assert example_prompt.exists(), "prompt.example.txt должен существовать для репозитория на GitHub"
+    with open(example_prompt, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    # Проверка структуры JSON ответа
+    assert '"score":' in content
+    assert '"title":' in content
+    assert '"caption":' in content
+    assert '"tag":' in content
+
+    # Проверка отсутствия приватных замечаний и локальных шуток в публичном шаблоне
+    for private_term in ["ГазМяс", "Базанов", "Дибуны", "Шугар Раш", "Дирик Платон"]:
+        assert private_term not in content, f"Публичный prompt.example.txt не должен содержать локальное замечание '{private_term}'"
+
 if __name__ == "__main__":
     test_data_json()
     test_articles_json()
     test_model_version()
+    test_prompt_configuration()
     print("All tests passed successfully!")

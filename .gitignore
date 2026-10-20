@@ -6,6 +6,11 @@ data/config.json
 *.pem
 *.key
 
+# Локальные промпты куратора
+prompt.txt
+prompt.*.txt
+!prompt.example.txt
+
 # Временная папка с исходниками фото и архивы
 deleted/
 incoming/
