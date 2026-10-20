@@ -26,6 +26,11 @@
       margin: 0;
       padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
@@ -79,6 +84,13 @@
       font-weight: 700;
       font-size: 13px;
       transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      white-space: nowrap;
+      user-select: none;
+      touch-action: manipulation;
     }
 
     .nav-btn:hover {
@@ -98,6 +110,46 @@
       background: var(--accent-gold-hover);
       border-color: var(--accent-gold-hover);
       color: #000;
+    }
+
+    .nav-btn-slot {
+      border-color: #ff4081;
+      box-shadow: 0 0 10px rgba(255, 64, 129, 0.35);
+      background: #240c1e;
+    }
+
+    .nav-btn-slot:hover {
+      background: #ff4081;
+      border-color: #ff4081;
+      box-shadow: 0 0 16px rgba(255, 64, 129, 0.6);
+      color: #fff;
+    }
+
+    .btn-text-tablet,
+    .btn-text-mobile {
+      display: none;
+    }
+
+    .btn-text-full {
+      display: inline;
+    }
+
+    @media (max-width: 820px) {
+      .btn-text-full {
+        display: none;
+      }
+      .btn-text-tablet {
+        display: inline;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .btn-text-tablet {
+        display: none;
+      }
+      .btn-text-mobile {
+        display: inline;
+      }
     }
 
     main {
@@ -511,6 +563,40 @@
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
+      position: relative;
+    }
+
+    .modal-close-icon-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(18, 12, 14, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 60;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s ease;
+      touch-action: manipulation;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-close-icon-btn:hover {
+      background: var(--accent-red);
+      border-color: var(--accent-red);
+      transform: scale(1.08);
+    }
+
+    .modal-close-icon-btn:active {
+      transform: scale(0.92);
     }
 
     .modal-photo-col {
@@ -661,6 +747,15 @@
 
     .btn-action:hover { opacity: 0.92; transform: translateY(-1px); }
     .btn-action:active { transform: translateY(0); }
+
+    .modal-view-actions,
+    .modal-edit-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 16px;
+      flex-shrink: 0;
+    }
 
     .type-switcher {
       display: grid;
@@ -1352,6 +1447,147 @@
     }
 
     @media (max-width: 768px) {
+      header {
+        padding: 10px 14px;
+      }
+      .brand {
+        font-size: 17px;
+        gap: 8px;
+      }
+      .brand img {
+        width: 28px;
+        height: 28px;
+      }
+      .nav-links {
+        gap: 6px;
+      }
+      .nav-btn {
+        padding: 7px 10px;
+        font-size: 12px;
+        gap: 4px;
+        border-radius: 6px;
+      }
+
+      main {
+        padding: 16px 12px;
+      }
+
+      .section-title {
+        font-size: 18px;
+        margin-bottom: 12px;
+      }
+
+      .articles-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 24px;
+      }
+
+      .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 14px;
+      }
+
+      .media-thumb-box {
+        height: 200px;
+      }
+
+      /* Мобильная адаптация карточки-модалки */
+      .modal-backdrop {
+        padding: 8px;
+      }
+
+      .modal-box {
+        flex-direction: column;
+        height: 94vh;
+        max-height: 94vh;
+        border-radius: 14px;
+      }
+
+      .modal-photo-col {
+        flex: none;
+        width: 100%;
+        height: 48vh;
+        min-height: 200px;
+        max-height: 50vh;
+      }
+
+      #modal-photo-wrapper {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #modal-photo-wrapper img {
+        max-width: 100%;
+        max-height: 48vh;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+      }
+
+      .modal-close-icon-btn {
+        top: 8px;
+        right: 8px;
+        width: 34px;
+        height: 34px;
+        font-size: 15px;
+      }
+
+      .modal-sidebar-col {
+        flex: 1;
+        min-width: 0;
+        max-width: 100%;
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid var(--border);
+        padding: 14px;
+        background: #140d10;
+      }
+
+      .modal-view-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .modal-view-actions .btn-close-modal {
+        grid-column: 1 / -1;
+      }
+
+      .modal-edit-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .preview-frame-rect {
+        width: 170px;
+        height: 130px;
+      }
+
+      /* Модалки форм */
+      .form-modal-window {
+        padding: 18px 14px;
+        max-height: 92vh;
+        overflow-y: auto;
+      }
+
+      .form-control {
+        font-size: 16px;
+      }
+
+      /* Пагинация */
+      .btn-gallery-load-more {
+        padding: 10px 24px;
+        font-size: 13.5px;
+      }
+
+      /* Слот машина */
       .slot-main-stage {
         flex-direction: column-reverse;
         align-items: center;
@@ -1377,6 +1613,147 @@
       }
       .celebration-amount {
         font-size: 32px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      header {
+        padding: 8px 10px;
+      }
+      .brand {
+        font-size: 15px;
+        gap: 6px;
+      }
+      .brand img {
+        width: 24px;
+        height: 24px;
+      }
+      .nav-links {
+        gap: 5px;
+      }
+      .nav-btn {
+        padding: 6px 8px;
+        font-size: 11.5px;
+        gap: 3px;
+      }
+
+      main {
+        padding: 12px 8px;
+      }
+
+      .gallery-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .media-thumb-box {
+        height: 210px;
+      }
+
+      .modal-photo-col {
+        height: 44vh;
+        max-height: 46vh;
+      }
+
+      #modal-photo-wrapper img {
+        max-height: 44vh;
+      }
+
+      .slot-container {
+        padding: 12px 10px;
+      }
+
+      .slot-logo-main {
+        font-size: 18px;
+      }
+
+      .slot-side-panel {
+        gap: 6px;
+      }
+
+      .slot-feature-card {
+        padding: 8px 6px;
+      }
+
+      .slot-feature-title {
+        font-size: 11px;
+      }
+
+      .slot-feature-price {
+        font-size: 12px;
+      }
+
+      .btn-buy-bonus,
+      .btn-buy-super {
+        padding: 6px 4px;
+        font-size: 10.5px;
+      }
+
+      .ante-toggle-btn {
+        padding: 6px;
+        font-size: 10px;
+      }
+
+      .slot-control-panel {
+        padding: 8px;
+        gap: 8px;
+        justify-content: center;
+      }
+
+      .slot-stat-val {
+        font-size: 14px;
+      }
+
+      .btn-spin-main {
+        padding: 8px 16px;
+        font-size: 14px;
+        min-width: 90px;
+      }
+
+      .toast-box {
+        bottom: 14px;
+        left: 14px;
+        right: 14px;
+        padding: 10px 14px;
+        font-size: 12.5px;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .brand span {
+        font-size: 13.5px;
+      }
+      .nav-btn {
+        padding: 5px 6px;
+        font-size: 10.5px;
+      }
+    }
+
+    @media (max-height: 500px) and (orientation: landscape) {
+      .modal-box {
+        flex-direction: row;
+        height: 96vh;
+        max-height: 96vh;
+      }
+      .modal-photo-col {
+        flex: 1;
+        height: 100%;
+        max-height: 100%;
+      }
+      #modal-photo-wrapper img {
+        max-height: 90vh;
+      }
+      .modal-sidebar-col {
+        min-width: 240px;
+        max-width: 280px;
+        border-left: 1px solid var(--border);
+        border-top: none;
+        padding: 10px;
+      }
+      .modal-view-actions {
+        display: flex;
+        flex-direction: column;
       }
     }
 
@@ -1448,8 +1825,17 @@
       <span>ФК «ГазМяс»</span>
     </div>
     <div class="nav-links">
-      <button class="nav-btn" onclick="openSlot()" style="border-color: #ff4081; box-shadow: 0 0 10px rgba(255, 64, 129, 0.35);">🍭 Sugar Rush: Super Scatter</button>
-      <button class="nav-btn nav-btn-gold" onclick="openSuggestModal()">➕ В предложку</button>
+      <button class="nav-btn nav-btn-slot" onclick="openSlot()" title="Sugar Rush: Super Scatter">
+        <span>🍭</span>
+        <span class="btn-text-full">Sugar Rush: Super Scatter</span>
+        <span class="btn-text-tablet">Sugar Rush</span>
+        <span class="btn-text-mobile">Слот</span>
+      </button>
+      <button class="nav-btn nav-btn-gold" onclick="openSuggestModal()" title="Предложить материал">
+        <span>➕</span>
+        <span class="btn-text-full">В предложку</span>
+        <span class="btn-text-mobile">Предложка</span>
+      </button>
     </div>
   </header>
 
@@ -1474,6 +1860,7 @@
 
   <div id="card-modal" class="modal-backdrop">
     <div class="modal-box">
+      <button class="modal-close-icon-btn" onclick="closeModal()" title="Закрыть" aria-label="Закрыть">✕</button>
       <div class="modal-photo-col">
         <div id="modal-photo-wrapper">
           <img id="modal-img" src="" alt="Full photo">
@@ -1499,10 +1886,10 @@
             <p id="modal-caption" style="color: var(--text-muted); font-size: 13.5px; line-height: 1.5; white-space: pre-wrap;"></p>
           </div>
 
-          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
+          <div class="modal-view-actions">
             <button class="btn-action" style="background: var(--accent-gold); color: #000;" onclick="enableInlineCardEdit()">✏️ Править</button>
             <button class="btn-action" style="background: var(--accent-red); color: #fff;" onclick="openDeleteConfirmModal()">🗑️ Запрос на удаление</button>
-            <button class="btn-action" style="background: #2a161b; color: #fff;" onclick="closeModal()">Закрыть</button>
+            <button class="btn-action btn-close-modal" style="background: #2a161b; color: #fff;" onclick="closeModal()">Закрыть</button>
           </div>
         </div>
 
@@ -1540,7 +1927,7 @@
             </div>
           </div>
 
-          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px;">
+          <div class="modal-edit-actions">
             <button class="btn-action" style="background: var(--accent-green); color: #fff;" onclick="submitInlineCardEdit()">Отправить</button>
             <button class="btn-action" style="background: #2a161b; color: #fff;" onclick="disableInlineCardEdit()">Отмена</button>
           </div>
@@ -2442,7 +2829,11 @@
       if (!activeCard) return;
 
       const fullSrc = resolveImagePath(activeCard);
-      document.getElementById('modal-img').src = fullSrc;
+      const modalImg = document.getElementById('modal-img');
+      modalImg.onload = () => {
+        if (isInlineEditingPhoto) updateInlineCropUI();
+      };
+      modalImg.src = fullSrc;
       document.getElementById('modal-title').innerText = activeCard.title || '';
       document.getElementById('modal-caption').innerText = activeCard.caption || '';
       document.getElementById('modal-tag').innerText = activeCard.tag || 'ФОТО';
