@@ -50,9 +50,31 @@ def test_prompt_configuration():
     for private_term in ["ГазМяс", "Базанов", "Дибуны", "Шугар Раш", "Дирик Платон"]:
         assert private_term not in content, f"Публичный prompt.example.txt не должен содержать локальное замечание '{private_term}'"
 
+def test_html_pages_in_root():
+    index_file = BASE_DIR / "index.html"
+    admin_file = BASE_DIR / "admin.html"
+    assert index_file.exists(), "index.html должен находиться в корне проекта"
+    assert admin_file.exists(), "admin.html должен находиться в корне проекта"
+
+    with open(index_file, "r", encoding="utf-8") as f:
+        index_content = f.read()
+    assert "../images/symbol.png" not in index_content, "index.html не должен ссылаться на ../images/symbol.png"
+    assert "../data/data.json" not in index_content, "index.html не должен ссылаться на ../data/data.json"
+    assert "images/symbol.png" in index_content
+    assert "data/data.json" in index_content
+
+    with open(admin_file, "r", encoding="utf-8") as f:
+        admin_content = f.read()
+    assert "../images/symbol.png" not in admin_content, "admin.html не должен ссылаться на ../images/symbol.png"
+    assert "images/symbol.png" in admin_content
+
+    pages_dir = BASE_DIR / "pages"
+    assert not pages_dir.exists() or not any(pages_dir.glob("*.html")), "В каталоге pages не должно оставаться HTML-файлов"
+
 if __name__ == "__main__":
     test_data_json()
     test_articles_json()
     test_model_version()
     test_prompt_configuration()
+    test_html_pages_in_root()
     print("All tests passed successfully!")

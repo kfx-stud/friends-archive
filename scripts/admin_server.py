@@ -189,8 +189,12 @@ class AdminHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         parsed = urlparse(self.path)
 
-        if parsed.path in ["/", "/admin.html"]:
-            self.path = "/pages/admin.html"
+        if parsed.path in ["/", "/admin.html", "/pages/admin.html"]:
+            self.path = "/admin.html"
+            return super().do_GET()
+
+        if parsed.path in ["/index.html", "/pages/index.html"]:
+            self.path = "/index.html"
             return super().do_GET()
 
         if parsed.path == "/api/config":
@@ -402,7 +406,7 @@ if __name__ == "__main__":
     
     server = HTTPServer(("127.0.0.1", port), AdminHandler)
     print("=" * 56)
-    print(f"[ШТАБ МОДЕРАЦИИ] Сервер запущен на http://127.0.0.1:{port}/pages/admin.html (или /admin.html)")
+    print(f"[ШТАБ МОДЕРАЦИИ] Сервер запущен на http://127.0.0.1:{port}/admin.html")
     print("=" * 56)
     try:
         server.serve_forever()
