@@ -286,6 +286,106 @@
       gap: 18px;
     }
 
+    /* Переключатель режима отображения карточек */
+    .cards-view-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      gap: 12px;
+    }
+
+    .cards-view-header .section-title {
+      margin-bottom: 0;
+    }
+
+    .cards-view-mode-selector {
+      display: flex;
+      align-items: center;
+    }
+
+    .view-mode-segmented {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(20, 10, 14, 0.9);
+      padding: 3px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.25);
+      gap: 3px;
+    }
+
+    .view-mode-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+      outline: none;
+      white-space: nowrap;
+    }
+
+    .view-mode-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .view-mode-btn.active {
+      background: var(--accent-red);
+      color: #fff;
+      box-shadow: 0 2px 10px rgba(220, 38, 38, 0.45);
+    }
+
+    .view-mode-svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      stroke-width: 2;
+      flex-shrink: 0;
+    }
+
+    /* Режим "Только фото" на десктопе */
+    .gallery-grid.mode-photos {
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .gallery-grid.mode-photos .media-card {
+      border-radius: 8px;
+      background: #0d0608;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .gallery-grid.mode-photos .media-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-gold);
+      box-shadow: 0 6px 20px rgba(234, 179, 8, 0.22);
+    }
+
+    .gallery-grid.mode-photos .media-thumb-box {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1 / 1;
+    }
+
+    .gallery-grid.mode-photos .media-info {
+      display: none !important;
+    }
+
+    .gallery-grid.mode-photos .media-badges {
+      display: none !important;
+    }
+
     .media-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
@@ -1686,6 +1786,37 @@
         gap: 14px;
       }
 
+      .cards-view-header {
+        margin-bottom: 12px;
+        justify-content: flex-end;
+      }
+
+      .view-mode-btn {
+        padding: 5px 11px;
+        font-size: 11.5px;
+        gap: 5px;
+      }
+
+      .view-mode-svg {
+        width: 13px;
+        height: 13px;
+      }
+
+      /* Режим только фото на мобильном режиме: строго по 2 фото в ряду */
+      .gallery-grid.mode-photos {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+
+      .gallery-grid.mode-photos .media-thumb-box {
+        height: auto !important;
+        aspect-ratio: 1 / 1 !important;
+      }
+
+      .gallery-grid.mode-photos .double-tap-heart {
+        font-size: 46px;
+      }
+
       .media-thumb-box {
         height: 200px;
       }
@@ -1846,6 +1977,38 @@
       .gallery-grid {
         grid-template-columns: 1fr;
         gap: 12px;
+      }
+
+      .cards-view-header {
+        margin-bottom: 10px;
+        width: 100%;
+      }
+
+      .cards-view-mode-selector {
+        width: 100%;
+      }
+
+      .view-mode-segmented {
+        width: 100%;
+        display: flex;
+      }
+
+      .view-mode-btn {
+        flex: 1;
+        justify-content: center;
+        padding: 7px 6px;
+        font-size: 11px;
+      }
+
+      /* Режим только фото на узких экранах <= 480px: также 2 фото в ряду */
+      .gallery-grid.mode-photos {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 6px !important;
+      }
+
+      .gallery-grid.mode-photos .media-thumb-box {
+        height: auto !important;
+        aspect-ratio: 1 / 1 !important;
       }
 
       .media-thumb-box {
@@ -2068,7 +2231,30 @@
 
         <!-- Слайд 1: Главный (Основной состав с карточками) -->
         <div class="mobile-slide-pane" id="slide-cards" data-slide-index="0">
-          <div class="section-title desktop-only-title">📸 Основной состав</div>
+          <div class="cards-view-header">
+            <div class="section-title desktop-only-title">📸 Основной состав</div>
+            <div class="cards-view-mode-selector">
+              <div class="view-mode-segmented" role="group" aria-label="Режим отображения карточек">
+                <button type="button" class="view-mode-btn active" id="view-mode-full-btn" onclick="setCardsViewMode('full')" title="Полный вид карточек">
+                  <svg class="view-mode-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="7" y1="16" x2="17" y2="16"></line>
+                  </svg>
+                  <span>Полностью</span>
+                </button>
+                <button type="button" class="view-mode-btn" id="view-mode-photos-btn" onclick="setCardsViewMode('photos')" title="Только фото">
+                  <svg class="view-mode-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                  </svg>
+                  <span>Только фото</span>
+                </button>
+              </div>
+            </div>
+          </div>
           <div id="gallery" class="gallery-grid"></div>
 
           <div id="gallery-pagination-wrapper" class="gallery-pagination-container">
@@ -3075,9 +3261,55 @@
       return raw.startsWith('images/') ? raw : ('images/' + raw);
     }
 
+    let currentCardsViewMode = localStorage.getItem('gazmyas_cards_view_mode') || 'full';
+
+    function setCardsViewMode(mode) {
+      if (mode !== 'full' && mode !== 'photos') mode = 'full';
+      currentCardsViewMode = mode;
+      try {
+        localStorage.setItem('gazmyas_cards_view_mode', mode);
+      } catch (e) {}
+      applyCardsViewMode();
+    }
+
+    function applyCardsViewMode() {
+      const container = document.getElementById('gallery');
+      const btnFull = document.getElementById('view-mode-full-btn');
+      const btnPhotos = document.getElementById('view-mode-photos-btn');
+
+      if (container) {
+        if (currentCardsViewMode === 'photos') {
+          container.classList.add('mode-photos');
+          container.classList.remove('mode-full');
+        } else {
+          container.classList.add('mode-full');
+          container.classList.remove('mode-photos');
+        }
+      }
+
+      if (btnFull && btnPhotos) {
+        if (currentCardsViewMode === 'photos') {
+          btnPhotos.classList.add('active');
+          btnFull.classList.remove('active');
+          btnPhotos.setAttribute('aria-pressed', 'true');
+          btnFull.setAttribute('aria-pressed', 'false');
+        } else {
+          btnFull.classList.add('active');
+          btnPhotos.classList.remove('active');
+          btnFull.setAttribute('aria-pressed', 'true');
+          btnPhotos.setAttribute('aria-pressed', 'false');
+        }
+      }
+
+      if (typeof setupGalleryScrollObserver === 'function') {
+        setupGalleryScrollObserver();
+      }
+    }
+
     async function loadData() {
       initLikesSync();
       initMobileSliderGestures();
+      applyCardsViewMode();
 
       try {
         const res = await fetch('data/data.json');
@@ -3133,7 +3365,7 @@
         const cropY = Number(c.crop_y ?? 50);
 
         return `
-          <div class="media-card" id="card-el-${safeKey}" data-card-key="${safeKey}" onclick="handleCardTap(this.dataset.cardKey, event)">
+          <div class="media-card" id="card-el-${safeKey}" data-card-key="${safeKey}" title="${safeTitle}" onclick="handleCardTap(this.dataset.cardKey, event)">
             <div class="media-thumb-box">
               <img src="${safeImg}" loading="lazy" style="object-position: ${cropX}% ${cropY}%;">
               <div class="media-badges">
@@ -3154,6 +3386,8 @@
           </div>
         `;
       }).join('');
+
+      applyCardsViewMode();
 
       if (paginationWrapper) {
         if (total > GALLERY_PAGE_SIZE) {
