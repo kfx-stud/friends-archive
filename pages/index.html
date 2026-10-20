@@ -1,0 +1,3116 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ФК «ГазМяс» – Официальный вестник и архив</title>
+  <link rel="icon" type="image/png" href="../images/symbol.png">
+  <style>
+    :root {
+      --bg: #0c090a;
+      --card-bg: #161012;
+      --card-inner: #1f1418;
+      --border: #311c21;
+      --text: #fff1f2;
+      --text-muted: #a39598;
+      --accent-red: #dc2626;
+      --accent-red-hover: #b91c1c;
+      --accent-gold: #facc15;
+      --accent-gold-hover: #eab308;
+      --accent-green: #16a34a;
+      --accent-blue: #3b82f6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #140b0e;
+      border-bottom: 2px solid var(--accent-red);
+      padding: 14px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: var(--accent-gold);
+    }
+
+    .brand img {
+      width: 34px;
+      height: 34px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      background: #221417;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: var(--accent-red);
+      border-color: var(--accent-red);
+      color: #fff;
+    }
+
+    .nav-btn-gold {
+      background: var(--accent-gold);
+      border-color: var(--accent-gold);
+      color: #000;
+      font-weight: 800;
+    }
+
+    .nav-btn-gold:hover {
+      background: var(--accent-gold-hover);
+      border-color: var(--accent-gold-hover);
+      color: #000;
+    }
+
+    main {
+      flex: 1;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 20px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent-gold);
+    }
+
+    .articles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 330px));
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 40px;
+    }
+
+    .article-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+
+    .article-box:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-gold);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .article-box.featured {
+      grid-column: 1 / -1;
+      max-width: 100%;
+      border-left: 5px solid var(--highlight-color, var(--accent-gold));
+      background: linear-gradient(90deg, rgba(220, 38, 38, 0.22) 0%, var(--card-bg) 100%);
+    }
+
+    .vestnik-lead-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(250, 204, 21, 0.25);
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--accent-gold);
+      letter-spacing: 0.5px;
+    }
+
+    .art-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .art-badge {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--highlight-color, var(--accent-gold));
+      border: 1px solid var(--highlight-color, var(--accent-gold));
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .art-heading {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+
+    .art-body {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.45;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    .media-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .media-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent-red);
+      box-shadow: 0 6px 18px rgba(220, 38, 38, 0.25);
+    }
+
+    .media-thumb-box {
+      width: 100%;
+      height: 220px;
+      background: #000;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .media-thumb-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: object-position 0.2s ease;
+    }
+
+    .media-badges {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+
+    .badge-score {
+      background: rgba(0, 0, 0, 0.85);
+      color: var(--accent-gold);
+      border: 1px solid var(--accent-gold);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .badge-tag {
+      background: rgba(0, 0, 0, 0.85);
+      color: #fff;
+      border: 1px solid var(--accent-red);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .media-info {
+      padding: 14px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .media-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #fff;
+    }
+
+    .media-caption {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.45;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(5px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-box {
+      display: flex;
+      width: 100%;
+      max-width: 1150px;
+      height: 85vh;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
+    }
+
+    .modal-photo-col {
+      flex: 2;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #modal-photo-wrapper {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    #modal-photo-wrapper img {
+      max-width: 100%;
+      max-height: 85vh;
+      object-fit: contain;
+      user-select: none;
+      display: block;
+    }
+
+    .crop-target-marker {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--accent-red);
+      background: rgba(239, 68, 68, 0.4);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.9);
+      display: none;
+      z-index: 10;
+    }
+
+    .crop-hint-badge {
+      position: absolute;
+      top: 14px;
+      background: rgba(0, 0, 0, 0.85);
+      border: 1px solid var(--accent-gold);
+      color: #fff;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      pointer-events: none;
+      display: none;
+      z-index: 10;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-sidebar-col {
+      flex: 1;
+      min-width: 320px;
+      max-width: 420px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-left: 1px solid var(--border);
+      background: #140d10;
+      overflow-y: auto;
+    }
+
+    .gallery-preview-box {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .preview-frame-rect {
+      width: 190px;
+      height: 145px;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 2px solid var(--accent-gold);
+      background: #000;
+    }
+
+    .preview-frame-rect img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .form-modal-window {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: var(--text-muted);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 9px 12px;
+      background: #0a0607;
+      border: 1px solid var(--border);
+      color: #fff;
+      border-radius: 6px;
+      font-size: 13.5px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--accent-gold);
+    }
+
+    .btn-action {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+
+    .btn-action:hover { opacity: 0.92; transform: translateY(-1px); }
+    .btn-action:active { transform: translateY(0); }
+
+    .type-switcher {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .type-btn {
+      padding: 10px;
+      background: #0a0607;
+      border: 2px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+
+    .type-btn.active {
+      border-color: var(--accent-gold);
+      color: var(--accent-gold);
+      background: rgba(250, 204, 21, 0.1);
+    }
+
+    .toast-box {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #181214;
+      border: 1px solid var(--accent-gold);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      z-index: 2000;
+      display: none;
+      animation: fadeIn 0.2s ease;
+      font-size: 13.5px;
+      font-weight: 600;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* === Стили слота Sugar Rush Super Scatter === */
+    #slot-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(38, 12, 30, 0.96) 0%, rgba(10, 4, 10, 0.98) 100%);
+      backdrop-filter: blur(12px);
+      z-index: 1500;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      overflow-y: auto;
+    }
+
+    .slot-container {
+      background: linear-gradient(180deg, #240c1e 0%, #150612 100%);
+      border: 2px solid #ff4081;
+      box-shadow: 0 0 35px rgba(255, 64, 129, 0.35), inset 0 0 25px rgba(255, 193, 7, 0.15);
+      border-radius: 20px;
+      padding: 16px 20px;
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #fff;
+      position: relative;
+      user-select: none;
+      box-sizing: border-box;
+    }
+
+    .slot-header {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+    }
+
+    .slot-title-box {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+    }
+
+    .slot-logo-main {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      background: linear-gradient(135deg, #ff80ab 0%, #ff4081 50%, #f50057 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 10px rgba(255, 64, 129, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .slot-logo-sub {
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #fff9c4 0%, #ffd700 50%, #ff8f00 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slot-header-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .slot-icon-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      border-radius: 8px;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.2s ease;
+    }
+
+    .slot-icon-btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+      transform: scale(1.05);
+    }
+
+    /* Верхний инфобар бонуски */
+    .slot-bonus-bar {
+      display: none;
+      width: 100%;
+      background: linear-gradient(90deg, #ff007f 0%, #9c27b0 50%, #ffb300 100%);
+      padding: 7px 14px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 800;
+      font-size: 13.5px;
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(255, 0, 127, 0.4);
+      animation: pulseBar 2s infinite alternate;
+    }
+
+    @keyframes pulseBar {
+      0% { filter: brightness(1); }
+      100% { filter: brightness(1.2); }
+    }
+
+    /* Основной макет: боковые опции + сетка */
+    .slot-main-stage {
+      display: flex;
+      gap: 16px;
+      width: 100%;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .slot-side-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 170px;
+      flex-shrink: 0;
+    }
+
+    .slot-feature-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 6px;
+    }
+
+    .slot-feature-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #ffd54f;
+    }
+
+    .slot-feature-price {
+      font-size: 14px;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .btn-buy-bonus {
+      background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+      color: #fff;
+      border: 1px solid #f472b6;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+    }
+
+    .btn-buy-bonus:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(236, 72, 153, 0.5);
+    }
+
+    .btn-buy-super {
+      background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+      color: #000;
+      border: 1px solid #fde047;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+    }
+
+    .btn-buy-super:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(245, 158, 11, 0.6);
+    }
+
+    .ante-toggle-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 8px;
+      width: 100%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #fff;
+      font-size: 11.5px;
+      font-weight: 700;
+      transition: all 0.2s ease;
+    }
+
+    .ante-toggle-btn.active {
+      background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+      border-color: #34d399;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+    }
+
+    /* Игровое поле 7x7 */
+    .slot-grid-frame {
+      background: #11050d;
+      border: 3px solid #ff4081;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 64, 129, 0.25);
+      border-radius: 14px;
+      padding: 6px;
+      width: 100%;
+      max-width: 480px;
+      aspect-ratio: 1/1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .slot-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-template-rows: repeat(7, 1fr);
+      gap: 4px;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .slot-cell {
+      background: rgba(45, 18, 36, 0.6);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      user-select: none;
+      overflow: visible;
+      transition: transform 0.15s ease, background-color 0.25s ease;
+    }
+
+    /* Состояния спотов (множителей) */
+    .slot-cell.spot-marked {
+      background: rgba(255, 64, 129, 0.18);
+      border: 1px dashed rgba(255, 128, 171, 0.4);
+    }
+
+    .slot-cell.spot-x2   { background: radial-gradient(circle, rgba(234, 179, 8, 0.35) 0%, rgba(45, 18, 36, 0.8) 100%); }
+    .slot-cell.spot-x4   { background: radial-gradient(circle, rgba(34, 197, 94, 0.35) 0%, rgba(45, 18, 36, 0.8) 100%); }
+    .slot-cell.spot-x8   { background: radial-gradient(circle, rgba(6, 182, 212, 0.35) 0%, rgba(45, 18, 36, 0.8) 100%); }
+    .slot-cell.spot-x16  { background: radial-gradient(circle, rgba(168, 85, 247, 0.38) 0%, rgba(45, 18, 36, 0.8) 100%); }
+    .slot-cell.spot-x32  { background: radial-gradient(circle, rgba(236, 72, 153, 0.42) 0%, rgba(45, 18, 36, 0.8) 100%); }
+    .slot-cell.spot-x64  { background: radial-gradient(circle, rgba(239, 68, 68, 0.45) 0%, rgba(45, 18, 36, 0.8) 100%); }
+    .slot-cell.spot-x128 { background: radial-gradient(circle, rgba(245, 158, 11, 0.5) 0%, rgba(45, 18, 36, 0.8) 100%); }
+    .slot-cell.spot-x256 { background: radial-gradient(circle, rgba(139, 92, 246, 0.55) 0%, rgba(45, 18, 36, 0.8) 100%); }
+    .slot-cell.spot-x512 { background: radial-gradient(circle, rgba(59, 130, 246, 0.6) 0%, rgba(45, 18, 36, 0.8) 100%); }
+    .slot-cell.spot-x1024 {
+      background: radial-gradient(circle, rgba(255, 215, 0, 0.75) 0%, rgba(220, 38, 38, 0.9) 100%);
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+      animation: maxSpotPulse 1s infinite alternate;
+    }
+
+    @keyframes maxSpotPulse {
+      0% { transform: scale(1); filter: brightness(1); }
+      100% { transform: scale(1.04); filter: brightness(1.3); }
+    }
+
+    /* Плашка множителя */
+    .cell-mult-badge {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      color: #000;
+      font-size: 10px;
+      font-weight: 900;
+      padding: 1px 4px;
+      border-radius: 4px;
+      z-index: 5;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
+      pointer-events: none;
+    }
+
+    .badge-x2   { background: #eab308; }
+    .badge-x4   { background: #22c55e; }
+    .badge-x8   { background: #06b6d4; }
+    .badge-x16  { background: #a855f7; color: #fff; }
+    .badge-x32  { background: #ec4899; color: #fff; }
+    .badge-x64  { background: #ef4444; color: #fff; }
+    .badge-x128 { background: #f59e0b; }
+    .badge-x256 { background: #8b5cf6; color: #fff; }
+    .badge-x512 { background: #3b82f6; color: #fff; }
+    .badge-x1024 { background: #ffd700; color: #990000; font-weight: 900; border: 1px solid #fff; }
+
+    /* Символы конфетных эмодзи */
+    .candy-emoji-wrap {
+      width: 86%;
+      height: 86%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 33px;
+      line-height: 1;
+      user-select: none;
+      filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.5));
+      transition: transform 0.15s ease, opacity 0.15s ease;
+      z-index: 2;
+    }
+
+    @media (max-width: 480px) {
+      .candy-emoji-wrap {
+        font-size: 25px;
+      }
+    }
+
+    .scatter-wrap {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .scatter-tag {
+      position: absolute;
+      bottom: -2px;
+      font-size: 7.5px;
+      font-weight: 900;
+      background: #ff0055;
+      color: #fff;
+      padding: 1px 4px;
+      border-radius: 4px;
+      letter-spacing: 0.3px;
+      border: 1px solid #ff80ab;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .super-scatter-wrap {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      animation: goldAuraPulse 1.2s infinite alternate;
+    }
+
+    .super-scatter-tag {
+      position: absolute;
+      bottom: -2px;
+      font-size: 7.5px;
+      font-weight: 900;
+      background: #d50000;
+      color: #ffd700;
+      padding: 1px 4px;
+      border-radius: 4px;
+      letter-spacing: 0.3px;
+      border: 1px solid #ffd700;
+      box-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+    }
+
+    @keyframes goldAuraPulse {
+      0% { filter: drop-shadow(0 0 5px #ffd700); transform: scale(1); }
+      100% { filter: drop-shadow(0 0 14px #ff6d00); transform: scale(1.1); }
+    }
+
+    /* Анимации выигрыша и взрыва */
+    .slot-cell.cell-winning .candy-emoji-wrap {
+      animation: winEmojiThump 0.35s ease infinite alternate;
+      filter: drop-shadow(0 0 10px #ffd700);
+    }
+
+    @keyframes winEmojiThump {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.28); }
+    }
+
+    .slot-cell.cell-exploding .candy-emoji-wrap {
+      animation: emojiBurst 0.28s forwards ease-in;
+    }
+
+    @keyframes emojiBurst {
+      0% { transform: scale(1); opacity: 1; }
+      40% { transform: scale(1.5) rotate(15deg); opacity: 0.9; filter: brightness(2); }
+      100% { transform: scale(0) rotate(-30deg); opacity: 0; }
+    }
+
+    /* Настоящее падение сверху с упругим желе-отскоком */
+    .slot-cell.cell-dropping .candy-emoji-wrap {
+      animation: fallFromTop 0.42s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+      animation-delay: var(--fall-delay, 0s);
+    }
+
+    @keyframes fallFromTop {
+      0% {
+        transform: translateY(-380px) scaleY(1.45) scaleX(0.7);
+        opacity: 0.15;
+      }
+      62% {
+        transform: translateY(0) scaleY(0.76) scaleX(1.26);
+        opacity: 1;
+      }
+      82% {
+        transform: translateY(-12px) scaleY(1.1) scaleX(0.92);
+      }
+      92% {
+        transform: translateY(2px) scaleY(0.97) scaleX(1.02);
+      }
+      100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* Нижняя панель управления */
+    .slot-control-panel {
+      display: flex;
+      width: 100%;
+      margin-top: 14px;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .slot-stat-block {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .slot-stat-label {
+      font-size: 10.5px;
+      color: #94a3b8;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .slot-stat-val {
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 0.3px;
+    }
+
+    .slot-bet-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 4px 6px;
+    }
+
+    .btn-bet-step {
+      width: 28px;
+      height: 28px;
+      background: rgba(255, 255, 255, 0.12);
+      border: none;
+      color: #fff;
+      font-weight: 900;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s ease;
+    }
+
+    .btn-bet-step:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-bet-step:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .btn-spin-main {
+      background: radial-gradient(circle, #ff0055 0%, #b3003b 100%);
+      border: 3px solid #ff80ab;
+      box-shadow: 0 0 20px rgba(255, 0, 85, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+      color: #fff;
+      font-size: 17px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      padding: 12px 28px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      min-width: 130px;
+    }
+
+    .btn-spin-main:hover:not(:disabled) {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px rgba(255, 0, 85, 0.8), inset 0 2px 4px rgba(255, 255, 255, 0.6);
+    }
+
+    .btn-spin-main:active:not(:disabled) {
+      transform: scale(0.96);
+    }
+
+    .btn-spin-main:disabled {
+      filter: grayscale(0.6);
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-sub-action {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 7px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-sub-action.active {
+      background: #eab308;
+      color: #000;
+      font-weight: 900;
+      box-shadow: 0 0 10px rgba(234, 179, 8, 0.4);
+    }
+
+    /* Модалка BIG WIN / MEGA WIN / SUPER SCATTER WIN */
+    .slot-celebration-overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      border-radius: 20px;
+      z-index: 50;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+      animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .celebration-title {
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-shadow: 0 0 25px rgba(255, 215, 0, 0.8);
+      margin-bottom: 8px;
+    }
+
+    .celebration-amount {
+      font-size: 46px;
+      font-weight: 900;
+      color: #ffd700;
+      text-shadow: 0 0 30px rgba(255, 215, 0, 0.9);
+      margin-bottom: 20px;
+    }
+
+    /* Модалка таблицы выплат */
+    .slot-paytable-modal {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(18, 5, 14, 0.96);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      z-index: 60;
+      padding: 24px;
+      flex-direction: column;
+      align-items: center;
+      overflow-y: auto;
+    }
+
+    .paytable-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      width: 100%;
+      margin: 16px 0;
+    }
+
+    .paytable-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 6px;
+    }
+
+    .paytable-card-svg {
+      width: 44px;
+      height: 44px;
+    }
+
+    .paytable-payouts {
+      font-size: 11px;
+      color: #cbd5e1;
+      line-height: 1.4;
+      text-align: left;
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .slot-main-stage {
+        flex-direction: column-reverse;
+        align-items: center;
+      }
+      .slot-side-panel {
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-between;
+      }
+      .slot-feature-card {
+        flex: 1;
+      }
+      .slot-grid-frame {
+        max-width: 350px;
+      }
+      .btn-spin-main {
+        padding: 10px 20px;
+        min-width: 100px;
+        font-size: 15px;
+      }
+      .celebration-title {
+        font-size: 26px;
+      }
+      .celebration-amount {
+        font-size: 32px;
+      }
+    }
+
+    /* Стили пагинации галереи */
+    .gallery-pagination-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 36px auto 60px;
+      text-align: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .gallery-count-info {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-gallery-load-more {
+      background: linear-gradient(135deg, var(--accent-gold) 0%, #eab308 100%);
+      color: #000;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 34px;
+      font-size: 14.5px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 18px rgba(250, 204, 21, 0.25);
+    }
+
+    .btn-gallery-load-more:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(250, 204, 21, 0.4);
+      filter: brightness(1.08);
+    }
+
+    .btn-gallery-load-more:active {
+      transform: translateY(0);
+    }
+
+    .load-more-counter {
+      background: rgba(0, 0, 0, 0.16);
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+    }
+
+    .gallery-sentinel {
+      width: 100%;
+      height: 24px;
+      pointer-events: none;
+      visibility: hidden;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <img src="../images/symbol.png" alt="Герб">
+      <span>ФК «ГазМяс»</span>
+    </div>
+    <div class="nav-links">
+      <button class="nav-btn" onclick="openSlot()" style="border-color: #ff4081; box-shadow: 0 0 10px rgba(255, 64, 129, 0.35);">🍭 Sugar Rush: Super Scatter</button>
+      <button class="nav-btn nav-btn-gold" onclick="openSuggestModal()">➕ В предложку</button>
+    </div>
+  </header>
+
+  <main>
+    <div id="articles-section" style="display: none;">
+      <div class="section-title">📰 Вестник Клуба / Главные события</div>
+      <div id="articles-list" class="articles-grid"></div>
+    </div>
+
+    <div class="section-title">📸 Основной состав</div>
+    <div id="gallery" class="gallery-grid"></div>
+
+    <div id="gallery-pagination-wrapper" class="gallery-pagination-container">
+      <div id="gallery-count-info" class="gallery-count-info"></div>
+      <button id="btn-gallery-load-more" class="btn-gallery-load-more" onclick="loadMoreCards()">
+        <span>Показать еще</span>
+        <span id="load-more-counter" class="load-more-counter"></span>
+      </button>
+      <div id="gallery-sentinel" class="gallery-sentinel"></div>
+    </div>
+  </main>
+
+  <div id="card-modal" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-photo-col">
+        <div id="modal-photo-wrapper">
+          <img id="modal-img" src="" alt="Full photo">
+          <div id="inline-crop-marker" class="crop-target-marker"></div>
+          <div id="inline-crop-hint" class="crop-hint-badge">
+            🎯 Кликните по фото, чтобы переместить фокус карточки
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-sidebar-col">
+        <div id="modal-view-mode" style="display: flex; flex-direction: column; height: 100%; justify-content: space-between;">
+          <div style="overflow-y: auto; padding-right: 4px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <span id="modal-tag" class="badge-tag"></span>
+              <span id="modal-score" class="badge-score"></span>
+            </div>
+            <h2 id="modal-title" style="margin-bottom: 10px; font-size: 18px; color: #fff;"></h2>
+            <p id="modal-caption" style="color: var(--text-muted); font-size: 13.5px; line-height: 1.5; white-space: pre-wrap;"></p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
+            <button class="btn-action" style="background: var(--accent-gold); color: #000;" onclick="enableInlineCardEdit()">✏️ Править</button>
+            <button class="btn-action" style="background: var(--accent-red); color: #fff;" onclick="openDeleteConfirmModal()">🗑️ Запрос на удаление</button>
+            <button class="btn-action" style="background: #2a161b; color: #fff;" onclick="closeModal()">Закрыть</button>
+          </div>
+        </div>
+
+        <div id="modal-edit-mode" style="display: none; flex-direction: column; height: 100%; justify-content: space-between;">
+          <div style="display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-right: 4px;">
+            <div style="font-weight: 800; font-size: 15px; color: var(--accent-gold);">
+              Редактирование карточки и фокуса
+            </div>
+
+            <div class="gallery-preview-box">
+              <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase;">
+                Превью в галерее на сайте:
+              </span>
+              <div class="preview-frame-rect">
+                <img id="inline-crop-preview" src="" alt="Gallery Preview">
+              </div>
+              <div style="margin-top: 6px; font-family: monospace; font-size: 11.5px; color: var(--accent-gold);">
+                Фокус: X: <span id="inline-val-cx">50</span>% | Y: <span id="inline-val-cy">50</span>%
+              </div>
+            </div>
+
+            <div class="form-group" style="margin: 0;">
+              <label>Заголовок карточки:</label>
+              <input type="text" id="inline-card-title" class="form-control">
+            </div>
+
+            <div class="form-group" style="margin: 0;">
+              <label>Тег рубрики:</label>
+              <input type="text" id="inline-card-tag" class="form-control">
+            </div>
+
+            <div class="form-group" style="margin: 0;">
+              <label>Описание / Панчлайн:</label>
+              <textarea id="inline-card-caption" rows="4" class="form-control"></textarea>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px;">
+            <button class="btn-action" style="background: var(--accent-green); color: #fff;" onclick="submitInlineCardEdit()">Отправить</button>
+            <button class="btn-action" style="background: #2a161b; color: #fff;" onclick="disableInlineCardEdit()">Отмена</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="suggest-modal" class="modal-backdrop">
+    <div class="form-modal-window">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h3 style="font-size: 17px; color: var(--accent-gold);">Предложить материал в клуб</h3>
+        <button class="nav-btn" style="padding: 2px 8px;" onclick="closeSuggestModal()">✕</button>
+      </div>
+
+      <div class="type-switcher">
+        <button id="btn-type-art" class="type-btn active" onclick="switchSuggestType('article')">
+          <span style="font-size: 18px;">📰</span>
+          <span>Статья / Новость</span>
+        </button>
+        <button id="btn-type-photo" class="type-btn" onclick="switchSuggestType('photo')">
+          <span style="font-size: 18px;">📸</span>
+          <span>Фотография</span>
+        </button>
+      </div>
+
+      <div id="form-article-fields">
+        <div class="form-group">
+          <label>Заголовок статьи:</label>
+          <input type="text" id="sug-art-title" class="form-control" placeholder="Инспекция периметра...">
+        </div>
+        <div class="form-group">
+          <label>Тег рубрики:</label>
+          <input type="text" id="sug-art-tag" class="form-control" placeholder="ДИРЕКЦИЯ, ЛУДКА, ВЕСТНИК...">
+        </div>
+        <div class="form-group">
+          <label>Текст статьи:</label>
+          <textarea id="sug-art-content" rows="5" class="form-control" placeholder="Подробный текст..."></textarea>
+        </div>
+      </div>
+
+      <div id="form-photo-fields" style="display: none;">
+        <div class="form-group">
+          <label>Название кадра:</label>
+          <input type="text" id="sug-photo-title" class="form-control" placeholder="Вертикальный паркинг...">
+        </div>
+        <div class="form-group">
+          <label>Тег:</label>
+          <input type="text" id="sug-photo-tag" class="form-control" placeholder="ОСНОВА, ЛЕГЕНДА, ЛУДКА...">
+        </div>
+        <div class="form-group">
+          <label>Описание / Панчлайн:</label>
+          <textarea id="sug-photo-caption" rows="3" class="form-control" placeholder="Мемная подпись..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Прямая ссылка на фото:</label>
+          <input type="url" id="sug-photo-url" class="form-control" placeholder="https://... или ссылка на файл">
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
+        <button class="nav-btn" onclick="closeSuggestModal()">Отмена</button>
+        <button class="btn-action" style="background: var(--accent-green); color: #fff; width: auto; padding: 8px 20px;" onclick="sendSuggest()">Отправить</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="article-edit-modal" class="modal-backdrop">
+    <div class="form-modal-window" style="max-width: 600px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h3 style="font-size: 17px; color: var(--accent-gold);">Предложить правку статьи</h3>
+        <button class="nav-btn" style="padding: 2px 8px;" onclick="closeArticleEditModal()">✕</button>
+      </div>
+
+      <input type="hidden" id="edit-art-id">
+
+      <div class="form-group">
+        <label>Заголовок статьи:</label>
+        <input type="text" id="edit-art-title" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label>Тег рубрики:</label>
+        <input type="text" id="edit-art-tag" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label>Полный текст статьи:</label>
+        <textarea id="edit-art-content" rows="6" class="form-control"></textarea>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
+        <button class="nav-btn" onclick="closeArticleEditModal()">Отмена</button>
+        <button class="btn-action" style="background: var(--accent-gold); color: #000; width: auto; padding: 8px 20px;" onclick="submitArticleEdit()">Отправить</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="confirm-modal" class="modal-backdrop">
+    <div class="form-modal-window" style="max-width: 440px; text-align: center;">
+      <h3 style="font-size: 17px; color: var(--accent-gold); margin-bottom: 10px;">Подтверждение</h3>
+      <p id="confirm-modal-text" style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.45;">
+        Вы уверены, что хотите отправить запрос на удаление карточки?
+      </p>
+      <div style="display: flex; justify-content: center; gap: 12px;">
+        <button class="nav-btn" onclick="closeConfirmModal()">Отмена</button>
+        <button id="confirm-modal-btn-ok" class="btn-action" style="background: var(--accent-red); color: #fff; width: auto; padding: 8px 22px;">Да, удалить</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="slot-modal">
+    <div class="slot-container">
+      <!-- Шапка слота -->
+      <div class="slot-header">
+        <div class="slot-title-box">
+          <div class="slot-logo-main">🍭 SUGAR RUSH</div>
+          <div class="slot-logo-sub">✨ SUPER SCATTER EDITION ✨</div>
+        </div>
+        <div class="slot-header-actions">
+          <button id="btn-slot-sound" class="slot-icon-btn" onclick="toggleSlotSound()" title="Звук (Вкл/Выкл)">🔊</button>
+          <button class="slot-icon-btn" onclick="openPaytable()" title="Таблица выплат и правила">ℹ️</button>
+          <button class="slot-icon-btn" onclick="reloadSlotBalance()" title="Пополнить банкролл (+5000)">💰</button>
+          <button class="slot-icon-btn" onclick="closeSlot()" title="Закрыть">✕</button>
+        </div>
+      </div>
+
+      <!-- Инфобар бесплатных вращений -->
+      <div id="slot-bonus-bar" class="slot-bonus-bar">
+        <div>🎉 БОНУСНЫЙ РАУНД: <span id="slot-fs-count" style="color: #ffd700;">10 / 10</span></div>
+        <div style="font-size: 11.5px; opacity: 0.9;">🔥 МУЛЬТИПЛИКАТОРЫ НЕ СБРАСЫВАЮТСЯ!</div>
+        <div>КУШ БОНУСА: <span id="slot-fs-win" style="color: #4ade80;">0</span></div>
+      </div>
+
+      <!-- Главная игровая зона: боковые кнопки + поле 7x7 -->
+      <div class="slot-main-stage">
+        <!-- Боковая панель опций (Ante Bet, Buy Bonus, Buy Super Bonus) -->
+        <div class="slot-side-panel">
+          <div class="slot-feature-card">
+            <div class="slot-feature-title">Двойной Шанс</div>
+            <div class="slot-feature-price">+25% к ставке</div>
+            <button id="btn-ante" class="ante-toggle-btn" onclick="toggleAnteBet()">
+              <span>Scatters x3</span>
+              <span id="ante-status" style="font-weight: 900; color: #f87171;">ВЫКЛ</span>
+            </button>
+          </div>
+
+          <div class="slot-feature-card">
+            <div class="slot-feature-title">Купить Бонус</div>
+            <div class="slot-feature-price" id="buy-bonus-price">2 000</div>
+            <button id="btn-buy-regular" class="btn-buy-bonus" onclick="buyRegularBonus()">BUY (100x)</button>
+          </div>
+
+          <div class="slot-feature-card" style="border-color: rgba(253, 224, 71, 0.4); background: rgba(245, 158, 11, 0.08);">
+            <div class="slot-feature-title" style="color: #ffd700;">Super Бонус</div>
+            <div class="slot-feature-price" id="buy-super-price" style="color: #ffd700;">10 000</div>
+            <button id="btn-buy-super" class="btn-buy-super" onclick="buySuperBonus()">SUPER (500x) 🌟</button>
+          </div>
+        </div>
+
+        <!-- Игровое поле 7x7 -->
+        <div class="slot-grid-frame">
+          <div id="slot-board" class="slot-grid"></div>
+        </div>
+      </div>
+
+      <!-- Нижняя панель управления: Баланс, Выигрыш, Ставка, Турбо, Авто, Спин -->
+      <div class="slot-control-panel">
+        <div class="slot-stat-block">
+          <div class="slot-stat-label">Баланс</div>
+          <div class="slot-stat-val" style="color: #4ade80;"><span id="slot-balance">10000</span></div>
+        </div>
+
+        <div class="slot-stat-block">
+          <div class="slot-stat-label">Выигрыш</div>
+          <div class="slot-stat-val" style="color: #ffd700;"><span id="slot-win">0</span></div>
+        </div>
+
+        <div class="slot-bet-controls">
+          <button id="btn-bet-minus" class="btn-bet-step" onclick="changeBet(-1)">−</button>
+          <div style="text-align: center; min-width: 90px;">
+            <div class="slot-stat-label">Ставка</div>
+            <div class="slot-stat-val" id="slot-current-bet">20</div>
+          </div>
+          <button id="btn-bet-plus" class="btn-bet-step" onclick="changeBet(1)">+</button>
+        </div>
+
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <button id="btn-turbo" class="btn-sub-action" onclick="toggleTurbo()" title="Ускоренная анимация падения">⚡ ТУРБО</button>
+          <button id="btn-auto" class="btn-sub-action" onclick="toggleAutoplay()" title="Серия автоспинов">🔄 АВТО</button>
+          <button id="btn-spin" class="btn-spin-main" onclick="handleSpinClick()">КРУТИТЬ</button>
+        </div>
+      </div>
+
+      <!-- Всплывающий экран выигрыша (BIG WIN / MEGA WIN / SUPER SCATTER WIN) -->
+      <div id="slot-celebration" class="slot-celebration-overlay">
+        <div id="celebration-title" class="celebration-title">BIG WIN</div>
+        <div id="celebration-amount" class="celebration-amount">0</div>
+        <button class="btn-spin-main" onclick="dismissCelebration()">ЗАБРАТЬ</button>
+      </div>
+
+      <!-- Модальное окно: Таблица выплат и правила -->
+      <div id="slot-paytable" class="slot-paytable-modal">
+        <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">
+          <h3 style="margin: 0; color: #ff80ab; font-size: 18px; font-weight: 900;">🍬 Таблица выплат и правила</h3>
+          <button class="slot-icon-btn" onclick="closePaytable()">✕</button>
+        </div>
+
+        <div style="font-size: 12.5px; color: #e2e8f0; margin-top: 10px; line-height: 1.5; text-align: left; width: 100%;">
+          <b>Кластерные выплаты:</b> 5 или более одинаковых символов, соединенных по горизонтали или вертикали.
+        </div>
+
+        <div id="paytable-symbols" class="paytable-grid"></div>
+
+        <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 10px; width: 100%; text-align: left; font-size: 12px; line-height: 1.6; margin-top: 8px;">
+          <div style="color: #ffd700; font-weight: 900; font-size: 13px; margin-bottom: 4px;">🚀 Множители позиций (Multiplier Spots):</div>
+          • При взрыве кластера клетка помечается оберткой.<br>
+          • При втором взрыве на этой клетке появляется множитель <b>x2</b>.<br>
+          • Каждый следующий взрыв удваивает множитель: <b>x4, x8, x16 ... до x1024</b>!<br>
+          • Если кластер накрывает несколько множителей, они <b>складываются</b>!<br>
+          • В обычных спинах клетки очищаются в конце спина, а во <b>Free Spins множители остаются ЛИПКИМИ</b> до конца бонуски!
+        </div>
+
+        <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); padding: 12px; border-radius: 10px; width: 100%; text-align: left; font-size: 12px; line-height: 1.6; margin-top: 10px;">
+          <div style="color: #ffd700; font-weight: 900; font-size: 13px; margin-bottom: 4px;">🌟 СУПЕР СКЕТТЕР (Instant Cash Prize):</div>
+          • 3+ ракет (обычных или золотых) дают 10, 12, 15, 20 или 30 бесплатных вращений.<br>
+          • Если среди ракет выпал <b>Super Scatter</b>, начисляется моментальный куш:<br>
+          &nbsp;&nbsp;<b>1 Super Scatter</b> = <b>100x</b> от ставки<br>
+          &nbsp;&nbsp;<b>2 Super Scatters</b> = <b>500x</b> от ставки<br>
+          &nbsp;&nbsp;<b>3 Super Scatters</b> = <b>5 000x</b> от ставки<br>
+          &nbsp;&nbsp;<b>4+ Super Scatters</b> = <b>50 000x</b> (MAX WIN игры!)
+        </div>
+
+        <button class="btn-action" style="max-width: 160px; margin-top: 16px; background: #ff4081; color: #fff;" onclick="closePaytable()">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast-box"></div>
+
+  <script>
+    const DEFAULT_BIN_ID = "6abbe438ffd5d160533c11f1";
+    const DEFAULT_ACCESS_KEY = "$2a$10$O1huoOnWr514Q11f8aMZjOJULgE9ejfgdMdlH9zJdMoXP0VzMTFTa";
+
+    let activeCard = null;
+    let cardsData = [];
+    let loadedArticles = [];
+    let currentSuggestType = 'article';
+
+    const GALLERY_PAGE_SIZE = 12;
+    let visibleCardsCount = GALLERY_PAGE_SIZE;
+    let galleryScrollObserver = null;
+
+    let isInlineEditingPhoto = false;
+    let currentCrop = { x: 50, y: 50 };
+    let envConfigCache = null;
+
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function escapeAttr(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function showToast(text) {
+      const t = document.getElementById('toast');
+      t.innerText = text;
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 3200);
+    }
+
+    async function getEnvConfig() {
+      if (envConfigCache) return envConfigCache;
+
+      const isLocal = ['localhost', '127.0.0.1', ''].includes(window.location.hostname);
+      if (isLocal) {
+        try {
+          const res = await fetch('../data/config.json');
+          if (res.ok) {
+            envConfigCache = await res.json();
+            return envConfigCache;
+          }
+        } catch (e) {}
+
+        try {
+          const res = await fetch('/api/config');
+          if (res.ok) {
+            envConfigCache = await res.json();
+            return envConfigCache;
+          }
+        } catch (e) {}
+      }
+
+      envConfigCache = { 
+        JSONBIN_BIN_ID: DEFAULT_BIN_ID,
+        JSONBIN_API_KEY: DEFAULT_ACCESS_KEY
+      };
+      return envConfigCache;
+    }
+
+    function resolveImagePath(item) {
+      if (!item) return '';
+      const raw = item.file || item.filename || '';
+      if (!raw) return '';
+      if (raw.startsWith('http://') || raw.startsWith('https://') || raw.startsWith('../')) return raw;
+      return raw.startsWith('images/') ? ('../' + raw) : ('../images/' + raw);
+    }
+
+    async function loadData() {
+      try {
+        const res = await fetch('../data/data.json');
+        cardsData = await res.json();
+        renderGallery(cardsData);
+        setupGalleryScrollObserver();
+      } catch (e) {
+        console.error("Ошибка загрузки data.json", e);
+      }
+
+      try {
+        const res = await fetch('../data/articles.json');
+        loadedArticles = await res.json();
+        if (loadedArticles && loadedArticles.length > 0) {
+          renderArticles(loadedArticles);
+        }
+      } catch (e) {
+        console.error("Ошибка загрузки articles.json", e);
+      }
+    }
+
+    function renderGallery(cards) {
+      const container = document.getElementById('gallery');
+      const paginationWrapper = document.getElementById('gallery-pagination-wrapper');
+      const countInfo = document.getElementById('gallery-count-info');
+      const btnMore = document.getElementById('btn-gallery-load-more');
+      const counterSpan = document.getElementById('load-more-counter');
+
+      if (!cards || cards.length === 0) {
+        container.innerHTML = '<div style="color: var(--text-muted); grid-column: 1 / -1; text-align: center; padding: 40px;">Кадров пока нет</div>';
+        if (paginationWrapper) paginationWrapper.style.display = 'none';
+        return;
+      }
+
+      const total = cards.length;
+      const visibleCount = Math.min(visibleCardsCount, total);
+      const visibleCards = cards.slice(0, visibleCount);
+
+      container.innerHTML = visibleCards.map(c => {
+        const imgPath = resolveImagePath(c);
+        const cardKey = c.id || c.file || c.filename || '';
+        const safeKey = escapeAttr(cardKey);
+        const safeImg = escapeAttr(imgPath);
+        const safeTitle = escapeHtml(c.title || 'Без названия');
+        const safeCaption = escapeHtml(c.caption || '');
+        const safeTag = escapeHtml(c.tag ?? 'ФОТО');
+        const safeScore = escapeHtml(c.score ?? 5);
+        const cropX = Number(c.crop_x ?? 50);
+        const cropY = Number(c.crop_y ?? 50);
+
+        return `
+          <div class="media-card" id="card-el-${safeKey}" data-card-key="${safeKey}" onclick="openModal(this.dataset.cardKey)">
+            <div class="media-thumb-box">
+              <img src="${safeImg}" loading="lazy" style="object-position: ${cropX}% ${cropY}%;">
+              <div class="media-badges">
+                <span class="badge-score">${safeScore}/10</span>
+                <span class="badge-tag">${safeTag}</span>
+              </div>
+            </div>
+            <div class="media-info">
+              <div class="media-title">${safeTitle}</div>
+              <div class="media-caption">${safeCaption}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      if (paginationWrapper) {
+        if (total > GALLERY_PAGE_SIZE) {
+          paginationWrapper.style.display = 'flex';
+          const remaining = total - visibleCount;
+
+          if (countInfo) {
+            countInfo.innerText = `Показано ${visibleCount} из ${total} кадров`;
+          }
+
+          if (btnMore) {
+            if (remaining > 0) {
+              btnMore.style.display = 'inline-flex';
+              if (counterSpan) {
+                const nextChunk = Math.min(remaining, GALLERY_PAGE_SIZE);
+                counterSpan.innerText = `+${nextChunk}`;
+              }
+            } else {
+              btnMore.style.display = 'none';
+            }
+          }
+        } else {
+          paginationWrapper.style.display = 'none';
+        }
+      }
+    }
+
+    function loadMoreCards() {
+      if (!cardsData || visibleCardsCount >= cardsData.length) return;
+      visibleCardsCount = Math.min(visibleCardsCount + GALLERY_PAGE_SIZE, cardsData.length);
+      renderGallery(cardsData);
+    }
+
+    function setupGalleryScrollObserver() {
+      if (galleryScrollObserver) {
+        galleryScrollObserver.disconnect();
+      }
+      const sentinel = document.getElementById('gallery-sentinel');
+      if (!sentinel || !window.IntersectionObserver) return;
+
+      galleryScrollObserver = new IntersectionObserver((entries) => {
+        const entry = entries[0];
+        if (entry && entry.isIntersecting) {
+          if (cardsData && visibleCardsCount < cardsData.length) {
+            loadMoreCards();
+          }
+        }
+      }, {
+        rootMargin: '250px',
+        threshold: 0.1
+      });
+
+      galleryScrollObserver.observe(sentinel);
+    }
+
+    function renderArticles(articles) {
+      document.getElementById('articles-section').style.display = 'block';
+      const container = document.getElementById('articles-list');
+
+      container.innerHTML = articles.map((a, index) => {
+        const col = a.color || a.highlight_color || (a.featured ? '#facc15' : 'var(--accent-gold)');
+        const safeCol = escapeAttr(col);
+        const safeId = escapeAttr(a.id || ('art_' + index));
+        const safeTag = escapeHtml(a.tag || '');
+        const safeDate = escapeHtml(a.date || '');
+        const safeAuthor = escapeHtml(a.author || 'Редакция');
+        const safeTitle = escapeHtml(a.title || '');
+        const safeContent = escapeHtml(a.content || '').replace(/\n/g, '<br>');
+
+        return `
+          <div class="article-box ${a.featured ? 'featured' : ''}" style="--highlight-color: ${safeCol};">
+            <div>
+              <div class="art-top">
+                <span class="art-badge">${a.featured ? '★ ' : ''}${safeTag}</span>
+                <span style="font-size: 11px; color: var(--text-muted);">${safeDate} | ${safeAuthor}</span>
+              </div>
+              <div class="art-heading" style="color: ${a.featured ? safeCol : '#fff'};">${safeTitle}</div>
+              <div class="art-body">${safeContent}</div>
+            </div>
+            <div style="margin-top: 14px; display: flex; justify-content: flex-end; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px;">
+              <button class="nav-btn" style="padding: 3px 10px; font-size: 11px;" data-art-id="${safeId}" onclick="openArticleEditModal(this.dataset.artId)">✏️ Править</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openModal(key) {
+      activeCard = cardsData.find(c => String(c.id) === String(key) || String(c.file) === String(key) || String(c.filename) === String(key));
+      if (!activeCard) return;
+
+      const fullSrc = resolveImagePath(activeCard);
+      document.getElementById('modal-img').src = fullSrc;
+      document.getElementById('modal-title').innerText = activeCard.title || '';
+      document.getElementById('modal-caption').innerText = activeCard.caption || '';
+      document.getElementById('modal-tag').innerText = activeCard.tag || 'ФОТО';
+      document.getElementById('modal-score').innerText = (activeCard.score ? activeCard.score + '/10' : '');
+
+      currentCrop.x = activeCard.crop_x ?? 50;
+      currentCrop.y = activeCard.crop_y ?? 50;
+
+      disableInlineCardEdit();
+      document.getElementById('card-modal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('card-modal').style.display = 'none';
+      disableInlineCardEdit();
+      activeCard = null;
+    }
+
+    function enableInlineCardEdit() {
+      if (!activeCard) return;
+      isInlineEditingPhoto = true;
+
+      document.getElementById('inline-card-title').value = activeCard.title || '';
+      document.getElementById('inline-card-tag').value = activeCard.tag || '';
+      document.getElementById('inline-card-caption').value = activeCard.caption || '';
+
+      const fullSrc = resolveImagePath(activeCard);
+      document.getElementById('inline-crop-preview').src = fullSrc;
+
+      document.getElementById('modal-view-mode').style.display = 'none';
+      document.getElementById('modal-edit-mode').style.display = 'flex';
+
+      document.getElementById('inline-crop-marker').style.display = 'block';
+      document.getElementById('inline-crop-hint').style.display = 'block';
+      document.getElementById('modal-photo-wrapper').style.cursor = 'crosshair';
+
+      updateInlineCropUI();
+    }
+
+    function disableInlineCardEdit() {
+      isInlineEditingPhoto = false;
+      document.getElementById('modal-edit-mode').style.display = 'none';
+      document.getElementById('modal-view-mode').style.display = 'flex';
+
+      document.getElementById('inline-crop-marker').style.display = 'none';
+      document.getElementById('inline-crop-hint').style.display = 'none';
+      document.getElementById('modal-photo-wrapper').style.cursor = 'default';
+    }
+
+    function updateInlineCropUI() {
+      const marker = document.getElementById('inline-crop-marker');
+      const img = document.getElementById('modal-img');
+      const preview = document.getElementById('inline-crop-preview');
+      const valX = document.getElementById('inline-val-cx');
+      const valY = document.getElementById('inline-val-cy');
+
+      if (valX) valX.innerText = Math.round(currentCrop.x);
+      if (valY) valY.innerText = Math.round(currentCrop.y);
+      if (preview) preview.style.objectPosition = `${currentCrop.x}% ${currentCrop.y}%`;
+
+      const rect = img.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+
+      const naturalRatio = (img.naturalWidth || 1) / (img.naturalHeight || 1);
+      const visibleRatio = rect.width / rect.height;
+      let renderedW = rect.width;
+      let renderedH = rect.height;
+      let offsetX = 0;
+      let offsetY = 0;
+
+      if (visibleRatio > naturalRatio) {
+        renderedH = rect.height;
+        renderedW = rect.height * naturalRatio;
+        offsetX = (rect.width - renderedW) / 2;
+      } else {
+        renderedW = rect.width;
+        renderedH = rect.width / naturalRatio;
+        offsetY = (rect.height - renderedH) / 2;
+      }
+
+      const markerLeft = offsetX + (currentCrop.x / 100) * renderedW;
+      const markerTop = offsetY + (currentCrop.y / 100) * renderedH;
+
+      marker.style.left = `${markerLeft}px`;
+      marker.style.top = `${markerTop}px`;
+    }
+
+    document.getElementById('modal-photo-wrapper').addEventListener('click', (e) => {
+      if (!isInlineEditingPhoto) return;
+      const img = document.getElementById('modal-img');
+      const rect = img.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+
+      const naturalRatio = (img.naturalWidth || 1) / (img.naturalHeight || 1);
+      const visibleRatio = rect.width / rect.height;
+      let renderedW = rect.width;
+      let renderedH = rect.height;
+      let offsetX = 0;
+      let offsetY = 0;
+
+      if (visibleRatio > naturalRatio) {
+        renderedH = rect.height;
+        renderedW = rect.height * naturalRatio;
+        offsetX = (rect.width - renderedW) / 2;
+      } else {
+        renderedW = rect.width;
+        renderedH = rect.width / naturalRatio;
+        offsetY = (rect.height - renderedH) / 2;
+      }
+
+      const clickX = e.clientX - rect.left - offsetX;
+      const clickY = e.clientY - rect.top - offsetY;
+
+      const pctX = Math.max(0, Math.min(100, (clickX / renderedW) * 100));
+      const pctY = Math.max(0, Math.min(100, (clickY / renderedH) * 100));
+
+      currentCrop.x = Math.round(pctX);
+      currentCrop.y = Math.round(pctY);
+
+      updateInlineCropUI();
+    });
+
+    async function submitInlineCardEdit() {
+      if (!activeCard) return;
+      const newTitle = document.getElementById('inline-card-title').value.trim();
+      const newTag = document.getElementById('inline-card-tag').value.trim();
+      const newCaption = document.getElementById('inline-card-caption').value.trim();
+
+      if (!newTitle) {
+        showToast('Пожалуйста, укажите заголовок карточки');
+        return;
+      }
+
+      const cx = Math.round(currentCrop.x);
+      const cy = Math.round(currentCrop.y);
+
+      const ok = await sendToCloudBuffer({
+        type: 'edit',
+        filename: activeCard.file || activeCard.filename,
+        title: newTitle,
+        tag: newTag,
+        caption: newCaption,
+        current_crop_x: cx,
+        current_crop_y: cy
+      });
+
+      if (ok) {
+        showToast('Заявка на правку и кадрирование отправлена в штаб!');
+        activeCard.title = newTitle;
+        activeCard.tag = newTag;
+        activeCard.caption = newCaption;
+        activeCard.crop_x = cx;
+        activeCard.crop_y = cy;
+
+        document.getElementById('modal-title').innerText = newTitle;
+        document.getElementById('modal-tag').innerText = newTag || 'ФОТО';
+        document.getElementById('modal-caption').innerText = newCaption;
+
+        renderGallery(cardsData);
+        disableInlineCardEdit();
+      }
+    }
+
+    function openDeleteConfirmModal() {
+      if (!activeCard) return;
+      const modal = document.getElementById('confirm-modal');
+      document.getElementById('confirm-modal-text').innerText = `Отправить запрос на удаление карточки «${activeCard.title || 'Без названия'}»?`;
+      document.getElementById('confirm-modal-btn-ok').onclick = async () => {
+        closeConfirmModal();
+        await requestDelete();
+      };
+      modal.style.display = 'flex';
+    }
+
+    function closeConfirmModal() {
+      document.getElementById('confirm-modal').style.display = 'none';
+    }
+
+    async function requestDelete() {
+      if (!activeCard) return;
+
+      const ok = await sendToCloudBuffer({
+        type: 'delete',
+        filename: activeCard.file || activeCard.filename,
+        title: activeCard.title
+      });
+
+      if (ok) {
+        showToast('Запрос на удаление карточки отправлен в штаб!');
+      }
+      closeModal();
+    }
+
+    function openArticleEditModal(id) {
+      const art = loadedArticles.find(a => String(a.id) === String(id));
+      if (!art) return;
+
+      document.getElementById('edit-art-id').value = art.id;
+      document.getElementById('edit-art-title').value = art.title || '';
+      document.getElementById('edit-art-tag').value = art.tag || '';
+      document.getElementById('edit-art-content').value = art.content || '';
+
+      document.getElementById('article-edit-modal').style.display = 'flex';
+    }
+
+    function closeArticleEditModal() {
+      document.getElementById('article-edit-modal').style.display = 'none';
+    }
+
+    async function submitArticleEdit() {
+      const id = document.getElementById('edit-art-id').value;
+      const title = document.getElementById('edit-art-title').value.trim();
+      const tag = document.getElementById('edit-art-tag').value.trim();
+      const content = document.getElementById('edit-art-content').value.trim();
+
+      if (!title || !content) {
+        showToast('Заполните заголовок и текст статьи');
+        return;
+      }
+
+      const ok = await sendToCloudBuffer({
+        type: 'article_edit',
+        article_id: id,
+        title: title,
+        tag: tag,
+        content: content
+      });
+
+      if (ok) {
+        showToast('Правка статьи отправлена в штаб модерации!');
+        closeArticleEditModal();
+      }
+    }
+
+    function openSuggestModal() {
+      document.getElementById('suggest-modal').style.display = 'flex';
+      switchSuggestType('article');
+    }
+
+    function closeSuggestModal() {
+      document.getElementById('suggest-modal').style.display = 'none';
+    }
+
+    function switchSuggestType(type) {
+      currentSuggestType = type;
+      const btnArt = document.getElementById('btn-type-art');
+      const btnPhoto = document.getElementById('btn-type-photo');
+      const fieldsArt = document.getElementById('form-article-fields');
+      const fieldsPhoto = document.getElementById('form-photo-fields');
+
+      if (type === 'article') {
+        btnArt.classList.add('active');
+        btnPhoto.classList.remove('active');
+        fieldsArt.style.display = 'block';
+        fieldsPhoto.style.display = 'none';
+      } else {
+        btnPhoto.classList.add('active');
+        btnArt.classList.remove('active');
+        fieldsArt.style.display = 'none';
+        fieldsPhoto.style.display = 'block';
+      }
+    }
+
+    async function sendSuggest() {
+      if (currentSuggestType === 'article') {
+        const title = document.getElementById('sug-art-title').value.trim();
+        const tag = document.getElementById('sug-art-tag').value.trim();
+        const content = document.getElementById('sug-art-content').value.trim();
+
+        if (!title || !content) {
+          showToast('Укажите название и текст статьи');
+          return;
+        }
+
+        const ok = await sendToCloudBuffer({
+          type: 'suggest_article',
+          title: title,
+          tag: tag || 'ВЕСТНИК',
+          content: content
+        });
+
+        if (ok) {
+          showToast('Статья отправлена в штаб модерации!');
+          document.getElementById('sug-art-title').value = '';
+          document.getElementById('sug-art-tag').value = '';
+          document.getElementById('sug-art-content').value = '';
+          closeSuggestModal();
+        }
+      } else {
+        const title = document.getElementById('sug-photo-title').value.trim();
+        const tag = document.getElementById('sug-photo-tag').value.trim();
+        const caption = document.getElementById('sug-photo-caption').value.trim();
+        const url = document.getElementById('sug-photo-url').value.trim();
+
+        if (!title || !url) {
+          showToast('Укажите название кадра и ссылку на фото');
+          return;
+        }
+
+        const ok = await sendToCloudBuffer({
+          type: 'suggest_photo',
+          title: title,
+          tag: tag || 'ОСНОВА',
+          caption: caption,
+          photo_url: url
+        });
+
+        if (ok) {
+          showToast('Фотография отправлена в штаб модерации!');
+          document.getElementById('sug-photo-title').value = '';
+          document.getElementById('sug-photo-tag').value = '';
+          document.getElementById('sug-photo-caption').value = '';
+          document.getElementById('sug-photo-url').value = '';
+          closeSuggestModal();
+        }
+      }
+    }
+
+    async function sendToCloudBuffer(payload) {
+      const cfg = await getEnvConfig();
+      const binId = cfg.JSONBIN_BIN_ID || DEFAULT_BIN_ID;
+      const apiKey = cfg.JSONBIN_API_KEY || cfg.JSONBIN_ACCESS_KEY || DEFAULT_ACCESS_KEY;
+
+      if (!binId || !apiKey) {
+        showToast('Ключи JSONBin не найдены в конфигурации');
+        return false;
+      }
+
+      try {
+        const getRes = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+          headers: { 
+            'X-Access-Key': apiKey 
+          }
+        });
+
+        if (!getRes.ok) {
+          showToast(`Ошибка облака JSONBin: HTTP ${getRes.status}`);
+          return false;
+        }
+
+        const json = await getRes.json();
+        let queue = json.record?.queue || [];
+
+        queue.push({
+          id: 'req_' + Date.now(),
+          timestamp: new Date().toISOString(),
+          ...payload
+        });
+
+        const putRes = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Access-Key': apiKey
+          },
+          body: JSON.stringify({ queue })
+        });
+
+        return putRes.ok;
+      } catch (err) {
+        console.error("Ошибка буфера JSONBin:", err);
+        showToast('Сетевая ошибка при отправке в облако');
+        return false;
+      }
+    }
+
+    // ========================================================
+    // 🍭 SUGAR RUSH SUPER SCATTER — ПОЛНЫЙ ДВИЖОК СЛОТА
+    // ========================================================
+
+    const BET_TIERS = [10, 20, 50, 100, 200, 500, 1000, 2000];
+    let currentBetIndex = 1; // Дефолт: 20
+    let anteBetActive = false;
+    let isTurbo = false;
+    let isAuto = false;
+    let autoSpinsLeft = 0;
+    let isSpinning = false;
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    let slotBalance = 10000;
+    let isFreeSpins = false;
+    let freeSpinsLeft = 0;
+    let freeSpinsTotal = 0;
+    let freeSpinsWinAccum = 0;
+
+    let grid = Array(49).fill('');
+    let spots = Array(49).fill(0); // 0: пусто, 1: обертка (метка), 2..1024: множитель
+
+    let guaranteedScatters = 0;
+    let guaranteedSuper = false;
+
+    const REGULAR_SYMBOLS = ['💖', '🍭', '🍬', '⭐', '🍓', '🍇', '🐻'];
+
+    const PAYTABLE_DATA = {
+      '💖': { name: "Розовое сердце", emoji: "💖", m5: 1.5,  m7: 3.0,  m9: 8.0,  m12: 25.0, m15: 150.0, color: "#ff4081" },
+      '🍭': { name: "Леденец",         emoji: "🍭", m5: 1.0,  m7: 2.0,  m9: 5.0,  m12: 15.0, m15: 100.0, color: "#ff6d00" },
+      '🍬': { name: "Карамелька",      emoji: "🍬", m5: 0.75, m7: 1.5,  m9: 3.5,  m12: 10.0, m15: 60.0,  color: "#aa00ff" },
+      '⭐': { name: "Звезда",          emoji: "⭐", m5: 0.5,  m7: 1.0,  m9: 2.5,  m12: 6.0,  m15: 40.0,  color: "#ffd600" },
+      '🍓': { name: "Клубника",        emoji: "🍓", m5: 0.4,  m7: 0.8,  m9: 1.8,  m12: 4.0,  m15: 30.0,  color: "#ff1744" },
+      '🍇': { name: "Виноград",        emoji: "🍇", m5: 0.3,  m7: 0.6,  m9: 1.2,  m12: 3.0,  m15: 25.0,  color: "#7c4dff" },
+      '🐻': { name: "Мишка",           emoji: "🐻", m5: 0.25, m7: 0.5,  m9: 1.0,  m12: 2.0,  m15: 20.0,  color: "#ff9100" }
+    };
+
+    function getBaseBet() {
+      return BET_TIERS[currentBetIndex];
+    }
+
+    function getTotalBet() {
+      const base = getBaseBet();
+      return anteBetActive ? Math.round(base * 1.25) : base;
+    }
+
+    // Аудиосинтезатор Web Audio API
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) audioCtx = new AudioContext();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playSoundTone(freq, duration, type = 'sine', gainVal = 0.25) {
+      if (!soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+      try {
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, now);
+        g.gain.setValueAtTime(gainVal, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + duration);
+        osc.connect(g);
+        g.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + duration);
+      } catch (e) {}
+    }
+
+    function playPopSound() {
+      if (!soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+      try {
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(520, now);
+        osc.frequency.exponentialRampToValueAtTime(90, now + 0.12);
+        g.gain.setValueAtTime(0.3, now);
+        g.gain.linearRampToValueAtTime(0.01, now + 0.12);
+        osc.connect(g);
+        g.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.13);
+      } catch (e) {}
+    }
+
+    function playMultSound(mult) {
+      if (!soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+      try {
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        osc.type = 'triangle';
+        const baseFreq = 420 + Math.min(1400, Math.log2(Math.max(2, mult || 2)) * 130);
+        osc.frequency.setValueAtTime(baseFreq, now);
+        osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.4, now + 0.22);
+        g.gain.setValueAtTime(0.3, now);
+        g.gain.linearRampToValueAtTime(0.01, now + 0.23);
+        osc.connect(g);
+        g.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.24);
+      } catch (e) {}
+    }
+
+    function playScatterSound(count) {
+      playSoundTone(440 * Math.pow(1.22, count || 1), 0.35, 'triangle', 0.35);
+    }
+
+    function playSuperScatterSound() {
+      if (!soundEnabled) return;
+      [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+        setTimeout(() => playSoundTone(freq, 0.4, 'triangle', 0.35), idx * 75);
+      });
+    }
+
+    function playBigWinFanfare() {
+      if (!soundEnabled) return;
+      const notes = [440, 554.37, 659.25, 880, 1108.73, 1318.51];
+      notes.forEach((freq, idx) => {
+        setTimeout(() => playSoundTone(freq, 0.6, 'sine', 0.35), idx * 80);
+      });
+    }
+
+    function toggleSlotSound() {
+      soundEnabled = !soundEnabled;
+      const btn = document.getElementById('btn-slot-sound');
+      if (btn) btn.innerText = soundEnabled ? '🔊' : '🔇';
+    }
+
+    function playCascadeSounds() {
+      if (!soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+      for (let c = 0; c < 7; c++) {
+        setTimeout(() => {
+          if (!soundEnabled) return;
+          const freq = 260 + c * 32;
+          playSoundTone(freq, 0.065, 'triangle', 0.16);
+        }, c * 45 + 130);
+      }
+    }
+
+    // Генерация HTML-разметки для конфетных эмодзи и спец-символов
+    function getSymbolHtml(sym) {
+      if (sym === 'scatter') {
+        return `<div class="candy-emoji-wrap scatter-wrap"><span style="font-size: 30px;">🚀</span><span class="scatter-tag">SCATTER</span></div>`;
+      }
+      if (sym === 'super_scatter') {
+        return `<div class="candy-emoji-wrap super-scatter-wrap"><span style="font-size: 32px;">🌟</span><span class="super-scatter-tag">SUPER</span></div>`;
+      }
+      const item = PAYTABLE_DATA[sym];
+      const char = item ? item.emoji : sym;
+      return `<div class="candy-emoji-wrap"><span>${char}</span></div>`;
+    }
+
+    // Запуск каскадной анимации падения эмодзи сверху со смещением по колонкам и рядам
+    function triggerDropAnimation(indices = null) {
+      const targetIndices = indices || Array.from({ length: 49 }, (_, i) => i);
+      targetIndices.forEach(idx => {
+        const cell = document.getElementById('cell-' + idx);
+        if (!cell) return;
+        const col = idx % 7;
+        const row = Math.floor(idx / 7);
+        const delaySec = (col * 0.045) + ((6 - row) * 0.012);
+        cell.style.setProperty('--fall-delay', `${delaySec.toFixed(3)}s`);
+        cell.classList.remove('cell-dropping');
+        void cell.offsetWidth; // Принудительный reflow для надежного рестарта CSS-анимации
+        cell.classList.add('cell-dropping');
+      });
+      playCascadeSounds();
+    }
+
+    // Случайный символ с учетом Ante Bet и вероятностей
+    function getRandomSymbol(allowScatters = true) {
+      if (allowScatters) {
+        const scatterThreshold = anteBetActive ? 0.035 : 0.015;
+        const superThreshold = anteBetActive ? 0.010 : 0.003;
+        const rnd = Math.random();
+        if (rnd < superThreshold) return 'super_scatter';
+        if (rnd < scatterThreshold) return 'scatter';
+      }
+      return REGULAR_SYMBOLS[Math.floor(Math.random() * REGULAR_SYMBOLS.length)];
+    }
+
+    // Открытие и закрытие слота
+    function openSlot() {
+      const modal = document.getElementById('slot-modal');
+      if (modal) modal.style.display = 'flex';
+      initAudio();
+      if (!grid[0]) initBoard();
+      updateUI();
+    }
+
+    function closeSlot() {
+      const modal = document.getElementById('slot-modal');
+      if (modal) modal.style.display = 'none';
+      stopAutoplay();
+    }
+
+    function reloadSlotBalance() {
+      slotBalance += 5000;
+      updateUI();
+      playSoundTone(880, 0.25, 'sine', 0.3);
+      showToast('💰 Банкролл пополнен на +5 000 кредитов!');
+    }
+
+    function changeBet(dir) {
+      if (isSpinning) return;
+      const nextIndex = currentBetIndex + dir;
+      if (nextIndex >= 0 && nextIndex < BET_TIERS.length) {
+        currentBetIndex = nextIndex;
+        updateUI();
+        playSoundTone(350, 0.08, 'sine', 0.2);
+      }
+    }
+
+    function toggleAnteBet() {
+      if (isSpinning || isFreeSpins) return;
+      anteBetActive = !anteBetActive;
+      const btn = document.getElementById('btn-ante');
+      const status = document.getElementById('ante-status');
+      if (btn && status) {
+        if (anteBetActive) {
+          btn.classList.add('active');
+          status.innerText = 'ВКЛ';
+          status.style.color = '#34d399';
+        } else {
+          btn.classList.remove('active');
+          status.innerText = 'ВЫКЛ';
+          status.style.color = '#f87171';
+        }
+      }
+      updateUI();
+      playSoundTone(500, 0.1, 'triangle', 0.25);
+    }
+
+    function toggleTurbo() {
+      isTurbo = !isTurbo;
+      const btn = document.getElementById('btn-turbo');
+      if (btn) btn.classList.toggle('active', isTurbo);
+      playSoundTone(600, 0.08, 'sine', 0.2);
+    }
+
+    function toggleAutoplay() {
+      if (isAuto) {
+        stopAutoplay();
+      } else {
+        autoSpinsLeft = 25;
+        isAuto = true;
+        const btn = document.getElementById('btn-auto');
+        if (btn) {
+          btn.classList.add('active');
+          btn.innerText = 'СТОП (' + autoSpinsLeft + ')';
+        }
+        if (!isSpinning) spin();
+      }
+    }
+
+    function stopAutoplay() {
+      isAuto = false;
+      autoSpinsLeft = 0;
+      const btn = document.getElementById('btn-auto');
+      if (btn) {
+        btn.classList.remove('active');
+        btn.innerText = '🔄 АВТО';
+      }
+    }
+
+    function updateUI() {
+      const balEl = document.getElementById('slot-balance');
+      if (balEl) balEl.innerText = slotBalance.toLocaleString();
+
+      const betEl = document.getElementById('slot-current-bet');
+      if (betEl) betEl.innerText = getTotalBet().toLocaleString();
+
+      const winEl = document.getElementById('slot-win');
+      if (winEl) winEl.innerText = lastRoundWin.toLocaleString();
+
+      const buyRegularPrice = 100 * getTotalBet();
+      const buySuperPrice = 500 * getTotalBet();
+
+      const regEl = document.getElementById('buy-bonus-price');
+      if (regEl) regEl.innerText = buyRegularPrice.toLocaleString();
+
+      const supEl = document.getElementById('buy-super-price');
+      if (supEl) supEl.innerText = buySuperPrice.toLocaleString();
+
+      const minusBtn = document.getElementById('btn-bet-minus');
+      const plusBtn = document.getElementById('btn-bet-plus');
+      if (minusBtn) minusBtn.disabled = currentBetIndex <= 0 || isSpinning || isFreeSpins;
+      if (plusBtn) plusBtn.disabled = currentBetIndex >= BET_TIERS.length - 1 || isSpinning || isFreeSpins;
+
+      const anteBtn = document.getElementById('btn-ante');
+      if (anteBtn) anteBtn.disabled = isSpinning || isFreeSpins;
+
+      const buyRegBtn = document.getElementById('btn-buy-regular');
+      if (buyRegBtn) buyRegBtn.disabled = isSpinning || isFreeSpins || slotBalance < buyRegularPrice;
+
+      const buySupBtn = document.getElementById('btn-buy-super');
+      if (buySupBtn) buySupBtn.disabled = isSpinning || isFreeSpins || slotBalance < buySuperPrice;
+    }
+
+    // Покупка бонусов
+    function buyRegularBonus() {
+      if (isSpinning || isFreeSpins) return;
+      const price = 100 * getTotalBet();
+      if (slotBalance < price) {
+        showToast('Недостаточно баланса для покупки бонуса!');
+        return;
+      }
+      slotBalance -= price;
+      guaranteedScatters = Math.floor(Math.random() * 3) + 3; // 3 - 5 скеттеров
+      guaranteedSuper = false;
+      showToast('🎁 Куплен бонусный раунд! Выпадение гарантировано.');
+      spin();
+    }
+
+    function buySuperBonus() {
+      if (isSpinning || isFreeSpins) return;
+      const price = 500 * getTotalBet();
+      if (slotBalance < price) {
+        showToast('Недостаточно баланса для покупки Super Бонуса!');
+        return;
+      }
+      slotBalance -= price;
+      guaranteedScatters = Math.floor(Math.random() * 2) + 3; // 3 - 4 скеттера
+      guaranteedSuper = true; // С обязательным Super Scatter!
+
+      // Случайно расставляем 3 начальных множителя x2 на сетке
+      spots.fill(0);
+      const preSpots = [];
+      while (preSpots.length < 3) {
+        const rndIdx = Math.floor(Math.random() * 49);
+        if (!preSpots.includes(rndIdx)) {
+          preSpots.push(rndIdx);
+          spots[rndIdx] = 2;
+        }
+      }
+      showToast('🌟 Куплен SUPER BONUS с гарантированным золотым Super Scatter!');
+      spin();
+    }
+
+    // Инициализация сетки
+    function initBoard() {
+      const board = document.getElementById('slot-board');
+      if (!board) return;
+      board.innerHTML = '';
+      for (let i = 0; i < 49; i++) {
+        if (!grid[i]) grid[i] = getRandomSymbol(false);
+        const cell = document.createElement('div');
+        cell.className = 'slot-cell';
+        cell.id = 'cell-' + i;
+        board.appendChild(cell);
+      }
+      renderBoard();
+      triggerDropAnimation();
+      updateUI();
+    }
+
+    function renderBoard() {
+      for (let i = 0; i < 49; i++) {
+        const cell = document.getElementById('cell-' + i);
+        if (!cell) continue;
+
+        cell.className = 'slot-cell';
+
+        const sp = spots[i];
+        if (sp === 1) {
+          cell.classList.add('spot-marked');
+        } else if (sp >= 2) {
+          cell.classList.add('spot-x' + Math.min(1024, sp));
+        }
+
+        let badge = cell.querySelector('.cell-mult-badge');
+        if (sp >= 2) {
+          if (!badge) {
+            badge = document.createElement('div');
+            badge.className = 'cell-mult-badge';
+            cell.appendChild(badge);
+          }
+          badge.className = 'cell-mult-badge badge-x' + Math.min(1024, sp);
+          badge.innerText = 'x' + sp;
+        } else if (badge) {
+          badge.remove();
+        }
+
+        let wrap = cell.querySelector('.candy-emoji-wrap');
+        const sym = grid[i];
+        if (sym) {
+          if (!wrap || cell.dataset.sym !== sym) {
+            if (wrap) wrap.remove();
+            const temp = document.createElement('div');
+            temp.innerHTML = getSymbolHtml(sym);
+            if (temp.firstElementChild) {
+              cell.appendChild(temp.firstElementChild);
+            }
+            cell.dataset.sym = sym;
+          }
+        } else if (wrap) {
+          wrap.remove();
+          delete cell.dataset.sym;
+        }
+      }
+    }
+
+    function handleSpinClick() {
+      if (isSpinning) return;
+      spin();
+    }
+
+    // Основной цикл вращения
+    async function spin() {
+      const totalBet = getTotalBet();
+      if (!isFreeSpins && slotBalance < totalBet && guaranteedScatters === 0) {
+        showToast('Недостаточно баланса! Пополните банкролл кнопкой 💰');
+        stopAutoplay();
+        return;
+      }
+
+      isSpinning = true;
+      const spinBtn = document.getElementById('btn-spin');
+      if (spinBtn) {
+        spinBtn.disabled = true;
+        spinBtn.innerText = 'ИГРА...';
+      }
+
+      if (!isFreeSpins && guaranteedScatters === 0) {
+        slotBalance -= totalBet;
+        spots.fill(0); // В обычной игре споты сбрасываются перед спином
+      }
+
+      lastRoundWin = 0;
+      updateUI();
+
+      // Генерация сетки
+      for (let i = 0; i < 49; i++) {
+        grid[i] = getRandomSymbol(true);
+      }
+
+      // Если была покупка бонуса
+      if (guaranteedScatters > 0) {
+        const scatterIndices = [];
+        while (scatterIndices.length < guaranteedScatters) {
+          const r = Math.floor(Math.random() * 49);
+          if (!scatterIndices.includes(r)) scatterIndices.push(r);
+        }
+        scatterIndices.forEach((idx, order) => {
+          if (guaranteedSuper && order === 0) {
+            grid[idx] = 'super_scatter';
+          } else {
+            grid[idx] = 'scatter';
+          }
+        });
+        guaranteedScatters = 0;
+        guaranteedSuper = false;
+      }
+
+      renderBoard();
+      triggerDropAnimation();
+      await delay(isTurbo ? 250 : 520);
+
+      // Процесс лавины кластеров
+      const roundWin = await processTumbles();
+
+      if (isFreeSpins) {
+        freeSpinsWinAccum += roundWin;
+        const fsWinEl = document.getElementById('slot-fs-win');
+        if (fsWinEl) fsWinEl.innerText = freeSpinsWinAccum.toLocaleString();
+      }
+
+      // Проверка на выпадение Скеттеров
+      await checkScattersTrigger();
+
+      // Проверка на крупный занос
+      if (!isFreeSpins && roundWin > 0) {
+        checkCelebration(roundWin, totalBet);
+      }
+
+      isSpinning = false;
+      if (spinBtn) {
+        spinBtn.disabled = false;
+        spinBtn.innerText = isFreeSpins ? 'БОНУС' : 'КРУТИТЬ';
+      }
+      updateUI();
+
+      // Обработка Free Spins очереди
+      if (isFreeSpins) {
+        freeSpinsLeft--;
+        const countEl = document.getElementById('slot-fs-count');
+        if (countEl) countEl.innerText = freeSpinsLeft + ' / ' + freeSpinsTotal;
+
+        if (freeSpinsLeft > 0) {
+          await delay(isTurbo ? 250 : 600);
+          spin();
+          return;
+        } else {
+          // Завершение бонусного раунда
+          isFreeSpins = false;
+          const bar = document.getElementById('slot-bonus-bar');
+          if (bar) bar.style.display = 'none';
+
+          playSoundTone(880, 0.5, 'triangle', 0.4);
+          showCelebration('🎉 БОНУС ЗАВЕРШЕН!', freeSpinsWinAccum);
+          slotBalance += freeSpinsWinAccum;
+          freeSpinsWinAccum = 0;
+          spots.fill(0);
+          renderBoard();
+          updateUI();
+        }
+      }
+
+      // Автоспины
+      if (isAuto && autoSpinsLeft > 0) {
+        autoSpinsLeft--;
+        const autoBtn = document.getElementById('btn-auto');
+        if (autoBtn) autoBtn.innerText = 'СТОП (' + autoSpinsLeft + ')';
+
+        if (autoSpinsLeft > 0 && slotBalance >= totalBet) {
+          await delay(isTurbo ? 200 : 500);
+          spin();
+        } else {
+          stopAutoplay();
+        }
+      }
+    }
+
+    function delay(ms) {
+      return new Promise(r => setTimeout(r, ms));
+    }
+
+    // Кластерный поиск
+    function findCluster(startIndex, visited) {
+      const sym = grid[startIndex];
+      if (!sym || sym === 'scatter' || sym === 'super_scatter') return [];
+
+      const cluster = [];
+      const queue = [startIndex];
+      visited[startIndex] = true;
+
+      while (queue.length > 0) {
+        const curr = queue.shift();
+        cluster.push(curr);
+        const r = Math.floor(curr / 7);
+        const c = curr % 7;
+
+        const neighbors = [];
+        if (r > 0) neighbors.push(curr - 7);
+        if (r < 6) neighbors.push(curr + 7);
+        if (c > 0) neighbors.push(curr - 1);
+        if (c < 6) neighbors.push(curr + 1);
+
+        for (const n of neighbors) {
+          if (!visited[n] && grid[n] === sym) {
+            visited[n] = true;
+            queue.push(n);
+          }
+        }
+      }
+      return cluster;
+    }
+
+    // Вычисление выигрыша кластера
+    function calculateClusterWin(sym, size) {
+      const data = PAYTABLE_DATA[sym];
+      if (!data || size < 5) return 0;
+      let mult = data.m5;
+      if (size >= 15) mult = data.m15;
+      else if (size >= 12) mult = data.m12;
+      else if (size >= 9) mult = data.m9;
+      else if (size >= 7) mult = data.m7;
+      return mult * getBaseBet();
+    }
+
+    // Лавины и взрывы (Tumbles)
+    async function processTumbles() {
+      let tumbleWinTotal = 0;
+      let hasWin = true;
+
+      while (hasWin) {
+        hasWin = false;
+        // Снимаем класс анимации падения перед проверкой выигрышных кластеров
+        for (let i = 0; i < 49; i++) {
+          const cell = document.getElementById('cell-' + i);
+          if (cell) cell.classList.remove('cell-dropping', 'cell-falling');
+        }
+
+        const visited = Array(49).fill(false);
+        const winningClusters = [];
+
+        for (let i = 0; i < 49; i++) {
+          if (!visited[i]) {
+            const cluster = findCluster(i, visited);
+            if (cluster.length >= 5) {
+              winningClusters.push({
+                sym: grid[i],
+                indices: cluster
+              });
+            }
+          }
+        }
+
+        if (winningClusters.length > 0) {
+          hasWin = true;
+          const toExplode = new Set();
+          let stepWin = 0;
+
+          // Подсветка выигрышных клеток
+          winningClusters.forEach(cl => {
+            const basePayout = calculateClusterWin(cl.sym, cl.indices.length);
+            let multSum = 0;
+            cl.indices.forEach(idx => {
+              toExplode.add(idx);
+              const cell = document.getElementById('cell-' + idx);
+              if (cell) cell.classList.add('cell-winning');
+              if (spots[idx] >= 2) multSum += spots[idx];
+            });
+
+            const clusterMult = multSum > 0 ? multSum : 1;
+            stepWin += Math.round(basePayout * clusterMult);
+          });
+
+          playPopSound();
+          if (stepWin > 0) playMultSound(stepWin);
+
+          tumbleWinTotal += stepWin;
+          slotBalance += stepWin;
+          lastRoundWin += stepWin;
+          updateUI();
+
+          await delay(isTurbo ? 180 : 400);
+
+          // Взрыв и обновление спот-множителей
+          const affectedCols = new Set();
+          toExplode.forEach(idx => {
+            affectedCols.add(idx % 7);
+            const cell = document.getElementById('cell-' + idx);
+            if (cell) {
+              cell.classList.remove('cell-winning');
+              cell.classList.add('cell-exploding');
+            }
+
+            if (spots[idx] === 0) {
+              spots[idx] = 1; // Помеченная обертка
+            } else if (spots[idx] === 1) {
+              spots[idx] = 2; // x2
+            } else {
+              spots[idx] = Math.min(1024, spots[idx] * 2); // Удвоение до x1024!
+            }
+            grid[idx] = '';
+          });
+
+          await delay(isTurbo ? 150 : 290);
+
+          // Гравитация: падение сверху в затронутых колонках
+          const droppedIndices = [];
+          for (let col = 0; col < 7; col++) {
+            let emptyRow = 6;
+            let colMoved = false;
+            for (let row = 6; row >= 0; row--) {
+              const idx = row * 7 + col;
+              if (grid[idx] !== '') {
+                if (emptyRow !== row) {
+                  grid[emptyRow * 7 + col] = grid[idx];
+                  grid[idx] = '';
+                  colMoved = true;
+                }
+                emptyRow--;
+              }
+            }
+            while (emptyRow >= 0) {
+              grid[emptyRow * 7 + col] = getRandomSymbol(false);
+              emptyRow--;
+              colMoved = true;
+            }
+            if (colMoved || affectedCols.has(col)) {
+              for (let r = 0; r < 7; r++) {
+                droppedIndices.push(r * 7 + col);
+              }
+            }
+          }
+
+          renderBoard();
+          triggerDropAnimation(droppedIndices.length > 0 ? droppedIndices : null);
+
+          await delay(isTurbo ? 220 : 460);
+        }
+      }
+
+      return tumbleWinTotal;
+    }
+
+    // Проверка выпадения скеттеров и Super Scatter
+    async function checkScattersTrigger() {
+      const scatters = [];
+      let superCount = 0;
+
+      for (let i = 0; i < 49; i++) {
+        if (grid[i] === 'scatter') scatters.push(i);
+        if (grid[i] === 'super_scatter') {
+          scatters.push(i);
+          superCount++;
+        }
+      }
+
+      if (scatters.length >= 3) {
+        // Подсветка скеттеров
+        scatters.forEach(idx => {
+          const cell = document.getElementById('cell-' + idx);
+          if (cell) cell.classList.add('cell-winning');
+        });
+
+        playScatterSound(scatters.length);
+        await delay(500);
+
+        let awardedSpins = 10;
+        if (scatters.length === 4) awardedSpins = 12;
+        else if (scatters.length === 5) awardedSpins = 15;
+        else if (scatters.length === 6) awardedSpins = 20;
+        else if (scatters.length >= 7) awardedSpins = 30;
+
+        // Расчет мгновенного куша Super Scatter
+        if (superCount > 0) {
+          playSuperScatterSound();
+          let instantMult = 100;
+          if (superCount === 2) instantMult = 500;
+          else if (superCount === 3) instantMult = 5000;
+          else if (superCount >= 4) instantMult = 50000;
+
+          const instantWin = instantMult * getTotalBet();
+          slotBalance += instantWin;
+          lastRoundWin += instantWin;
+          updateUI();
+
+          showCelebration('🌟 SUPER SCATTER ' + instantMult + 'X!', instantWin);
+          await delay(1800);
+        }
+
+        if (!isFreeSpins) {
+          isFreeSpins = true;
+          freeSpinsLeft = awardedSpins;
+          freeSpinsTotal = awardedSpins;
+          freeSpinsWinAccum = 0;
+
+          const bar = document.getElementById('slot-bonus-bar');
+          if (bar) bar.style.display = 'flex';
+
+          const countEl = document.getElementById('slot-fs-count');
+          if (countEl) countEl.innerText = freeSpinsLeft + ' / ' + freeSpinsTotal;
+
+          showToast('🎉 ЗАПУСК БОНУСА: ' + awardedSpins + ' бесплатных вращений!');
+        } else {
+          // Ретриггер во время фриспинов
+          freeSpinsLeft += awardedSpins;
+          freeSpinsTotal += awardedSpins;
+          showToast('🔥 РЕТРИГГЕР: +' + awardedSpins + ' бесплатных вращений!');
+        }
+      }
+    }
+
+    // Экран крупного заноса
+    function checkCelebration(roundWin, totalBet) {
+      const mult = roundWin / totalBet;
+      if (mult >= 50000) {
+        showCelebration('🌟 MAX WIN 50,000X! 🌟', roundWin);
+      } else if (mult >= 500) {
+        showCelebration('👑 SENSATIONAL WIN!', roundWin);
+      } else if (mult >= 100) {
+        showCelebration('🔥 SUPER WIN!', roundWin);
+      } else if (mult >= 50) {
+        showCelebration('🚀 MEGA WIN!', roundWin);
+      } else if (mult >= 20) {
+        showCelebration('🎉 BIG WIN!', roundWin);
+      }
+    }
+
+    function showCelebration(title, amount) {
+      const modal = document.getElementById('slot-celebration');
+      const titleEl = document.getElementById('celebration-title');
+      const amountEl = document.getElementById('celebration-amount');
+      if (!modal || !titleEl || !amountEl) return;
+
+      playBigWinFanfare();
+      titleEl.innerText = title;
+      amountEl.innerText = '0';
+      modal.style.display = 'flex';
+
+      // Анимация накрутки чисел
+      const duration = 1200;
+      const start = Date.now();
+      const interval = setInterval(() => {
+        const progress = Math.min(1, (Date.now() - start) / duration);
+        const curr = Math.floor(progress * amount);
+        amountEl.innerText = curr.toLocaleString();
+        if (progress >= 1) {
+          clearInterval(interval);
+          amountEl.innerText = amount.toLocaleString();
+        }
+      }, 30);
+    }
+
+    function dismissCelebration() {
+      const modal = document.getElementById('slot-celebration');
+      if (modal) modal.style.display = 'none';
+    }
+
+    // Таблица выплат
+    function openPaytable() {
+      const modal = document.getElementById('slot-paytable');
+      const container = document.getElementById('paytable-symbols');
+      if (!modal || !container) return;
+
+      const baseBet = getBaseBet();
+      container.innerHTML = '';
+
+      REGULAR_SYMBOLS.forEach(sym => {
+        const d = PAYTABLE_DATA[sym];
+        const card = document.createElement('div');
+        card.className = 'paytable-card';
+        card.innerHTML = `
+          <div class="paytable-card-svg" style="font-size: 34px; display: flex; align-items: center; justify-content: center; height: 46px;">${d.emoji}</div>
+          <div style="font-weight: 800; font-size: 11.5px; color: ${d.color};">${d.name}</div>
+          <div class="paytable-payouts">
+            15+: <b>${Math.round(d.m15 * baseBet).toLocaleString()}</b><br>
+            12-14: <b>${Math.round(d.m12 * baseBet).toLocaleString()}</b><br>
+            9-11: <b>${Math.round(d.m9 * baseBet).toLocaleString()}</b><br>
+            7-8: <b>${Math.round(d.m7 * baseBet).toLocaleString()}</b><br>
+            5-6: <b>${Math.round(d.m5 * baseBet).toLocaleString()}</b>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      // Карточка SCATTER
+      const scatterCard = document.createElement('div');
+      scatterCard.className = 'paytable-card';
+      scatterCard.style.borderColor = '#ff4081';
+      scatterCard.innerHTML = `
+        <div class="paytable-card-svg" style="font-size: 34px; display: flex; align-items: center; justify-content: center; height: 46px;">🚀</div>
+        <div style="font-weight: 800; font-size: 11.5px; color: #ff4081;">SCATTER</div>
+        <div class="paytable-payouts">
+          7+: <b>30 Фриспинов</b><br>
+          6: <b>20 Фриспинов</b><br>
+          5: <b>15 Фриспинов</b><br>
+          4: <b>12 Фриспинов</b><br>
+          3: <b>10 Фриспинов</b>
+        </div>
+      `;
+      container.appendChild(scatterCard);
+
+      // Карточка SUPER SCATTER
+      const superCard = document.createElement('div');
+      superCard.className = 'paytable-card';
+      superCard.style.borderColor = '#ffd700';
+      superCard.innerHTML = `
+        <div class="paytable-card-svg" style="font-size: 34px; display: flex; align-items: center; justify-content: center; height: 46px;">🌟</div>
+        <div style="font-weight: 800; font-size: 11.5px; color: #ffd700;">SUPER SCATTER</div>
+        <div class="paytable-payouts">
+          4+: <b>50 000x MAX</b><br>
+          3: <b>5 000x ставка</b><br>
+          2: <b>500x ставка</b><br>
+          1: <b>100x ставка</b><br>
+          + дает Фриспины!
+        </div>
+      `;
+      container.appendChild(superCard);
+
+      modal.style.display = 'flex';
+    }
+
+    function closePaytable() {
+      const modal = document.getElementById('slot-paytable');
+      if (modal) modal.style.display = 'none';
+    }
+
+    document.getElementById('card-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'card-modal') closeModal();
+    });
+
+    document.getElementById('suggest-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'suggest-modal') closeSuggestModal();
+    });
+
+    document.getElementById('article-edit-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'article-edit-modal') closeArticleEditModal();
+    });
+
+    document.getElementById('slot-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'slot-modal') closeSlot();
+    });
+
+    document.getElementById('confirm-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'confirm-modal') closeConfirmModal();
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeModal();
+        closeSuggestModal();
+        closeArticleEditModal();
+        closeSlot();
+        closeConfirmModal();
+      }
+      if (e.code === 'Space') {
+        const slot = document.getElementById('slot-modal');
+        if (slot && slot.style.display === 'flex' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+          handleSpinClick();
+        }
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      if (isInlineEditingPhoto) updateInlineCropUI();
+    });
+
+    loadData();
+  </script>
+</body>
+</html>

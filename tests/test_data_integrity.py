@@ -22,7 +22,9 @@ def test_articles_json():
     assert isinstance(articles, list)
 
 def test_model_version():
-    curator_file = BASE_DIR / "auto_curator.py"
+    curator_file = BASE_DIR / "scripts" / "auto_curator.py"
+    if not curator_file.exists():
+        curator_file = BASE_DIR / "auto_curator.py"
     with open(curator_file, "r", encoding="utf-8") as f:
         content = f.read()
     assert "gemini-3.8-flash" in content

@@ -15,7 +15,7 @@ from PIL import Image, ImageOps
 # ==========================================
 # 1. ПУТИ И КОНФИГУРАЦИЯ
 # ==========================================
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 INCOMING_DIR = BASE_DIR / "incoming"
 PENDING_DIR = BASE_DIR / "pending"       # Промежуточный буфер модерации
 IMAGES_DIR = BASE_DIR / "images"         # Финальные фото сайта

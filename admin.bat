@@ -8,6 +8,6 @@ echo ========================================================
 
 
 
-py admin_server.py
+py scripts\admin_server.py
 
 pause

@@ -9,7 +9,7 @@ import urllib.error
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from urllib.parse import urlparse
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 IMAGES_DIR = os.path.join(BASE_DIR, "images")
 PENDING_DIR = os.path.join(BASE_DIR, "pending")
@@ -165,6 +165,9 @@ def get_clean_pending():
     return valid_pending
 
 class AdminHandler(SimpleHTTPRequestHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, directory=BASE_DIR, **kwargs)
+
     def send_json(self, payload, status=200):
         body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
         self.send_response(status)
@@ -185,6 +188,10 @@ class AdminHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         parsed = urlparse(self.path)
+
+        if parsed.path in ["/", "/admin.html"]:
+            self.path = "/pages/admin.html"
+            return super().do_GET()
 
         if parsed.path == "/api/config":
             return self.send_json({
@@ -395,7 +402,7 @@ if __name__ == "__main__":
     
     server = HTTPServer(("127.0.0.1", port), AdminHandler)
     print("=" * 56)
-    print(f"[ШТАБ МОДЕРАЦИИ] Сервер запущен на http://127.0.0.1:{port}/admin.html")
+    print(f"[ШТАБ МОДЕРАЦИИ] Сервер запущен на http://127.0.0.1:{port}/pages/admin.html (или /admin.html)")
     print("=" * 56)
     try:
         server.serve_forever()

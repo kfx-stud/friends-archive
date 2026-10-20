@@ -74,7 +74,7 @@
                           │
                           ▼
                 Локальный штаб модерации
-            (admin_server.py [127.0.0.1:8080] + admin.html)
+            (scripts/admin_server.py [127.0.0.1:8080] + pages/admin.html)
         ▲                 │
         │ Опрос и очистка ├─ Одобрить [A] ──► 📁 images/ + 📄 data/data.json
         │ (X-Master-Key)  └─ В брак   [D] ──► 📁 deleted/
@@ -95,7 +95,16 @@ friends-archive/
 ├── incoming/             # Входная папка для оригиналов фото (в .gitignore)
 ├── pending/              # Кандидаты, отобранные нейросетью перед модерацией
 ├── images/               # Опубликованные оптимизированные фото витрины клуба
+│   └── symbol.png        # Фавикон и герб клуба
 ├── deleted/              # Корзина забракованных снимков (в .gitignore)
+│
+├── pages/                # Страницы веб-интерфейса
+│   ├── index.html        # Публичный сайт: статьи, галерея с пагинацией, слот Sugar Rush Super Scatter
+│   └── admin.html        # Штаб модератора: фокус кадрирования, хоткеи, статьи, заявки
+│
+├── scripts/              # Python-скрипты автоматизации и локального сервера
+│   ├── auto_curator.py   # Конвейер AI-анализа и подготовки изображений
+│   └── admin_server.py   # Локальный HTTP-бэкенд (127.0.0.1) и синхронизатор
 │
 ├── data/                 # Каталог баз данных проекта
 │   ├── data.json         # База опубликованных карточек витрины
@@ -105,19 +114,15 @@ friends-archive/
 │   ├── config.json       # Локальный конфиг с ключом предложки (в .gitignore)
 │   └── config.json.example # Пример публичного шаблона конфигурации
 │
-├── index.html            # Публичный сайт: статьи, галерея с пагинацией, слот Sugar Rush Super Scatter
-├── admin.html            # Штаб модератора: фокус кадрирования, хоткеи, статьи, заявки
-├── auto_curator.py       # Конвейер AI-анализа и подготовки изображений
-├── admin_server.py       # Локальный HTTP-бэкенд (127.0.0.1) и синхронизатор
-│
+├── index.html            # Редирект на pages/index.html для GitHub Pages
 ├── admin.bat             # Запуск панели модератора в один клик
-├── run.bat               # Запуск анализа новых фото из incoming/
-├── push.bat              # Безопасный коммит и пуш на GitHub Pages
+├── run.bat               # Запуск анализа новых фото из incoming/ (в .gitignore)
+├── push.bat              # Безопасный коммит и пуш на GitHub Pages (в .gitignore)
+├── pull.bat              # Подтягивание изменений из репозитория (в .gitignore)
 ├── requirements.txt      # Зависимости Python
 ├── .env                  # Локальные переменные окружения и ключи API (в .gitignore)
 ├── prompt.example.txt    # Шаблон системного промпта AI-куратора (в репозитории)
 ├── prompt.txt            # Локальный кастомизированный промпт куратора (в .gitignore)
-├── symbol.png            # Фавикон и герб клуба
 └── CNAME                 # Привязка пользовательского домена site.gasmyas.me
 ```
 
@@ -178,8 +183,8 @@ JSONBIN_API_KEY=$2a$10$your_private_master_key_here...
 ### 5. Рабочий процесс
 
 1. **Сбор фото:** поместите новые фотографии в папку `incoming/`.
-2. **AI-разбор:** запустите `run.bat` (или `python auto_curator.py`).
-3. **Модерация:** запустите `admin.bat`, откройте `http://127.0.0.1:8080/admin.html`, настройте фокус на снимках и утвердите публикации.
+2. **AI-разбор:** запустите `run.bat` (или `python scripts/auto_curator.py`).
+3. **Модерация:** запустите `admin.bat`, откройте `http://127.0.0.1:8080/pages/admin.html` (или `/admin.html`), настройте фокус на снимках и утвердите публикации.
 4. **Тестирование:** выполните `python tests/test_data_integrity.py`.
 5. **Деплой:** запустите `push.bat` для отправки изменений на GitHub Pages.
 

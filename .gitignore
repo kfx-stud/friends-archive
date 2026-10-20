@@ -37,3 +37,8 @@ ehthumbs.db
 .idea/
 *.tmp
 *.bak
+
+# Локальные bat-скрипты автоматизации
+push.bat
+pull.bat
+run.bat

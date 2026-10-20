@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Штаб Модерации – ФК «ГазМяс»</title>
-  <link rel="icon" type="image/png" href="symbol.png">
+  <link rel="icon" type="image/png" href="../images/symbol.png">
   <style>
     :root {
       --bg: #08090d;
@@ -536,7 +536,7 @@
 
   <header>
     <div class="brand">
-      <img src="symbol.png" alt="Герб">
+      <img src="../images/symbol.png" alt="Герб">
       <span>Штаб Модерации ФК «ГазМяс»</span>
     </div>
 
@@ -771,11 +771,12 @@
       setTimeout(() => { t.style.display = 'none'; }, 3000);
     }
 
-    function resolveImagePath(item, fallbackFolder = 'images/') {
+    function resolveImagePath(item, fallbackFolder = '../images/') {
       if (!item) return '';
       const raw = item.file || item.filename || '';
       if (!raw) return '';
-      if (raw.startsWith('images/') || raw.startsWith('pending/')) return raw;
+      if (raw.startsWith('http://') || raw.startsWith('https://') || raw.startsWith('../')) return raw;
+      if (raw.startsWith('images/') || raw.startsWith('pending/')) return '../' + raw;
       return fallbackFolder + raw;
     }
 
@@ -982,7 +983,7 @@
         return `
           <div class="photo-card" style="border-left: 5px solid ${isDelete ? 'var(--accent-red)' : 'var(--accent-purple)'};" data-req-id="${safeId}" onclick="openPhotoModal(this.dataset.reqId, 'request')">
             <div class="card-photo-box">
-              <img src="${safeImg}" onerror="this.src='symbol.png'" style="object-position: ${cx}% ${cy}%;">
+              <img src="${safeImg}" onerror="this.src='../images/symbol.png'" style="object-position: ${cx}% ${cy}%;">
               <div class="card-badges-top">
                 <span class="score-badge" style="border-color:${isDelete ? 'var(--accent-red)' : 'var(--accent-purple)'}; color:#fff;">
                   ${isDelete ? 'УДАЛЕНИЕ' : (isSuggest ? 'НОВОЕ ФОТО' : 'ПРАВКА')}
