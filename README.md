@@ -45,6 +45,7 @@
 | **XSS-Санитизация** | `escapeHtml` / `Attr` | Полная экранизация карточек, статей и предложений пользователей на фронтенде |
 | **Безопасное облако** | `JSONBin.io API v3` | Разделение прав: публичный `X-Access-Key` для предложки и приватный `X-Master-Key` в `.env` |
 | **Изоляция бэкенда** | `admin_server.py` | Привязка к `127.0.0.1` и потокобезопасная синхронизация JSON через `threading.Lock()` |
+| **Прокси и SOCKS5** | `auto_curator.py` / `PySocks` | Поддержка HTTP и SOCKS5h (Happ, Sing-box, Clash) для прямого обращения к Gemini API в обход блокировок |
 | **Sugar Rush Super Scatter** | `index.html` | Точная копия хита Pragmatic Play: 7x7 кластеры, спот-множители до x1024, Super Scatter (до 50 000x), Ante Bet, Bonus Buy и Web Audio синтезатор |
 
 ---
@@ -155,6 +156,10 @@ GEMINI_MODEL=gemini-3.8-flash
 # Приватный Master-Key JSONBin для админки (полный доступ: чтение и очистка очереди)
 JSONBIN_BIN_ID=6abbe438ffd5...
 JSONBIN_API_KEY=$2a$10$your_private_master_key_here...
+
+# Прокси (при необходимости обхода гео-ограничений Gemini API: HTTP или SOCKS5h)
+# HTTP_PROXY=socks5h://127.0.0.1:10808
+# HTTPS_PROXY=socks5h://127.0.0.1:10808
 ```
 
 > [!TIP]
