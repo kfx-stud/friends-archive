@@ -127,8 +127,7 @@ friends-archive/
 ├── requirements.txt      # Зависимости Python
 ├── .env                  # Локальные переменные окружения и ключи API (в .gitignore)
 ├── prompt.example.txt    # Шаблон системного промпта AI-куратора (в репозитории)
-├── prompt.txt            # Локальный кастомизированный промпт куратора (в .gitignore)
-└── CNAME                 # Привязка пользовательского домена site.gasmyas.me
+└── prompt.txt            # Локальный кастомизированный промпт куратора (в .gitignore)
 ```
 
 ---

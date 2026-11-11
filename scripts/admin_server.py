@@ -189,6 +189,13 @@ class AdminHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         parsed = urlparse(self.path)
 
+        # Защита от прямого скачивания скрытых и конфиденциальных файлов (.env, .git и т.д.)
+        path_parts = parsed.path.strip("/").split("/")
+        if any(part.startswith(".") for part in path_parts if part):
+            self.send_response(403)
+            self.end_headers()
+            return
+
         if parsed.path in ["/", "/admin.html", "/pages/admin.html"]:
             self.path = "/admin.html"
             return super().do_GET()
